@@ -7,6 +7,10 @@
   <strong>Starknet <> Celestia bridge</strong>
 </p>
 
+Blobstream Starknet is a port of [Celestia blobstream contracts](https://github.com/celestiaorg/blobstream-contracts) in [Cairo](https://book.cairo-lang.org/) for [Starknet](https://starknet.io/).
+
+> This project is under active development and should not be used in production.
+
 ## 🛠️ Build
 
 To build the project, run:
