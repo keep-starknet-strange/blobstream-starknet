@@ -12,3 +12,11 @@ Cargo.lock
 
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
+
+# Scarb and Starknet Foundry
+**/target
+.snfoundry_cache/
+
+# Starkli
+**/account.json
+**/keystore.json
