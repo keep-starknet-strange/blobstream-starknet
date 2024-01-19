@@ -24,21 +24,13 @@ Your branch must be prefixed in the following issue map (`type`, `title:`, `bran
 - `Bug report` -> `bug:` -> `bug/{issue #}-{issue name}`
 - `Codebase improvement` -> `dev:` -> `dev/{issue #}-{issue name}`
 
-#### Bug Reports
-Please try to create bug reports that are:
-
-- _Reproducible._ Include steps to reproduce the problem.
-- _Specific._ Include as much detail as possible: which version, what environment, etc.
-- _Unique._ Do not duplicate existing opened issues.
-- _Scoped to a Single Bug._ One bug per report.
-
 ### Submit PR
 
 Ensure your code is well formatted, well tested and well documented. A core contributor
 will review your work. Address changes, ensure ci passes, and voilà you're a blobstream-sn contributor.
 
 
-## Resources
+### Additional Resources
 
 Here are some resources to help you get started:
 
@@ -49,8 +41,6 @@ Here are some resources to help you get started:
 - [Starkli Book](https://book.starkli.rs/)
 - [Blockstream-sn TG](https://t.me/+N7UqCg2hxA4wNTZh)
 - [Syncing a Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork)
-
-***ping the [TG](https://t.me/+N7UqCg2hxA4wNTZh) for questions***
 
 ##
 
