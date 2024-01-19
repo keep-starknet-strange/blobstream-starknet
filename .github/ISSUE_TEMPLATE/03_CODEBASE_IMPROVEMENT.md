@@ -1,7 +1,7 @@
 ---
 name: Codebase improvement
 about: docs, ci, tooling, other
-title: "dev: "
+title: "[dev] "
 labels: "dev"
 assignees: ""
 ---
