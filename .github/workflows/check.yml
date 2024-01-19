@@ -1,4 +1,4 @@
-name: Test
+name: check
 
 on: [push, pull_request]
 permissions: read-all
