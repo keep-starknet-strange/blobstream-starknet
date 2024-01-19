@@ -22,7 +22,7 @@ Your branch must be prefixed in the following issue map (`type`, `title:`, `bran
 
 - `Feature request` -> `feat:` -> `feat/{issue #}-{issue name}`
 - `Bug report` -> `bug:` -> `bug/{issue #}-{issue name}`
-- `Codebase improvement` -> -> `dev:` -> `dev/{issue #}-{issue name}`
+- `Codebase improvement` -> `dev:` -> `dev/{issue #}-{issue name}`
 
 #### Bug Reports
 Please try to create bug reports that are:
@@ -41,6 +41,6 @@ General info on [syncing a fork](https://docs.github.com/en/pull-requests/collab
 
 ***ping the [TG](https://t.me/+N7UqCg2hxA4wNTZh) for questions***
 
----
+<hr>
 
 Thank you for your contribution!

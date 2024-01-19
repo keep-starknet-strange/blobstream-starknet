@@ -17,7 +17,7 @@
   **This project is under active development and should not be used in production**
 </div>
 
-## 🛠️ Build
+## Build
 
 To build the project, run:
 
@@ -25,7 +25,7 @@ To build the project, run:
 scarb build
 ```
 
-## 🧪 Test
+## Test
 
 To test the project, run:
 
@@ -33,6 +33,6 @@ To test the project, run:
 snforge
 ```
 
----
+<hr>
 
 #### We live on contributions, follow the guide [here](CONTRIBUTING.md)!
