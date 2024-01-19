@@ -12,10 +12,9 @@ jobs:
   markdown:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - run: |
           sudo gem install mdl
-          pwd
-          ls 
           mdl -s docs/linter/readme_style.rb README.md
           mdl -s docs/linter/base_style.rb CONTRIBUTING.md docs .github
 
