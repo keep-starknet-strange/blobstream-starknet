@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          gem install mdl
+          sudo gem install mdl
           mdl -s docs/linter/readme_style.rb README.md
           mdl -s docs/linter/base_style.rb CONTRIBUTING.md docs .github
 
