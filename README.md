@@ -2,7 +2,7 @@
 <!-- markdownlint-disable -->
 
 <div align="center">
-  <img src="docs/images/blobStreamSnBanner.png" height="250" />
+  <img src="docs/images/blobstreamSnBanner.png" height="250" />
 </div>
 
 Starknet <> Celestia bridge
