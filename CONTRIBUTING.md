@@ -41,6 +41,6 @@ General info on [syncing a fork](https://docs.github.com/en/pull-requests/collab
 
 ***ping the [TG](https://t.me/+N7UqCg2hxA4wNTZh) for questions***
 
-_________________
+##
 
 Thank you for your contribution!

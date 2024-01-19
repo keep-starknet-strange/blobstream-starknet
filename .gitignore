@@ -20,3 +20,5 @@ Cargo.lock
 # Starkli
 **/account.json
 **/keystore.json
+
+**/.DS_Store

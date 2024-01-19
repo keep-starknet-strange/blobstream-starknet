@@ -12,8 +12,7 @@
 
   ***Celestia -> Starknet messaging***
 
-  Blobstream Starknet is a port of Celestia Blobstream [contracts](https://github.com/celestiaorg/blobstream-contracts) 
-  in [Cairo](https://book.cairo-lang.org/) for [Starknet](https://starknet.io/).
+  Blobstream Starknet is a port of Celestia Blobstream [contracts](https://github.com/celestiaorg/blobstream-contracts) <br>in [Cairo](https://book.cairo-lang.org/) for [Starknet](https://starknet.io/).
 
   *!!This project is under active development and should not be used in production!!*
 </div>
@@ -36,4 +35,6 @@ snforge
 
 ##
 
-***we live on contributions, follow the guide [here](CONTRIBUTING.md)!***
+<div align="center">
+  <b>We live on contributions, follow the guide <a href="CONTRIBUTING.md">here</a>!</b>
+</div>
