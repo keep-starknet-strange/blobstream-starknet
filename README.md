@@ -4,7 +4,6 @@
 <div align="center">
   <img style="margin-bottom: 3px" src="docs/images/blobstreamSnBanner.png" height="300" />
 
-  ***Celestia -> Starknet messaging***
 
   [![Check Workflow Status](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/check.yml/badge.svg)](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/check.yml)
   [![Build Workflow Status](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/build.yml/badge.svg)](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/build.yml)
@@ -16,7 +15,7 @@
 
 ## Overview
 
-Blobstream Starknet is a port of Celestia Blobstream [contracts](https://github.com/celestiaorg/blobstream-contracts) 
+`blobstream-sn` is a port of Celestia Blobstream [contracts](https://github.com/celestiaorg/blobstream-contracts) 
 in [Cairo](https://book.cairo-lang.org/) for [Starknet](https://starknet.io/).
 
 ## Build
