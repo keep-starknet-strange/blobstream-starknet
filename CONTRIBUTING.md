@@ -37,7 +37,18 @@ Please try to create bug reports that are:
 Ensure your code is well formatted, well tested and well documented. A core contributor
 will review your work. Address changes, ensure ci passes, and voilà you're a blobstream-sn contributor.
 
-General info on [syncing a fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork).
+
+## Resources
+
+Here are some resources to help you get started:
+
+- [Cairo Book](https://book.cairo-lang.org/)
+- [Starknet Book](https://book.starknet.io/)
+- [Starknet Foundry Book](https://foundry-rs.github.io/starknet-foundry/)
+- [Starknet By Example](https://starknet-by-example.voyager.online/)
+- [Starkli Book](https://book.starkli.rs/)
+- [Blockstream-sn TG](https://t.me/+N7UqCg2hxA4wNTZh)
+- [Syncing a Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork)
 
 ***ping the [TG](https://t.me/+N7UqCg2hxA4wNTZh) for questions***
 
