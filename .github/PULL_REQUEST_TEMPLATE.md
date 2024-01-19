@@ -1,5 +1,5 @@
 - [ ] `blobstream-sn` issue #
-- [ ] breaking change
 - [ ] follows contribution guide
+- [ ] breaking change
 
 <!-- Description Below -->
