@@ -9,13 +9,15 @@ on:
 permissions: read-all
 
 jobs:
-  markdown-link-check:
+  markdown:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - uses: gaurav-nelson/github-action-markdown-link-check@v1
+      - run: |
+          gem install mdl
+          mdl -s docs/linter/readme_style.rb README.md
+          mdl -s docs/linter/base_style.rb CONTRIBUTING.md docs .github
 
-  check:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
