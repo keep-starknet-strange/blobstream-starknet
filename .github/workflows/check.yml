@@ -1,10 +1,24 @@
 name: check
 
-on: [push, pull_request]
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
 permissions: read-all
 
 jobs:
-  check:
+  markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          sudo gem install mdl
+          mdl -s docs/linter/readme_style.rb README.md
+          mdl -s docs/linter/base_style.rb CONTRIBUTING.md docs .github
+
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
