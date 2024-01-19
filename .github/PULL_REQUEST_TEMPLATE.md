@@ -3,13 +3,12 @@ title: {{ env.GITHUB_BASE_REF }}
 ---
 <!--TODO does env need to be changed?-->
 
-Issue Number: N/A
-Breaking Change: [ ] <!-- [x] if breaking -->
-
-## Type
+<!-- uncomment line below if change is breaking -->
+<!-- ## CHANGE IS BREAKING -->
+## Issue Number: N/A
 
 - [ ] feat
 - [ ] bug
 - [ ] dev (no functional changes)
 
-<!-- Description -->
+<!-- Description Below -->
