@@ -1,11 +1,12 @@
 ---
-name: Feature Request
-about: Suggest a feature for blobstream-sn
+name: Feature request
+about: suggest new feature
 title: "feat: "
-labels: "enhancement"
+labels: "feature"
 assignees: ""
 ---
 
 <!-- Description -->
+
 
 ## References
