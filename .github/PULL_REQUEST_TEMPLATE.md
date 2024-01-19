@@ -1,4 +1,4 @@
 <!-- markdownlint-disable-next-line MD026 -->
-## Issue: # 
+## `blobstream-sn` Issue #
 
 <!-- Description Below -->
