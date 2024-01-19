@@ -1,7 +1,3 @@
-## Issue Number: N/A
-
-- [ ] feat
-- [ ] bug
-- [ ] dev (no functional changes)
+## Issue Number: #
 
 <!-- Description Below -->
