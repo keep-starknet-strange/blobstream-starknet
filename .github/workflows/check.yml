@@ -14,6 +14,8 @@ jobs:
     steps:
       - run: |
           sudo gem install mdl
+          pwd
+          ls 
           mdl -s docs/linter/readme_style.rb README.md
           mdl -s docs/linter/base_style.rb CONTRIBUTING.md docs .github
 
