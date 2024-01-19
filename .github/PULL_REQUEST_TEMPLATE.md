@@ -1,3 +1,3 @@
-## Issue Number: #
+## Issue: #
 
 <!-- Description Below -->
