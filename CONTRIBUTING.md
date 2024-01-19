@@ -14,15 +14,17 @@ Project tracking is done via GitHub [issues](https://github.com/keep-starknet-st
 First look at open issues to see if your request is already submitted.
 If it is comment on the issue requesting assignment, if not open an issue.
 
-We use 3 issue [labels](https://github.com/keep-starknet-strange/blobstream-sn/issues/new):
+We use 3 issue labels for development:
 
-> `feat:`, `bug:`, `dev:`
+- `feat` -> suggest new feature
+- `bug` -> create a reproducible bug report
+- `dev` -> non-functional repository changes
 
-Your branch must be prefixed in the following issue map (`type`, `title:`, `branch-prefix/`):
+These labels are used as prefixes as follows for `issue`, `branch name`, `pr title`:
 
-- `Feature request` -> `feat:` -> `feat/{issue #}-{issue name}`
-- `Bug report` -> `bug:` -> `bug/{issue #}-{issue name}`
-- `Codebase improvement` -> `dev:` -> `dev/{issue #}-{issue name}`
+- `[feat]` -> `feat/{issue #}-{issue name}` -> `feat:`
+- `[bug]` -> `bug/{issue #}-{issue name}` -> `bug:`
+- `[dev]` -> `dev/{issue #}-{issue name}` -> `dev:`
 
 ### Submit PR
 

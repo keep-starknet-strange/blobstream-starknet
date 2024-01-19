@@ -1,4 +1,5 @@
-<!-- markdownlint-disable-next-line MD026 -->
-## `blobstream-sn` Issue #
+- [ ] `blobstream-sn` issue #
+- [ ] breaking change
+- [ ] follows contribution guide
 
 <!-- Description Below -->
