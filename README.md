@@ -2,7 +2,7 @@
 <!-- markdownlint-disable -->
 
 <div align="center">
-  <img style="margin-bottom: 3px" src="docs/images/blobstreamSnBanner.png" height="300" />
+  <img style="margin-bottom: 3px" src="docs/images/blobstreamSnBanner.png" height="250" />
 
 
   [![Check Workflow Status](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/check.yml/badge.svg)](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/check.yml)
