@@ -2,7 +2,7 @@
 <!-- markdownlint-disable -->
 
 <div align="center">
-  <img style="margin-bottom: 3px" src="docs/images/blobstreamSnBanner.png" height="250" />
+  <img style="margin-bottom: 3px" src="docs/images/blobstreamSnBanner.png" height="300" />
 
   [![Check Workflow Status](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/check.yml/badge.svg)](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/check.yml)
   [![Build Workflow Status](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/build.yml/badge.svg)](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/build.yml)
@@ -33,6 +33,6 @@ To test the project, run:
 snforge
 ```
 
-<hr>
+_________________
 
-#### We live on contributions, follow the guide [here](CONTRIBUTING.md)!
+***we live on contributions, follow the guide [here](CONTRIBUTING.md)!***
