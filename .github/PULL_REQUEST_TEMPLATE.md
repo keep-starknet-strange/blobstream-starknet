@@ -1,6 +1,7 @@
+<!-- type related gh issue after hash -->
 - [ ] `blobstream-sn` issue #
 - [ ] follows contribution guide
-- [ ] code change included tests
+- [ ] code change includes tests
 - [ ] breaking change
 
 <!-- Description Below -->
