@@ -2,5 +2,5 @@ mod consts;
 
 #[cfg(test)]
 mod tests {
-    mod stub;
+    mod namespace;
 }

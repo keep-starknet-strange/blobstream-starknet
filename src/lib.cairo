@@ -3,10 +3,6 @@ mod verifier;
 
 use starknet::{EthAddress};
 
-#[cfg(test)]
-mod tests {
-    mod stub;
-}
 
 // u256 encoding of the string "checkpoint"
 const VALIDATOR_SET_HASH_DOMAIN_SEPARATOR: u256 =
@@ -33,3 +29,7 @@ struct DataRoot {
     dataRoot: u256
 }
 
+#[cfg(test)]
+mod tests {
+    mod verifier;
+}
