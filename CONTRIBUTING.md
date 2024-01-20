@@ -14,7 +14,7 @@ Project tracking is done via GitHub [issues](https://github.com/keep-starknet-st
 First look at open issues to see if your request is already submitted.
 If it is comment on the issue requesting assignment, if not open an issue.
 
-We use 3 issue labels for development:
+We use 3 issue [labels](git fetch origin git checkout 6-dev-ui-addition) for development:
 
 - `feat` -> suggest new feature
 - `bug` -> create a reproducible bug report
