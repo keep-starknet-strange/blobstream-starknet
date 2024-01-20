@@ -1,4 +1,4 @@
-<!-- type related gh issue after hash -->
+<!-- enter the gh issue after hash -->
 
 - [ ] issue #
 - [ ] follows contribution guide
