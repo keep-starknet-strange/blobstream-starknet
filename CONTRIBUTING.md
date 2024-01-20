@@ -1,6 +1,6 @@
 ## 🛠️ Contributing to Blobstream-SN 🛠️
 
-Welcome, welcome, contributing to `blobstream-sn` is easy!
+Welcome, Contributing to `blobstream-sn` is easy!
 
 1. Submit or comment your intent on an issue
 1. We will try to respond quickly
