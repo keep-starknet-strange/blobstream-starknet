@@ -39,7 +39,7 @@ and voilà you're a blobstream-sn contributor.
 - [Starknet Foundry Book](https://foundry-rs.github.io/starknet-foundry/)
 - [Starknet By Example](https://starknet-by-example.voyager.online/)
 - [Starkli Book](https://book.starkli.rs/)
-- [Blockstream-sn TG](https://t.me/+N7UqCg2hxA4wNTZh)
+- [blockstream-sn TG](https://t.me/+N7UqCg2hxA4wNTZh)
 - [Syncing a Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork)
 
 ##
