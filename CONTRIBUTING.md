@@ -1,6 +1,6 @@
 ## 🛠️ Contributing to Blobstream-SN 🛠️
 
-Welcome, welcome, contributing to blobstream-sn is easy!
+Welcome, welcome, contributing to `blobstream-sn` is easy!
 
 1. Submit or comment your intent on an issue
 1. We will try to respond quickly
@@ -14,7 +14,7 @@ Project tracking is done via GitHub [issues](https://github.com/keep-starknet-st
 First look at open issues to see if your request is already submitted.
 If it is comment on the issue requesting assignment, if not open an issue.
 
-We use 3 issue [labels](git fetch origin git checkout 6-dev-ui-addition) for development:
+We use 3 issue labels for development:
 
 - `feat` -> suggest new feature
 - `bug` -> create a reproducible bug report
@@ -33,8 +33,6 @@ will review your work. Address changes, ensure ci passes,
 and voilà you're a blobstream-sn contributor.
 
 ### Additional Resources
-
-Here are some resources to help you get started:
 
 - [Cairo Book](https://book.cairo-lang.org/)
 - [Starknet Book](https://book.starknet.io/)
