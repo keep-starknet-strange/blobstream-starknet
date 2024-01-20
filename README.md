@@ -32,5 +32,5 @@ snforge
 ##
 
 <div align="center">
-  <b>We live on contributions, follow the guide <a href="CONTRIBUTING.md">here</a>!</b>
+  <b>We live on contributions, follow the guide <a href="docs/CONTRIBUTING.md">here</a>!</b>
 </div>
