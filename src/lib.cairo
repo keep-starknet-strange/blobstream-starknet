@@ -1,7 +1,9 @@
 mod tree;
 mod verifier;
+mod interface;
 
 use starknet::EthAddress;
+use starknet::secp256_trait::Signature;
 
 // u256 encoding of the string "checkpoint"
 const VALIDATOR_SET_HASH_DOMAIN_SEPARATOR: u256 =
@@ -25,6 +27,44 @@ struct DataRoot {
     // Celestia block height for data root(genesis height = 0)
     height: felt252,
     data_root: u256
+}
+
+
+#[starknet::contract]
+mod Blobstream {
+    use starknet::EthAddress;
+    use starknet::secp256_trait::Signature;
+    use starknet::eth_signature::verify_eth_signature;
+    use blobstream::interface::IDAOracle;
+    
+    #[storage]
+    struct Storage {
+        state_event_nonce: felt252,
+        state_power_threshold: felt252,
+        state_last_validator_checkpoint: u256, // TODO will need to change type here
+    }
+
+    #[constructor]
+    fn constructor(
+        ref self: ContractState,
+        nonce: felt252,
+        power_threshold: felt252,
+        validator_checkpoint: u256
+    ) {
+        self.state_event_nonce.write(nonce);
+        self.state_power_threshold.write(power_threshold);
+        self.state_last_validator_checkpoint.write(validator_checkpoint);
+    }
+
+    #[abi(embed_v0)]
+    impl Blobstream of IDAOracle<ContractState> {
+        fn verify_sig(
+            self: @ContractState, digest: u256, sig: Signature, signer: EthAddress,
+        ) -> bool {
+            verify_eth_signature(digest, sig, signer);
+            false
+        }
+    }
 }
 
 #[cfg(test)]
