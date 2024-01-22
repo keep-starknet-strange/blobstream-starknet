@@ -1,4 +1,3 @@
-mod interface;
 mod tree;
 mod verifier;
 
@@ -12,7 +11,6 @@ const VALIDATOR_SET_HASH_DOMAIN_SEPARATOR: u256 =
 // u256 encoding of the string "transactionBatch"
 const DATA_ROOT_TUPLE_ROOT_DOMAIN_SEPARATOR: u256 =
     0x7472616e73616374696f6e426174636800000000000000000000000000000000;
-
 
 #[derive(Copy, Drop)]
 struct Validator {
@@ -29,10 +27,14 @@ struct DataRoot {
     data_root: u256
 }
 
+#[starknet::interface]
+trait IDAOracle<TContractState> {
+    fn verify_sig(self: @TContractState, digest: u256, sig: Signature, signer: EthAddress) -> bool;
+}
+
 
 #[starknet::contract]
 mod Blobstream {
-    use blobstream::interface::IDAOracle;
     use starknet::EthAddress;
     use starknet::eth_signature::verify_eth_signature;
     use starknet::secp256_trait::Signature;
@@ -44,8 +46,8 @@ mod Blobstream {
         state_last_validator_checkpoint: u256, // TODO will need to change type here
     }
 
-    #[constructor]
-    fn constructor(
+    // #[constructor]
+    fn initialize(
         ref self: ContractState,
         nonce: felt252,
         power_threshold: felt252,
@@ -57,7 +59,7 @@ mod Blobstream {
     }
 
     #[abi(embed_v0)]
-    impl Blobstream of IDAOracle<ContractState> {
+    impl Blobstream of super::IDAOracle<ContractState> {
         fn verify_sig(
             self: @ContractState, digest: u256, sig: Signature, signer: EthAddress,
         ) -> bool {

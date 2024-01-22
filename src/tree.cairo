@@ -8,5 +8,5 @@ mod namespace {
 
 #[cfg(test)]
 mod tests {
-    mod tree;
+    mod test_tree;
 }
