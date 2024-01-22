@@ -1,7 +1,7 @@
 mod tree;
 mod verifier;
 
-use starknet::{EthAddress};
+use starknet::EthAddress;
 
 // u256 encoding of the string "checkpoint"
 const VALIDATOR_SET_HASH_DOMAIN_SEPARATOR: u256 =
@@ -24,12 +24,11 @@ struct Validator {
 struct DataRoot {
     // Celestia block height for data root(genesis height = 0)
     height: felt252,
-    // Data root
-    dataRoot: u256
+    data_root: u256
 }
-
 
 #[cfg(test)]
 mod tests {
+    mod blobstream;
     mod verifier;
 }
