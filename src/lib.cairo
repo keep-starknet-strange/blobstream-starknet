@@ -1,6 +1,6 @@
+mod interface;
 mod tree;
 mod verifier;
-mod interface;
 
 use starknet::EthAddress;
 use starknet::secp256_trait::Signature;
@@ -32,11 +32,11 @@ struct DataRoot {
 
 #[starknet::contract]
 mod Blobstream {
-    use starknet::EthAddress;
-    use starknet::secp256_trait::Signature;
-    use starknet::eth_signature::verify_eth_signature;
     use blobstream::interface::IDAOracle;
-    
+    use starknet::EthAddress;
+    use starknet::eth_signature::verify_eth_signature;
+    use starknet::secp256_trait::Signature;
+
     #[storage]
     struct Storage {
         state_event_nonce: felt252,
