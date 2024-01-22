@@ -5,7 +5,7 @@ use core::bytes_31::bytes31_const;
 fn constants_test() {
     assert!(LEAF_PREFIX == 0x00, "leaf prefix");
     assert!(MAX_HEIGHT == 256, "max height");
-    assert!(NODE_PREFIX == 0x01,"node prefix");
+    assert!(NODE_PREFIX == 0x01, "node prefix");
 }
 
 #[test]
