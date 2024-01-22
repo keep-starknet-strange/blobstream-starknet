@@ -1,6 +1,4 @@
 mod consts;
-
-#[cfg(test)]
-mod tests {
-    mod namespace;
+mod binary {
+    mod binary_merkle_proof;
 }

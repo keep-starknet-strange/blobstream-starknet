@@ -8,8 +8,6 @@ test = "snforge test"
 [dependencies]
 snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.14.0" }
 starknet = "2.4.4"
-
-# External dependencies
 openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v0.8.0" }
 
 [[target.starknet-contract]]
