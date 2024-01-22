@@ -24,12 +24,11 @@ struct Validator {
 struct DataRoot {
     // Celestia block height for data root(genesis height = 0)
     height: felt252,
-    dataRoot: u256
+    data_root: u256
 }
 
 #[cfg(test)]
 mod tests {
     mod blobstream;
-    mod tree;
     mod verifier;
 }
