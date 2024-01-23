@@ -1,4 +1,4 @@
-## 🛠️ Contributing to Blobstream-SN 🛠️
+## 🛠️ Contributing to Blobstream-Starknet 🛠️
 
 Welcome, contributing to `blobstream-sn` is easy!
 

@@ -1,4 +1,4 @@
-use blobstream::{
+use blobstream_sn::{
     VALIDATOR_SET_HASH_DOMAIN_SEPARATOR, DATA_ROOT_TUPLE_ROOT_DOMAIN_SEPARATOR, IDAOracleDispatcher
 };
 use core::bytes_31::one_shift_left_bytes_u128;

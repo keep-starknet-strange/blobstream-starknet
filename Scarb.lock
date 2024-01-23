@@ -2,7 +2,7 @@
 version = 1
 
 [[package]]
-name = "blobstream"
+name = "blobstream_sn"
 version = "0.1.0"
 dependencies = [
  "openzeppelin",

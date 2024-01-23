@@ -1,4 +1,4 @@
-use blobstream::tree::namespace::namespace_merkle_tree::Namespace;
+use blobstream_sn::tree::namespace::namespace_merkle_tree::Namespace;
 use core::bytes_31::bytes31_const;
 
 const MAX_HEIGHT: felt252 = 256;
