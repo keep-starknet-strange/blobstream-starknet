@@ -32,6 +32,25 @@ Ensure your code is well formatted, well tested and well documented. A core cont
 will review your work. Address changes, ensure ci passes,
 and voilà you're a blobstream-sn contributor.
 
+Markdown [linter](https://github.com/markdownlint/markdownlint?tab=readme-ov-file#markdown-lint-tool):
+
+```bash
+mdl -s .github/linter/readme_style.rb README.md
+```
+
+Scarb linter:
+
+```bash
+scarb fmt
+```
+
+To add via [all-contributors](https://allcontributors.org/docs/en/cli/installation):
+
+```bash
+yarn all-contributors add jfmengels code
+yarn all-contributors generate
+```
+
 ### Additional Resources
 
 - [Cairo Book](https://book.cairo-lang.org/)
