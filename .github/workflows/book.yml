@@ -1,4 +1,4 @@
-name: Blobstream Starknet Book
+name: book
 
 on:
   push:
