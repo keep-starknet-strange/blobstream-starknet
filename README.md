@@ -1,7 +1,7 @@
 <div align="center">
   <img src="book/src/assets/blobstreamSnBanner.png" height="300"/>
 
-  ***When Modularism meets Integrity***
+  ***Where Modularism meets Integrity***
 
   [![Check Workflow Status](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/check.yml/badge.svg)](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/check.yml)
   [![Build Workflow Status](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/build.yml/badge.svg)](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/build.yml)
