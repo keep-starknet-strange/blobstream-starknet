@@ -1,5 +1,7 @@
 <div align="center">
   <img style="margin-bottom: 3px" src="docs/images/blobstreamSnBanner.png" height="250"/>
+  
+  <h2> When Modularism meets Integrity </h2>
 
   [![Check Workflow Status](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/check.yml/badge.svg)](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/check.yml)
   [![Build Workflow Status](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/build.yml/badge.svg)](https://github.com/keep-starknet-strange/blobstream-sn/actions/workflows/build.yml)
@@ -28,8 +30,6 @@ To test the project, run:
 ```bash
 snforge test
 ```
-
-##
 
 <div align="center">
   <b>We live on contributions, follow the guide <a href="CONTRIBUTING.md">here</a>!</b>
