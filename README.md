@@ -1,5 +1,5 @@
 <div align="center">
-  <img style="margin-bottom: 3px" src="docs/images/blobstreamSnBanner.png" height="250"/>
+  <img style="margin-bottom: 3px" src="book/src/assets/blobstreamSnBanner.png" height="250"/>
   
   ***When Modularism meets Integrity***
 
