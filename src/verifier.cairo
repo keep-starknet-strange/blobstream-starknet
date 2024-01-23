@@ -1,5 +1,5 @@
-use blobstream::DataRoot;
-use blobstream::tree::binary::binary_merkle_proof::BinaryMerkleProof;
+use blobstream_sn::DataRoot;
+use blobstream_sn::tree::binary::binary_merkle_proof::BinaryMerkleProof;
 
 // Data needed to verify that a data root tuple was committed to
 // by the Blobstream smart contract, at some specific nonce

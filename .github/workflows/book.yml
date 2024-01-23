@@ -1,4 +1,4 @@
-name: Blobstream Starknet Book
+name: book
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Check for changes in the book directory
         id: check_changes

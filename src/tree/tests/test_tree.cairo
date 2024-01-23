@@ -1,4 +1,4 @@
-use blobstream::tree::consts::{LEAF_PREFIX, MAX_HEIGHT, NODE_PREFIX, parity_share_namespace};
+use blobstream_sn::tree::consts::{LEAF_PREFIX, MAX_HEIGHT, NODE_PREFIX, parity_share_namespace};
 use core::bytes_31::bytes31_const;
 
 #[test]

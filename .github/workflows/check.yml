@@ -16,7 +16,7 @@ jobs:
       - run: |
           sudo gem install mdl
           mdl -s .github/linter/readme_style.rb README.md
-          mdl -s .github/linter/base_style.rb docs .github
+          mdl -s .github/linter/base_style.rb book .github
 
   test:
     runs-on: ubuntu-latest
