@@ -1,5 +1,5 @@
 <div align="center">
-  <img style="margin-bottom: 3px" src="book/src/assets/blobstreamSnBanner.png" height="250"/>
+  <img src="book/src/assets/blobstreamSnBanner.png" height="300"/>
 
   ***When Modularism meets Integrity***
 
@@ -12,7 +12,7 @@
 
 ## Overview
 
-`blobstream-sn` is a port of Celestia Blobstream [contracts](https://github.com/celestiaorg/blobstream-contracts)
+`blobstream_sn` is a port of Celestia Blobstream [contracts](https://github.com/celestiaorg/blobstream-contracts)
 in [Cairo](https://book.cairo-lang.org/) for [Starknet](https://starknet.io/).
 
 ## Build

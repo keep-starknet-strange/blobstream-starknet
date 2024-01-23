@@ -1,6 +1,6 @@
-## 🛠️ Contributing to Blobstream-Starknet 🛠️
+## 🛠️ Contributing to Blobstream Starknet 🛠️
 
-Welcome, contributing to `blobstream-sn` is easy!
+Welcome, contributing to is easy!
 
 1. Submit or comment your intent on an issue
 1. We will try to respond quickly
