@@ -11,7 +11,6 @@ struct Namespace {
     version: u8,
     id: bytes31, //TODO: #28
 }
-
 // TODO: #28
 // impl NamespacePartialOrd of PartialOrd<Namespace> {
 //     #[inline(always)]
@@ -41,3 +40,4 @@ struct Namespace {
 // fn namespace_node_eq(first: NamespaceNode, second: NamespaceNode) -> bool {
 //     return first.min.eq(second.min) && first.max.eq(second.max) && (first.digest == second.digest);
 // }
+
