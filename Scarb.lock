@@ -2,9 +2,53 @@
 version = 1
 
 [[package]]
+name = "alexandria_bytes"
+version = "0.1.0"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git#3d6d49d981aaa36e7a4abdbc1e44e7a04a3988a8"
+dependencies = [
+ "alexandria_data_structures",
+ "alexandria_math",
+]
+
+[[package]]
+name = "alexandria_data_structures"
+version = "0.2.0"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git#3d6d49d981aaa36e7a4abdbc1e44e7a04a3988a8"
+dependencies = [
+ "alexandria_encoding",
+]
+
+[[package]]
+name = "alexandria_encoding"
+version = "0.1.0"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git#3d6d49d981aaa36e7a4abdbc1e44e7a04a3988a8"
+dependencies = [
+ "alexandria_math",
+ "alexandria_numeric",
+]
+
+[[package]]
+name = "alexandria_math"
+version = "0.2.0"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git#3d6d49d981aaa36e7a4abdbc1e44e7a04a3988a8"
+dependencies = [
+ "alexandria_data_structures",
+]
+
+[[package]]
+name = "alexandria_numeric"
+version = "0.1.0"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git#3d6d49d981aaa36e7a4abdbc1e44e7a04a3988a8"
+dependencies = [
+ "alexandria_math",
+]
+
+[[package]]
 name = "blobstream_sn"
 version = "0.1.0"
 dependencies = [
+ "alexandria_bytes",
+ "alexandria_math",
  "openzeppelin",
  "snforge_std",
 ]

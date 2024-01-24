@@ -1,4 +1,5 @@
 mod tree;
+mod utils;
 mod verifier;
 
 use starknet::EthAddress;
@@ -71,6 +72,6 @@ mod Blobstream {
 
 #[cfg(test)]
 mod tests {
-    mod blobstream;
-    mod verifier;
+    mod test_blobstream;
+    mod test_verifier;
 }

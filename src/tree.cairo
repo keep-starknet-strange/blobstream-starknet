@@ -1,12 +1,21 @@
 mod consts;
 mod binary {
-    mod binary_merkle_proof;
+    mod hasher;
+    mod merkle_proof;
+    #[cfg(test)]
+    mod tests {
+        mod test_hasher;
+    }
 }
 mod namespace {
-    mod namespace_merkle_tree;
+    mod merkle_tree;
+    #[cfg(test)]
+    mod tests {
+        mod test_merkle_tree;
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    mod test_tree;
+    mod test_consts;
 }
