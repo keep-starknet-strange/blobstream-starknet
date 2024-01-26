@@ -1,6 +1,6 @@
-# Build 
+# Build
 
- ## Contracts
+## Contracts
 
 Open a terminal and run:
 

@@ -13,4 +13,3 @@
 ## 5. `updateState`
 
 ## 6. `isValid` && `verifyAttestation`
-
