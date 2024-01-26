@@ -1,6 +1,8 @@
-# Build the contracts
+# Build 
 
-Open a terminal and run the following command:
+ ## Contracts
+
+Open a terminal and run:
 
 ```shell
 scarb build

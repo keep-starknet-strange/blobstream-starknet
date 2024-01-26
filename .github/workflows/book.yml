@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - book/**
 
 jobs:
   book:
@@ -12,31 +14,13 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
     steps:
       - uses: actions/checkout@v3
-
-      - name: Check for changes in the book directory
-        id: check_changes
-        run: |
-          if git diff --quiet --exit-code HEAD^ HEAD -- book; then
-            echo "No changes in the 'book' directory. Exiting..."
-            exit 0
-          else
-            echo "Changes detected in the book directory. Continuing..."
-          fi
-        continue-on-error: true
-
       - name: Setup mdBook
-        if: steps.check_changes.outcome == 'success'
         uses: peaceiris/actions-mdbook@v1
         with:
           mdbook-version: "latest"
-
-      - name: Build mdBook
-        if: steps.check_changes.outcome == 'success'
-        run: mdbook build
+      - run: mdbook build book
         working-directory: ./book
-
       - name: Deploy
-        if: ${{ github.ref == 'refs/heads/main' }} && steps.check_changes.outcome == 'success'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

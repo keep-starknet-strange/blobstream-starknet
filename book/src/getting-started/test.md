@@ -1,6 +1,8 @@
-# Test the contracts
+# Test 
 
-Open a terminal and run the following command:
+## Contracts
+
+Open a terminal and run:
 
 ```shell
 snforge test
