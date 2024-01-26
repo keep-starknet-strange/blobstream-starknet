@@ -7,9 +7,9 @@ There are several ways to run `blobstream_sn`:
 
 ## Install dependencies
 
-`blobstream_sn` requires both [scarb](https://docs.swmansion.com/scarb/download.html) and
-[snfoundry](https://foundry-rs.github.io/starknet-foundry). As scarb doesn't currently have
-dependency version resolution we will use `asdf`
+`blobstream_sn` requires both [scarb](https://docs.swmansion.com/scarb/download.html)
+and [snfoundry](https://foundry-rs.github.io/starknet-foundry). As scarb doesn't
+currently have dependency version resolution we will use `asdf`:
 
 - [install asdf](https://asdf-vm.com/guide/getting-started.html)
 - navigate to project root
