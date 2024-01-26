@@ -1,0 +1,10 @@
+[book]
+authors = ["drspacemn"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Blobstream Starknet"
+
+[output.html]
+git-repository-url = "https://github.com/keep-starknet-strange/satoru/"
+edit-url-template = "https://github.com/keep-starknet-strange/satoru/book/{path}"

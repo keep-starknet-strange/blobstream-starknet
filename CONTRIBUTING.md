@@ -60,6 +60,7 @@ yarn all-contributors generate
 - [Starkli Book](https://book.starkli.rs/)
 - [blockstream-sn TG](https://t.me/+N7UqCg2hxA4wNTZh)
 - [Syncing a Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork)
+- [Submitting data blobs to Celestia](https://docs.celestia.org/developers/submit-data)
 
 ##
 

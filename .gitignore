@@ -8,3 +8,6 @@
 # Starkli
 **/account.json
 **/keystore.json
+
+# mdBook
+book/book/
