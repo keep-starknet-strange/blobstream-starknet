@@ -22,9 +22,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: software-mansion/setup-scarb@v1
-      - uses: foundry-rs/setup-snfoundry@v2
-        with:
-          starknet-foundry-version: 0.14.0
-      - name: Run cairo tests
-        run: snforge test unit_tests
+      - uses: asdf-vm/actions/install@v3
+      - run: snforge test
