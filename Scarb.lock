@@ -4,7 +4,7 @@ version = 1
 [[package]]
 name = "alexandria_bytes"
 version = "0.1.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git#3d6d49d981aaa36e7a4abdbc1e44e7a04a3988a8"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
 dependencies = [
  "alexandria_data_structures",
  "alexandria_math",
@@ -13,7 +13,7 @@ dependencies = [
 [[package]]
 name = "alexandria_data_structures"
 version = "0.2.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git#3d6d49d981aaa36e7a4abdbc1e44e7a04a3988a8"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
 dependencies = [
  "alexandria_encoding",
 ]
@@ -21,7 +21,7 @@ dependencies = [
 [[package]]
 name = "alexandria_encoding"
 version = "0.1.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git#3d6d49d981aaa36e7a4abdbc1e44e7a04a3988a8"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
 dependencies = [
  "alexandria_math",
  "alexandria_numeric",
@@ -30,7 +30,7 @@ dependencies = [
 [[package]]
 name = "alexandria_math"
 version = "0.2.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git#3d6d49d981aaa36e7a4abdbc1e44e7a04a3988a8"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
 dependencies = [
  "alexandria_data_structures",
 ]
@@ -38,7 +38,7 @@ dependencies = [
 [[package]]
 name = "alexandria_numeric"
 version = "0.1.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git#3d6d49d981aaa36e7a4abdbc1e44e7a04a3988a8"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
 dependencies = [
  "alexandria_math",
 ]
@@ -55,10 +55,10 @@ dependencies = [
 
 [[package]]
 name = "openzeppelin"
-version = "0.8.0"
-source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.8.0#c23e8e96de60e6e3159b1ff8591a1187269c0eb7"
+version = "0.8.1"
+source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?tag=v0.8.1#5c7a022f333dca721fe490c2191a811fa2566a89"
 
 [[package]]
 name = "snforge_std"
-version = "0.15.0"
-source = "git+https://github.com/foundry-rs/starknet-foundry?tag=v0.15.0#7747a2d27b9ebfccf7de8e757d9c6a3ed31e81fc"
+version = "0.16.0"
+source = "git+https://github.com/foundry-rs/starknet-foundry?tag=v0.16.0#f58e0ab42b6095b7d0cb841ede595aecbc9cb45d"
