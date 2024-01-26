@@ -5,7 +5,7 @@ Blobstream allows Celestia block header data roots to be relayed in one directio
 > ***From Celestia to Starknet***
 
 It does not support bridging assets such as fungible
-or non-fungible tokens directly, and cannot send messages from the Starknet 
+or non-fungible tokens directly, and cannot send messages from the Starknet
 back to Celestia.
 
 `blobstream-sn` is a port of Celestia Blobstream in Cairo:
