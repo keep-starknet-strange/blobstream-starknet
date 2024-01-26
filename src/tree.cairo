@@ -8,7 +8,6 @@ mod binary {
     }
 }
 mod namespace {
-    
     mod merkle_tree;
     #[cfg(test)]
     mod tests {
