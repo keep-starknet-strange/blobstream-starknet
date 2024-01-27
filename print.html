@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title></title>
+        <title>Blobstream Starknet</title>
         <meta name="robots" content="noindex">
 
 
@@ -89,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="getting-started/index.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="getting-started/prerequisites.html"><strong aria-hidden="true">1.1.</strong> Prerequisites</a></li><li class="chapter-item expanded "><a href="getting-started/build.html"><strong aria-hidden="true">1.2.</strong> Build the contracts</a></li><li class="chapter-item expanded "><a href="getting-started/test.html"><strong aria-hidden="true">1.3.</strong> Test the contracts</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="getting-started/index.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="getting-started/build.html"><strong aria-hidden="true">1.1.</strong> Build</a></li><li class="chapter-item expanded "><a href="getting-started/test.html"><strong aria-hidden="true">1.2.</strong> Test</a></li></ol></li><li class="chapter-item expanded "><a href="overview/index.html"><strong aria-hidden="true">2.</strong> Overview</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="overview/l3_architecture.html"><strong aria-hidden="true">2.1.</strong> L3 Architecture</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -142,11 +142,14 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title"></h1>
+                    <h1 class="menu-title">Blobstream Starknet</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
                             <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/keep-starknet-strange/satoru/" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
                         </a>
 
                     </div>
@@ -175,53 +178,63 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="blobstream-starknet"><a class="header" href="#blobstream-starknet">Blobstream Starknet</a></h1>
-<h2 id="about"><a class="header" href="#about">About</a></h2>
-<p>When Modularism meets Integrity.</p>
-<p>Celestia -&gt; Starknet messaging bridge via Cairo Blobstream contracts.</p>
-<p><code>blobstream-sn</code> is a port of Celestia Blobstream <a href="https://github.com/celestiaorg/blobstream-contracts">contracts</a>
-in <a href="https://book.cairo-lang.org/">Cairo</a> for <a href="https://starknet.io/">Starknet</a>.</p>
-<p>So what ? Well, it brings a lot of possibilities to the table, like:</p>
-<ul>
-<li>Starknet L3s using Celestia as Data Availability Layer</li>
-</ul>
-<h2 id="resources"><a class="header" href="#resources">Resources</a></h2>
-<ul>
-<li><a href="https://book.cairo-lang.org/">Cairo Book</a></li>
-<li><a href="https://book.starknet.io/">Starknet Book</a></li>
-<li><a href="https://foundry-rs.github.io/starknet-foundry/">Starknet Foundry Book</a></li>
-<li><a href="https://starknet-by-example.voyager.online/">Starknet By Example</a></li>
-<li><a href="https://book.starkli.rs/">Starkli Book</a></li>
-<li><a href="https://docs.celestia.org">Celestia Docs</a></li>
-<li><a href="https://docs.celestia.org/developers/submit-data">Submitting data blobs to Celestia</a></li>
-</ul>
+<p>Celestia -&gt; Starknet messaging bridge via Cairo Blobstream contracts.
+Enables possibilities like Starknet L3s that use Celestia as a
+Data Availability layer.</p>
+<p><img src="./assets/blobstreamSnArchSimple.jpg" alt="BSN High Level" /></p>
+<p>Let's journey down the <a href="./getting-started">blob hole</a>...</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
-<p>In this section, we will go through the steps to build and test the smart contracts.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h1>
-<p>There are several ways to run <code>blobstream-sn</code>:</p>
+<p>There are several ways to run <code>blobstream_sn</code>:</p>
 <ul>
-<li>Install prerequisites on the local system</li>
+<li>Install dependencies</li>
 <li>Run in a dev container</li>
 </ul>
-<h2 id="installation-on-the-local-system"><a class="header" href="#installation-on-the-local-system">Installation on the local system</a></h2>
+<h2 id="install-dependencies"><a class="header" href="#install-dependencies">Install dependencies</a></h2>
+<p><code>blobstream_sn</code> requires both <a href="https://docs.swmansion.com/scarb/download.html">scarb</a>
+and <a href="https://foundry-rs.github.io/starknet-foundry">snfoundry</a>. As scarb doesn't
+currently have dependency version resolution we will use <code>asdf</code>:</p>
 <ul>
-<li><a href="https://docs.swmansion.com/scarb/download.html">Scarb</a></li>
-<li><a href="https://foundry-rs.github.io/starknet-foundry/">Starknet Foundry</a></li>
+<li><a href="https://asdf-vm.com/guide/getting-started.html">install asdf</a></li>
+<li>navigate to project root</li>
+<li>run <code>asdf install</code></li>
 </ul>
 <h2 id="run-in-a-dev-container"><a class="header" href="#run-in-a-dev-container">Run in a dev container</a></h2>
 <p>Dev containers provide a dedicated environment for the project. Since the dev
 container configuration is stored in the <code>.devcontainer</code> directory, this ensures
 that the environment is strictly identical from one developer to the next.</p>
 <p>To run inside a dev container, please follow <a href="https://code.visualstudio.com/docs/devcontainers/tutorial">Dev Containers tutorial</a>.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="build-the-contracts"><a class="header" href="#build-the-contracts">Build the contracts</a></h1>
-<p>Open a terminal and run the following command:</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="build"><a class="header" href="#build">Build</a></h1>
+<h2 id="contracts"><a class="header" href="#contracts">Contracts</a></h2>
+<p>Open a terminal and run:</p>
 <pre><code class="language-shell">scarb build
 </code></pre>
 <p>This will build the smart contracts into <code>target</code> directory.</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="test-the-contracts"><a class="header" href="#test-the-contracts">Test the contracts</a></h1>
-<p>Open a terminal and run the following command:</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="test"><a class="header" href="#test">Test</a></h1>
+<h2 id="contracts-1"><a class="header" href="#contracts-1">Contracts</a></h2>
+<p>Open a terminal and run:</p>
 <pre><code class="language-shell">snforge test
 </code></pre>
 <p>This will execute the tests in <code>tests</code> directory and print the results.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
+<p>Blobstream allows Celestia block header data roots to be relayed
+<em><strong>from Celestia to Starknet</strong></em></p>
+<p>It does not support bridging assets such as fungible
+or non-fungible tokens directly, and cannot send messages from the Starknet
+back to Celestia.</p>
+<p><code>blobstream-sn</code> is a port of Celestia Blobstream in Cairo:</p>
+<ul>
+<li><a href="https://github.com/celestiaorg/blobstream-contracts">Solidity Blobstream Contracts</a></li>
+<li><a href="https://book.cairo-lang.org/">Cairo</a></li>
+<li><a href="https://starknet.io/">Starknet</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="l3-architecture"><a class="header" href="#l3-architecture">L3 Architecture</a></h1>
+<p><img src="overview/../assets/blobstreamSnArchSimpleFlow.jpg" alt="BSN High Level Flow" /></p>
+<h2 id="1-submitjob"><a class="header" href="#1-submitjob">1. <code>submitJob</code></a></h2>
+<h2 id="2-verifyproofandregister"><a class="header" href="#2-verifyproofandregister">2. <code>verifyProofAndRegister</code></a></h2>
+<h2 id="3-publishstatediff"><a class="header" href="#3-publishstatediff">3. <code>publishStateDiff</code></a></h2>
+<h2 id="4-submitdataroottupleroot"><a class="header" href="#4-submitdataroottupleroot">4. <code>submitDataRootTupleRoot</code></a></h2>
+<h2 id="5-updatestate"><a class="header" href="#5-updatestate">5. <code>updateState</code></a></h2>
+<h2 id="6-isvalid--verifyattestation"><a class="header" href="#6-isvalid--verifyattestation">6. <code>isValid</code> &amp;&amp; <code>verifyAttestation</code></a></h2>
 
                     </main>
 
