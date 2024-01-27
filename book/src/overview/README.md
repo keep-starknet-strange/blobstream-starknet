@@ -1,8 +1,7 @@
 # Overview
 
-Blobstream allows Celestia block header data roots to be relayed in one direction:
-
-> ***From Celestia to Starknet***
+Blobstream allows Celestia block header data roots to be relayed
+***from Celestia to Starknet***
 
 It does not support bridging assets such as fungible
 or non-fungible tokens directly, and cannot send messages from the Starknet

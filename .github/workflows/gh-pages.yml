@@ -1,25 +1,29 @@
-name: book
+name: gh-pages
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
     paths:
       - book/**
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   book:
     runs-on: ubuntu-20.04
-    concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Setup mdBook
         uses: peaceiris/actions-mdbook@v1
         with:
           mdbook-version: "latest"
+
       - run: mdbook build book
-        working-directory: ./book
+  
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
