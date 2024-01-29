@@ -8,3 +8,4 @@ title = "Blobstream Starknet"
 [output.html]
 git-repository-url = "https://github.com/keep-starknet-strange/blobstream-starknet"
 edit-url-template = "https://github.com/keep-starknet-strange/blobstream-starknet/issues/new/choose"
+cname = "blobstream-stark.net"
