@@ -89,7 +89,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="getting-started/index.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="getting-started/build.html"><strong aria-hidden="true">1.1.</strong> Build</a></li><li class="chapter-item expanded "><a href="getting-started/test.html"><strong aria-hidden="true">1.2.</strong> Test</a></li></ol></li><li class="chapter-item expanded "><a href="overview/index.html"><strong aria-hidden="true">2.</strong> Overview</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="overview/l3_architecture.html"><strong aria-hidden="true">2.1.</strong> L3 Architecture</a></li></ol></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">Introduction</a></li><li class="chapter-item expanded "><a href="getting-started/index.html"><strong aria-hidden="true">1.</strong> Getting Started</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="getting-started/build.html"><strong aria-hidden="true">1.1.</strong> Build</a></li><li class="chapter-item expanded "><a href="getting-started/test.html"><strong aria-hidden="true">1.2.</strong> Test</a></li></ol></li><li class="chapter-item expanded "><a href="overview/index.html"><strong aria-hidden="true">2.</strong> Overview</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="overview/write_to_celestia.html"><strong aria-hidden="true">2.1.</strong> Write to Celestia</a></li><li class="chapter-item expanded "><a href="overview/read_from_celestia.html"><strong aria-hidden="true">2.2.</strong> Read from Celestia</a></li><li class="chapter-item expanded "><a href="overview/relayer.html"><strong aria-hidden="true">2.3.</strong> Relayer</a></li></ol></li><li class="chapter-item expanded "><a href="l3_starknet/index.html"><strong aria-hidden="true">3.</strong> L3 Starknet</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="l3_starknet/core_contract.html"><strong aria-hidden="true">3.1.</strong> Core Contract</a></li><li class="chapter-item expanded "><a href="l3_starknet/verifier.html"><strong aria-hidden="true">3.2.</strong> Verifier</a></li><li class="chapter-item expanded "><a href="l3_starknet/proving_service.html"><strong aria-hidden="true">3.3.</strong> Proving Service</a></li></ol></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -216,25 +216,46 @@ that the environment is strictly identical from one developer to the next.</p>
 </code></pre>
 <p>This will execute the tests in <code>tests</code> directory and print the results.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
+<p><img src="overview/../assets/blobstreamSnModule.png" alt="BSN Module" /></p>
 <p>Blobstream allows Celestia block header data roots to be relayed
-<em><strong>from Celestia to Starknet</strong></em></p>
+<em><strong>from Celestia to Starknet.</strong></em></p>
 <p>It does not support bridging assets such as fungible
 or non-fungible tokens directly, and cannot send messages from the Starknet
 back to Celestia.</p>
-<p><code>blobstream-sn</code> is a port of Celestia Blobstream in Cairo:</p>
+<p><code>blobstream-sn</code> is a port of Celestia Blobstream in Cairo deployed on Starknet:</p>
 <ul>
 <li><a href="https://github.com/celestiaorg/blobstream-contracts">Solidity Blobstream Contracts</a></li>
 <li><a href="https://book.cairo-lang.org/">Cairo</a></li>
-<li><a href="https://starknet.io/">Starknet</a></li>
+<li><a href="https://docs.starknet.io/documentation">Starknet</a></li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="write-to-celestia"><a class="header" href="#write-to-celestia">Write to Celestia</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="read-from-celestia"><a class="header" href="#read-from-celestia">Read from Celestia</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="relayer"><a class="header" href="#relayer">Relayer</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="l3-architecture"><a class="header" href="#l3-architecture">L3 Architecture</a></h1>
-<p><img src="overview/../assets/blobstreamSnArchSimpleFlow.png" alt="BSN High Level Flow" /></p>
+<p><img src="l3_starknet/../assets/blobstreamSnArchSimpleFlow.png" alt="BSN High Level Flow" /></p>
 <h2 id="1-submitjob"><a class="header" href="#1-submitjob">1. <code>submitJob</code></a></h2>
 <h2 id="2-verifyproofandregister"><a class="header" href="#2-verifyproofandregister">2. <code>verifyProofAndRegister</code></a></h2>
 <h2 id="3-publishstatediff"><a class="header" href="#3-publishstatediff">3. <code>publishStateDiff</code></a></h2>
 <h2 id="4-submitdataroottupleroot"><a class="header" href="#4-submitdataroottupleroot">4. <code>submitDataRootTupleRoot</code></a></h2>
 <h2 id="5-updatestate"><a class="header" href="#5-updatestate">5. <code>updateState</code></a></h2>
 <h2 id="6-isvalid--verifyattestation"><a class="header" href="#6-isvalid--verifyattestation">6. <code>isValid</code> &amp;&amp; <code>verifyAttestation</code></a></h2>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="starknet-core-contract"><a class="header" href="#starknet-core-contract">Starknet Core Contract</a></h1>
+<ul>
+<li><a href="https://github.com/keep-starknet-strange/piltover">repo</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="cairo-verifier"><a class="header" href="#cairo-verifier">Cairo Verifier</a></h1>
+<ul>
+<li><a href="https://github.com/HerodotusDev/cairo-verifier">repo</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="proving-service"><a class="header" href="#proving-service">Proving Service</a></h1>
+<h2 id="sharp"><a class="header" href="#sharp">SHARP</a></h2>
+<ul>
+<li><a href="https://github.com/starkware-libs/cairo-lang/tree/master/src/starkware/cairo/sharp">repo</a></li>
+</ul>
+<h2 id="moonsong-labs"><a class="header" href="#moonsong-labs">Moonsong Labs</a></h2>
+<ul>
+<li><a href="https://github.com/Moonsong-Labs/madara-prover-api">repo</a></li>
+</ul>
 
                     </main>
 
