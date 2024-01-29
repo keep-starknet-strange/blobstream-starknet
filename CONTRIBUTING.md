@@ -1,6 +1,6 @@
 ## 🛠️ Contributing to Blobstream Starknet 🛠️
 
-Welcome, contributing to is easy!
+Welcome, contributing to `blobstream_sn` is easy!
 
 1. Submit or comment your intent on an issue
 1. We will try to respond quickly
@@ -42,13 +42,6 @@ Scarb linter:
 
 ```bash
 scarb fmt
-```
-
-To add via [all-contributors](https://allcontributors.org/docs/en/cli/installation):
-
-```bash
-yarn all-contributors add jfmengels code
-yarn all-contributors generate
 ```
 
 ### Additional Resources
