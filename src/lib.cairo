@@ -128,7 +128,7 @@ mod Blobstream {
             // Check that the supplied current validator set matches the saved checkpoint.
             let current_validator_set_hash: u256 = compute_validator_set_hash(
                 _current_validator_set
-            ); // TODO: compute_validator_set_hash
+            ); 
             let domain_separate_validator_set_hash_val = domain_separate_validator_set_hash(
                 _old_nonce, current_power_threshold, current_validator_set_hash
             );
@@ -173,7 +173,7 @@ mod Blobstream {
             // Check that the supplied current validator set matches the saved checkpoint.
             let current_validator_set_hash: u256 = compute_validator_set_hash(
                 _current_validator_set
-            ); // TODO: compute_validator_set_hash
+            ); 
 
             // Check that the supplied current validator set matches the saved checkpoint.
             let current_validator_set_hash: u256 = compute_validator_set_hash(
@@ -194,6 +194,8 @@ mod Blobstream {
 
             self.state_event_nonce.write(_new_nonce);
             self.state_data_root_tuple_roots.write(_new_nonce, _data_root_tuple_root);
+
+
         // TODO Add event emission: ISSUE:  #25
 
         }
@@ -234,15 +236,15 @@ mod Blobstream {
     }
 
     fn compute_validator_set_hash(_validators: Span<Validator>) -> u256 {
-        return 0;
+        return 0;  // TODO
     }
 
     fn domain_separate_validator_set_hash(_nonce: felt252, _power_threshold: felt252, _validator_set_hash: u256 ) -> u256 {
-        return 0;
+        return 0;   // TODO
     }
 
     fn domain_separate_data_root_tuple_root(_nonce: felt252, _data_root_tuple_root: u256) -> u256 {
-        return 0;
+        return 0;  // TODO
     }
     
 }
