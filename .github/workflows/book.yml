@@ -1,4 +1,4 @@
-name: gh-pages
+name: book
 
 on:
   workflow_dispatch:
@@ -28,4 +28,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./book/book
-      - run: ls && pwd
