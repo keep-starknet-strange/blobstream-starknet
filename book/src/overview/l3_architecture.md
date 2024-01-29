@@ -1,6 +1,6 @@
 # L3 Architecture
 
-![BSN High Level Flow](../assets/blobstreamSnArchSimpleFlow.jpg)
+![BSN High Level Flow](../assets/blobstreamSnArchSimpleFlow.png)
 
 ## 1. `submitJob`
 
