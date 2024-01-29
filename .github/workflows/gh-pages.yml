@@ -1,4 +1,4 @@
-name: gh-pages
+name: book
 
 on:
   workflow_dispatch:
