@@ -1,5 +1,7 @@
 ## 🛠️ Contributing to Blobstream Starknet 🛠️
 
+[![All Contributors](https://img.shields.io/github/all-contributors/keep-starknet-strange/bloblstream-starknet?color=ee8449&style=flat-square)](#contributors)
+
 Welcome, contributing to `blobstream_sn` is easy!
 
 1. Submit or comment your intent on an issue
@@ -10,7 +12,7 @@ Welcome, contributing to `blobstream_sn` is easy!
 
 ### Issue
 
-Project tracking is done via GitHub [issues](https://github.com/keep-starknet-strange/blobstream-sn/issues).
+Project tracking is done via GitHub [issues](https://github.com/keep-starknet-strange/blobstream-starknet/issues).
 First look at open issues to see if your request is already submitted.
 If it is comment on the issue requesting assignment, if not open an issue.
 
@@ -36,7 +38,7 @@ code with `TODO(#ISSUE_NUM): `.
 
 Ensure your code is well formatted, well tested and well documented. A core contributor
 will review your work. Address changes, ensure ci passes,
-and voilà you're a blobstream-sn contributor.
+and voilà you're a `blobstream_sn` contributor.
 
 Markdown [linter](https://github.com/markdownlint/markdownlint?tab=readme-ov-file#markdown-lint-tool):
 
