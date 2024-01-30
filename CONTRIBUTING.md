@@ -1,6 +1,8 @@
 ## 🛠️ Contributing to Blobstream Starknet 🛠️
 
-[![All Contributors](https://img.shields.io/github/all-contributors/keep-starknet-strange/bloblstream-starknet?color=ee8449&style=flat-square)](#contributors)
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Welcome, contributing to `blobstream_sn` is easy!
 
@@ -28,11 +30,10 @@ These labels are used as prefixes as follows for `issue`, `branch name`, `pr tit
 - `[bug]` -> `bug/{issue #}-{issue name}` -> `bug:`
 - `[dev]` -> `dev/{issue #}-{issue name}` -> `dev:`
 
-
 #### TODO
 
 If your PR includes a `TODO` comment please open an issue and comment the relevant
-code with `TODO(#ISSUE_NUM): `.
+code with `TODO(#ISSUE_NUM):`.
 
 ### Submit PR
 
