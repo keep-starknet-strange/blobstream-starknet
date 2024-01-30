@@ -69,11 +69,11 @@ trait IDAOracle<TContractState> {
 
 #[starknet::contract]
 mod Blobstream {
+    use array::SpanTrait;
     use starknet::EthAddress;
     use starknet::eth_signature::verify_eth_signature;
     use starknet::secp256_trait::Signature;
-    use super::{Errors,Validator};
-    use array::SpanTrait;
+    use super::{Errors, Validator};
 
     #[storage]
     struct Storage {
@@ -83,8 +83,8 @@ mod Blobstream {
         state_data_root_tuple_roots: LegacyMap::<felt252, u256>
     }
 
-    // #[constructor]
-    fn initialize(
+    #[constructor]
+    fn constructor(
         ref self: ContractState,
         nonce: felt252,
         power_threshold: felt252,
@@ -128,7 +128,7 @@ mod Blobstream {
             // Check that the supplied current validator set matches the saved checkpoint.
             let current_validator_set_hash: u256 = compute_validator_set_hash(
                 _current_validator_set
-            ); 
+            );
             let domain_separate_validator_set_hash_val = domain_separate_validator_set_hash(
                 _old_nonce, current_power_threshold, current_validator_set_hash
             );
@@ -142,7 +142,7 @@ mod Blobstream {
                 _new_nonce, _new_power_threshold, _new_validator_set_hash
             );
             check_validator_signatures(
-                @self,_current_validator_set, _sigs, new_checkpoint, current_power_threshold
+                @self, _current_validator_set, _sigs, new_checkpoint, current_power_threshold
             );
 
             self.state_last_validator_checkpoint.write(new_checkpoint);
@@ -164,7 +164,7 @@ mod Blobstream {
             let last_validator_set_checkpoint: u256 = self.state_last_validator_checkpoint.read();
 
             // Check that the new nonce is one more than the current one.
-            assert(_new_nonce == current_nonce + 1, Errors::INVALID_VALIDATOR_SET_NONCE);
+            assert(_new_nonce == current_nonce + 1, Errors::INVALID_DATA_ROOT_TUPLE_ROOT_NONCE);
             // Check that current validators and signatures are well-formed.
             assert(
                 _current_validator_set.len() == _sigs.len(), Errors::MALFORMED_CURRENT_VALIDATOR_SET
@@ -173,7 +173,7 @@ mod Blobstream {
             // Check that the supplied current validator set matches the saved checkpoint.
             let current_validator_set_hash: u256 = compute_validator_set_hash(
                 _current_validator_set
-            ); 
+            );
 
             // Check that the supplied current validator set matches the saved checkpoint.
             let current_validator_set_hash: u256 = compute_validator_set_hash(
@@ -188,14 +188,14 @@ mod Blobstream {
             );
 
             let c: u256 = domain_separate_data_root_tuple_root(_new_nonce, _data_root_tuple_root);
-            check_validator_signatures(@self,_current_validator_set, _sigs, c, current_power_threshold);
+            check_validator_signatures(
+                @self, _current_validator_set, _sigs, c, current_power_threshold
+            );
 
             // EFFECTS
 
             self.state_event_nonce.write(_new_nonce);
             self.state_data_root_tuple_roots.write(_new_nonce, _data_root_tuple_root);
-
-
         // TODO Add event emission: ISSUE:  #25
 
         }
@@ -220,7 +220,7 @@ mod Blobstream {
                 continue;
             }
             let cur_validator = *_current_validators.at(cur_idx);
-            assert(self.verify_sig(_digest,sig,cur_validator.addr), Errors::INVALID_SIGNATURE);
+            assert(self.verify_sig(_digest, sig, cur_validator.addr), Errors::INVALID_SIGNATURE);
             cumulative_power += cur_validator.power;
             if (cumulative_power >= _power_threshold.into()) {
                 break ();
@@ -236,17 +236,18 @@ mod Blobstream {
     }
 
     fn compute_validator_set_hash(_validators: Span<Validator>) -> u256 {
-        return 0;  // TODO
+        return 0; // TODO
     }
 
-    fn domain_separate_validator_set_hash(_nonce: felt252, _power_threshold: felt252, _validator_set_hash: u256 ) -> u256 {
-        return 0;   // TODO
+    fn domain_separate_validator_set_hash(
+        _nonce: felt252, _power_threshold: felt252, _validator_set_hash: u256
+    ) -> u256 {
+        return 0; // TODO
     }
 
     fn domain_separate_data_root_tuple_root(_nonce: felt252, _data_root_tuple_root: u256) -> u256 {
-        return 0;  // TODO
+        return 0; // TODO
     }
-    
 }
 
 #[cfg(test)]
