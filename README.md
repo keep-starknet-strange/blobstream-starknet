@@ -38,8 +38,6 @@ snforge test
 
 We live on contributions. If you'd like to contribute please follow the [guide](CONTRIBUTING.md).
 
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
