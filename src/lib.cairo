@@ -167,7 +167,7 @@ mod Blobstream {
             self.state_last_validator_checkpoint.write(new_checkpoint);
             self.state_power_threshold.write(_new_power_threshold);
             self.state_event_nonce.write(_new_nonce);
-            // TODO Add event emission: ISSUE:  #25
+            // TODO(#25): Add event emission
         }
 
         fn submit_data_root_tuple_root(
@@ -198,7 +198,7 @@ mod Blobstream {
             let current_validator_set_hash: u256 = compute_validator_set_hash(
                 _current_validator_set
             );
-            // TODO: compute_validator_set_hash ISSUE: #51
+            // TODO(#51): Blobstream Funcs 
             let domain_separate_validator_set_hash_val = domain_separate_validator_set_hash(
                 _validator_set_nonce, current_power_threshold, current_validator_set_hash
             );
@@ -214,7 +214,7 @@ mod Blobstream {
 
             self.state_event_nonce.write(_new_nonce);
             self.state_data_root_tuple_roots.write(_new_nonce, _data_root_tuple_root);
-            // TODO Add event emission: ISSUE:  #25
+            // TODO(#25): Add event emission
         }
     }
 
@@ -266,17 +266,17 @@ mod Blobstream {
 
 
     fn compute_validator_set_hash(_validators: Span<Validator>) -> u256 {
-        return 0; // TODO
+        return 0; // TODO(#51): Blobstream Funcs 
     }
 
     fn domain_separate_validator_set_hash(
         _nonce: felt252, _power_threshold: felt252, _validator_set_hash: u256
     ) -> u256 {
-        return 0; // TODO
+        return 0;  // TODO(#51): Blobstream Funcs 
     }
 
     fn domain_separate_data_root_tuple_root(_nonce: felt252, _data_root_tuple_root: u256) -> u256 {
-        return 0; // TODO
+        return 0; // TODO(#51): Blobstream Funcs 
     }
 }
 
