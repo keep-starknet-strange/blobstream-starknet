@@ -26,6 +26,12 @@ These labels are used as prefixes as follows for `issue`, `branch name`, `pr tit
 - `[bug]` -> `bug/{issue #}-{issue name}` -> `bug:`
 - `[dev]` -> `dev/{issue #}-{issue name}` -> `dev:`
 
+
+#### TODO
+
+If your PR includes a `TODO` comment please open an issue and comment the relevant
+code with `TODO(#ISSUE_NUM): `.
+
 ### Submit PR
 
 Ensure your code is well formatted, well tested and well documented. A core contributor

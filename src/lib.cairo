@@ -5,11 +5,11 @@ mod verifier;
 use starknet::EthAddress;
 use starknet::secp256_trait::Signature;
 
-// u256 encoding of the string "checkpoint"
+/// u256 encoding of the string "checkpoint"
 const VALIDATOR_SET_HASH_DOMAIN_SEPARATOR: u256 =
     0x636865636b706f696e7400000000000000000000000000000000000000000000;
 
-// u256 encoding of the string "transactionBatch"
+/// u256 encoding of the string "transactionBatch"
 const DATA_ROOT_TUPLE_ROOT_DOMAIN_SEPARATOR: u256 =
     0x7472616e73616374696f6e426174636800000000000000000000000000000000;
 
@@ -19,8 +19,8 @@ struct Validator {
     power: u256
 }
 
-// Each data root is associated with a Celestia block height. `availableDataRoot` in
-// https://github.com/celestiaorg/celestia-specs/blob/master/src/specs/data_structures.md#header
+/// Each data root is associated with a Celestia block height. `availableDataRoot` in
+/// https://github.com/celestiaorg/celestia-specs/blob/master/src/specs/data_structures.md#header
 #[derive(Copy, Drop)]
 struct DataRoot {
     // Celestia block height for data root(genesis height = 0)
@@ -29,9 +29,9 @@ struct DataRoot {
 }
 
 mod Errors {
-    //Malformed current validator set.
+    // Malformed current validator set.
     const MALFORMED_CURRENT_VALIDATOR_SET: felt252 = 'Malformed current validator set';
-    //Validator signature does not match.
+    // Validator signature does not match.
     const INVALID_SIGNATURE: felt252 = 'Invalid signature';
     // Submitted validator set signatures do not have enough power.
     const INSUFFICIENT_VOTING_POWER: felt252 = 'Sub validator inadequate power';
@@ -42,7 +42,6 @@ mod Errors {
     // Data root tuple root nonce must be greater than the current nonce.
     const INVALID_DATA_ROOT_TUPLE_ROOT_NONCE: felt252 = 'Data RTR nonce > current nonce';
 }
-
 
 #[starknet::interface]
 trait IDAOracle<TContractState> {
@@ -66,7 +65,6 @@ trait IDAOracle<TContractState> {
     );
 }
 
-
 #[starknet::contract]
 mod Blobstream {
     use array::SpanTrait;
@@ -82,7 +80,7 @@ mod Blobstream {
         // Voting power required to submit a new update.
         state_power_threshold: felt252,
         // Domain-separated commitment to the latest validator set.
-        state_last_validator_checkpoint: u256, // TODO will need to change type here
+        state_last_validator_checkpoint: u256,
         // Mapping of data root tuple root nonces to data root tuple roots.
         state_data_root_tuple_roots: LegacyMap::<felt252, u256>
     }
