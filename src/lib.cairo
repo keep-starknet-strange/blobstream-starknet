@@ -167,7 +167,7 @@ mod Blobstream {
             self.state_last_validator_checkpoint.write(new_checkpoint);
             self.state_power_threshold.write(_new_power_threshold);
             self.state_event_nonce.write(_new_nonce);
-        // TODO Add event emission: ISSUE:  #25
+            // TODO Add event emission: ISSUE:  #25
         }
 
         fn submit_data_root_tuple_root(
@@ -214,8 +214,7 @@ mod Blobstream {
 
             self.state_event_nonce.write(_new_nonce);
             self.state_data_root_tuple_roots.write(_new_nonce, _data_root_tuple_root);
-        // TODO Add event emission: ISSUE:  #25
-
+            // TODO Add event emission: ISSUE:  #25
         }
     }
 
