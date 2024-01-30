@@ -77,9 +77,13 @@ mod Blobstream {
 
     #[storage]
     struct Storage {
+        // Nonce for bridge events. Must be incremented sequentially.
         state_event_nonce: felt252,
+        // Voting power required to submit a new update.
         state_power_threshold: felt252,
+        // Domain-separated commitment to the latest validator set.
         state_last_validator_checkpoint: u256, // TODO will need to change type here
+        // Mapping of data root tuple root nonces to data root tuple roots.
         state_data_root_tuple_roots: LegacyMap::<felt252, u256>
     }
 
@@ -104,7 +108,22 @@ mod Blobstream {
             false
         }
 
-
+        /// This updates the validator set by checking that the validators
+        /// in the current validator set have signed off on the new validator set.
+        /// The signatures supplied are the signatures of the current validator set
+        /// over the checkpoint hash generated from the new validator set. Anyone
+        /// can call this function, but they must supply valid signatures of the
+        /// current validator set over the new validator set.
+        ///
+        /// The validator set hash that is signed over is domain separated as per
+        /// `domain_separate_validator_set_hash`.
+        /// # Arguments
+        /// `_new_nonce` - The new event nonce.
+        /// `_old_nonce` - The nonce of the latest update to the validator set.
+        /// `_new_power_threshold` - At least this much power must have signed.
+        /// `_new_validator_set_hash` - The hash of the new validator set.
+        /// `_current_validator_set`- The current validator set.
+        /// `_sigs` - Signatures
         fn update_validator_set(
             ref self: ContractState,
             _new_nonce: felt252,
@@ -201,6 +220,13 @@ mod Blobstream {
         }
     }
 
+    /// Checks that enough voting power signed over a digest.
+    /// It expects the signatures to be in the same order as the _currentValidators.
+    /// # Arguments
+    /// `_currentValidators` - The current validators.
+    ///  `_sigs` - The current validators' signatures.
+    ///  `_digest`- This is what we are checking they have signed.
+    ///  `_power_threshold` -  At least this much power must have signed.
     fn check_validator_signatures(
         self: @ContractState,
         _current_validators: Span<Validator>,
@@ -230,11 +256,21 @@ mod Blobstream {
         assert(cumulative_power >= _power_threshold.into(), Errors::INSUFFICIENT_VOTING_POWER);
     }
 
-
+    /// Determines if a signature is nil.
+    /// If all bytes of the 65-byte signature are zero, and the parity true, then it's a nil signature
+    /// # Arguments
+    /// * `_sig` - The signature to consider
+    /// # Returns
+    /// * A boolean
     fn is_sig_nil(_sig: Signature) -> bool {
-        return (_sig.r == 0 && _sig.s == 0 && _sig.y_parity == false);
+        return (_sig.r == 0 && _sig.s == 0 && _sig.y_parity == true);
     }
 
+    /// Computes the hash of a validator set.
+    /// # Arguments
+    /// * `_validators - The validator set to hash
+    /// # Returns
+    /// * * `hash` - The result of the hashing process
     fn compute_validator_set_hash(_validators: Span<Validator>) -> u256 {
         return 0; // TODO
     }

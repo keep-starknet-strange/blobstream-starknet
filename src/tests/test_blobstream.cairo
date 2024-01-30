@@ -16,7 +16,6 @@ fn constants_test() {
     );
 }
 
-// Commented the following test because it worked without constructor
 
 // #[test]
 // fn setup_test() {
