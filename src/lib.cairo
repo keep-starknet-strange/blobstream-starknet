@@ -1,6 +1,7 @@
 mod tree;
 mod utils;
 mod verifier;
+mod interfaces;
 use starknet::secp256_trait::Signature;
 
 use starknet::{EthAddress, ClassHash};
@@ -43,36 +44,10 @@ mod Errors {
     const INVALID_DATA_ROOT_TUPLE_ROOT_NONCE: felt252 = 'Data RTR nonce > current nonce';
 }
 
-#[starknet::interface]
-trait IDAOracle<TContractState> {
-    fn verify_sig(self: @TContractState, digest: u256, sig: Signature, signer: EthAddress) -> bool;
-    fn submit_data_root_tuple_root(
-        ref self: TContractState,
-        _new_nonce: felt252,
-        _validator_set_nonce: felt252,
-        _data_root_tuple_root: u256,
-        _current_validator_set: Span<Validator>,
-        _sigs: Span<Signature>
-    );
-    fn update_validator_set(
-        ref self: TContractState,
-        _new_nonce: felt252,
-        _old_nonce: felt252,
-        _new_power_threshold: felt252,
-        _new_validator_set_hash: u256,
-        _current_validator_set: Span<Validator>,
-        _sigs: Span<Signature>
-    );
-}
-
-#[starknet::interface]
-trait IUpgradeable<TContractState> {
-    fn upgrade(ref self: TContractState, new_hash: ClassHash);
-}
-
 #[starknet::contract]
 mod Blobstream {
     use array::SpanTrait;
+    use blobstream_sn::interfaces::{IDAOracle, IUpgradeable};
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::access::ownable::interface::IOwnable;
     use openzeppelin::access::ownable::ownable::OwnableComponent::InternalTrait as OwnableInternalTrait;
@@ -133,7 +108,7 @@ mod Blobstream {
     }
 
     #[abi(embed_v0)]
-    impl Upgradeable of super::IUpgradeable<ContractState> {
+    impl Upgradeable of IUpgradeable<ContractState> {
         fn upgrade(ref self: ContractState, new_hash: ClassHash) {
             self.ownable.assert_only_owner();
             self.upgradeable._upgrade(new_hash);
@@ -141,7 +116,7 @@ mod Blobstream {
     }
 
     #[abi(embed_v0)]
-    impl Blobstream of super::IDAOracle<ContractState> {
+    impl Blobstream of IDAOracle<ContractState> {
         fn verify_sig(
             self: @ContractState, digest: u256, sig: Signature, signer: EthAddress,
         ) -> bool {

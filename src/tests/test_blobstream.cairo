@@ -1,17 +1,14 @@
 use blobstream_sn::mocks::upgraded::{IMockUpgradedDispatcher, IMockUpgradedDispatcherTrait};
 use blobstream_sn::{
-    VALIDATOR_SET_HASH_DOMAIN_SEPARATOR, DATA_ROOT_TUPLE_ROOT_DOMAIN_SEPARATOR, IDAOracleDispatcher,
-    IDAOracleDispatcherTrait, Validator, Blobstream, IUpgradeableDispatcher,
-    IUpgradeableDispatcherTrait
+    VALIDATOR_SET_HASH_DOMAIN_SEPARATOR, DATA_ROOT_TUPLE_ROOT_DOMAIN_SEPARATOR, Validator, Blobstream, 
 };
+use blobstream_sn::interfaces::{IUpgradeableDispatcher,IUpgradeableDispatcherTrait, IDAOracleDispatcher,IDAOracleDispatcherTrait};
 use core::bytes_31::one_shift_left_bytes_u128;
 use snforge_std::{declare, ContractClassTrait, start_prank, stop_prank, CheatTarget};
 use starknet::secp256_trait::Signature;
-use starknet::{EthAddress, ContractAddress, ClassHash};
-
-fn OWNER() -> ContractAddress {
-    'owner'.try_into().unwrap()
-}
+use starknet::{EthAddress, ContractAddress, ClassHash, contract_address_const};
+use openzeppelin::tests::utils::constants::{OWNER};
+use openzeppelin::access::ownable::interface::{IOwnableDispatcher, IOwnableDispatcherTrait};
 
 #[test]
 fn constants_test() {
@@ -147,5 +144,37 @@ fn blobstream_upgrade_not_owner() {
     assert(
         IMockUpgradedDispatcher { contract_address: dispatcher.contract_address }.get_version(),
         'Upgrade failed'
+    );
+}
+
+#[test]
+fn blobstream_transfer_ownership() {
+    let dispatcher = setup_test();
+
+    let current_owner = IOwnableDispatcher { contract_address: dispatcher.contract_address}.owner();
+    assert(current_owner == OWNER().into(), 'initial owner wrong');
+
+    let new_owner = contract_address_const::<'new_owner'>();
+    start_prank(CheatTarget::One(dispatcher.contract_address), OWNER());
+    IOwnableDispatcher { contract_address: dispatcher.contract_address}.transfer_ownership(new_owner);
+    stop_prank(CheatTarget::One(dispatcher.contract_address));
+
+    assert(
+        IOwnableDispatcher { contract_address: dispatcher.contract_address}.owner() == new_owner.into(),
+        'transfer owner failed'
+    );
+}
+
+#[test]
+#[should_panic(expected: ('Caller is not the owner',))]
+fn blobstream_transfer_ownership_no_owner() {
+    let dispatcher = setup_test();
+
+    let new_owner = contract_address_const::<'new_owner'>();
+    IOwnableDispatcher { contract_address: dispatcher.contract_address}.transfer_ownership(new_owner);
+
+    assert(
+        IOwnableDispatcher { contract_address: dispatcher.contract_address}.owner() == new_owner.into(),
+        'transfer owner failed'
     );
 }
