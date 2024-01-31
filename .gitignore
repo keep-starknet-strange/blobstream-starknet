@@ -11,3 +11,8 @@
 
 # mdBook
 book/book/
+
+# All Contributors CLI
+package.json
+yarn.lock
+node_modules/

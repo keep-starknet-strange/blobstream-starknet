@@ -3,7 +3,6 @@
   "projectOwner": "keep-starknet-strange",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true,
   "files": [
     "README.md",
     "CONTRIBUTING.md"
@@ -11,8 +10,7 @@
   "imageSize": 100,
   "commit": true,
   "commitConvention": "gitmoji",
-  "badgeTemplate": "[![All Contributors](https://img.shields.io/badge/all_contributors-<%= contributors.length %>-orange.svg?style=flat)](#contributors)",
-  "contributorsPerLine": 4,
+  "contributorsPerLine": 7,
   "contributors": [
     {
       "login": "AbdelStark",
@@ -37,6 +35,15 @@
       "name": "Jordy Romuald",
       "avatar_url": "https://avatars.githubusercontent.com/u/87231934?v=4",
       "profile": "https://github.com/JordyRo1",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ermvrs",
+      "name": "Erim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3417324?v=4",
+      "profile": "https://github.com/ermvrs",
       "contributions": [
         "code"
       ]
