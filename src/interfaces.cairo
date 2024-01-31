@@ -1,6 +1,6 @@
+use blobstream_sn::{Errors, Validator};
 use starknet::secp256_trait::Signature;
 use starknet::{EthAddress, ContractAddress, ClassHash};
-use blobstream_sn::{Errors, Validator};
 
 #[starknet::interface]
 trait IDAOracle<TContractState> {

@@ -1,7 +1,7 @@
+mod interfaces;
 mod tree;
 mod utils;
 mod verifier;
-mod interfaces;
 use starknet::secp256_trait::Signature;
 
 use starknet::{EthAddress, ClassHash};
