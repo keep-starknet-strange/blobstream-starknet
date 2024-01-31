@@ -3,6 +3,7 @@
   "projectOwner": "keep-starknet-strange",
   "repoType": "github",
   "repoHost": "https://github.com",
+  "skipCi": true,
   "files": [
     "README.md",
     "CONTRIBUTING.md"
@@ -10,6 +11,8 @@
   "imageSize": 100,
   "commit": true,
   "commitConvention": "gitmoji",
+  "badgeTemplate": "[![All Contributors](https://img.shields.io/badge/all_contributors-<%= contributors.length %>-orange.svg?style=flat)](#contributors)",
+  "contributorsPerLine": 4,
   "contributors": [
     {
       "login": "AbdelStark",
@@ -38,8 +41,5 @@
         "code"
       ]
     }
-  ],
-  "contributorsPerLine": 7,
-  "skipCi": true,
-  "linkToUsage": false
+  ]
 }
