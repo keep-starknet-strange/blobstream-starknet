@@ -1,9 +1,10 @@
+mod interfaces;
 mod tree;
 mod utils;
 mod verifier;
-
-use starknet::EthAddress;
 use starknet::secp256_trait::Signature;
+
+use starknet::{EthAddress, ClassHash};
 
 /// u256 encoding of the string "checkpoint"
 const VALIDATOR_SET_HASH_DOMAIN_SEPARATOR: u256 =
@@ -43,35 +44,27 @@ mod Errors {
     const INVALID_DATA_ROOT_TUPLE_ROOT_NONCE: felt252 = 'Data RTR nonce > current nonce';
 }
 
-#[starknet::interface]
-trait IDAOracle<TContractState> {
-    fn verify_sig(self: @TContractState, digest: u256, sig: Signature, signer: EthAddress) -> bool;
-    fn submit_data_root_tuple_root(
-        ref self: TContractState,
-        _new_nonce: felt252,
-        _validator_set_nonce: felt252,
-        _data_root_tuple_root: u256,
-        _current_validator_set: Span<Validator>,
-        _sigs: Span<Signature>
-    );
-    fn update_validator_set(
-        ref self: TContractState,
-        _new_nonce: felt252,
-        _old_nonce: felt252,
-        _new_power_threshold: felt252,
-        _new_validator_set_hash: u256,
-        _current_validator_set: Span<Validator>,
-        _sigs: Span<Signature>
-    );
-}
-
 #[starknet::contract]
 mod Blobstream {
     use array::SpanTrait;
-    use starknet::EthAddress;
+    use blobstream_sn::interfaces::{IDAOracle, IUpgradeable};
+    use openzeppelin::access::ownable::OwnableComponent;
+    use openzeppelin::access::ownable::interface::IOwnable;
+    use openzeppelin::access::ownable::ownable::OwnableComponent::InternalTrait as OwnableInternalTrait;
+    use openzeppelin::upgrades::upgradeable::UpgradeableComponent;
     use starknet::eth_signature::verify_eth_signature;
     use starknet::secp256_trait::Signature;
+    use starknet::{EthAddress, ContractAddress, ClassHash};
     use super::{Errors, Validator};
+
+    // Components.
+    component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
+    #[abi(embed_v0)]
+    impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
+    impl OwnableInternalImpl = OwnableComponent::InternalImpl<ContractState>;
+
+    component!(path: UpgradeableComponent, storage: upgradeable, event: UpgradeableEvent);
+    impl UpgradeableInternalImpl = UpgradeableComponent::InternalImpl<ContractState>;
 
     #[storage]
     struct Storage {
@@ -82,7 +75,22 @@ mod Blobstream {
         // Domain-separated commitment to the latest validator set.
         state_last_validator_checkpoint: u256,
         // Mapping of data root tuple root nonces to data root tuple roots.
-        state_data_root_tuple_roots: LegacyMap::<felt252, u256>
+        state_data_root_tuple_roots: LegacyMap::<felt252, u256>,
+        // Ownable component for access controlled methods.
+        #[substorage(v0)]
+        ownable: OwnableComponent::Storage,
+        // Upgradeable component for upgrade utility.
+        #[substorage(v0)]
+        upgradeable: UpgradeableComponent::Storage,
+    }
+
+    #[event]
+    #[derive(Drop, starknet::Event)]
+    enum Event {
+        #[flat]
+        OwnableEvent: OwnableComponent::Event,
+        #[flat]
+        UpgradeableEvent: UpgradeableComponent::Event
     }
 
     #[constructor]
@@ -90,15 +98,25 @@ mod Blobstream {
         ref self: ContractState,
         nonce: felt252,
         power_threshold: felt252,
-        validator_checkpoint: u256
+        validator_checkpoint: u256,
+        owner: ContractAddress
     ) {
         self.state_event_nonce.write(nonce);
         self.state_power_threshold.write(power_threshold);
         self.state_last_validator_checkpoint.write(validator_checkpoint);
+        self.ownable.initializer(owner);
     }
 
     #[abi(embed_v0)]
-    impl Blobstream of super::IDAOracle<ContractState> {
+    impl Upgradeable of IUpgradeable<ContractState> {
+        fn upgrade(ref self: ContractState, new_hash: ClassHash) {
+            self.ownable.assert_only_owner();
+            self.upgradeable._upgrade(new_hash);
+        }
+    }
+
+    #[abi(embed_v0)]
+    impl Blobstream of IDAOracle<ContractState> {
         fn verify_sig(
             self: @ContractState, digest: u256, sig: Signature, signer: EthAddress,
         ) -> bool {
@@ -282,4 +300,8 @@ mod Blobstream {
 mod tests {
     mod test_blobstream;
     mod test_verifier;
+}
+
+mod mocks {
+    mod upgraded;
 }

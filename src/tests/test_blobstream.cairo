@@ -1,11 +1,18 @@
+use blobstream_sn::interfaces::{
+    IUpgradeableDispatcher, IUpgradeableDispatcherTrait, IDAOracleDispatcher,
+    IDAOracleDispatcherTrait
+};
+use blobstream_sn::mocks::upgraded::{IMockUpgradedDispatcher, IMockUpgradedDispatcherTrait};
 use blobstream_sn::{
-    VALIDATOR_SET_HASH_DOMAIN_SEPARATOR, DATA_ROOT_TUPLE_ROOT_DOMAIN_SEPARATOR, IDAOracleDispatcher,
-    IDAOracleDispatcherTrait, Validator, Blobstream
+    VALIDATOR_SET_HASH_DOMAIN_SEPARATOR, DATA_ROOT_TUPLE_ROOT_DOMAIN_SEPARATOR, Validator,
+    Blobstream,
 };
 use core::bytes_31::one_shift_left_bytes_u128;
-use snforge_std::{declare, ContractClassTrait};
-use starknet::EthAddress;
+use openzeppelin::access::ownable::interface::{IOwnableDispatcher, IOwnableDispatcherTrait};
+use openzeppelin::tests::utils::constants::{OWNER};
+use snforge_std::{declare, ContractClassTrait, start_prank, stop_prank, CheatTarget};
 use starknet::secp256_trait::Signature;
+use starknet::{EthAddress, ContractAddress, ClassHash, contract_address_const};
 
 #[test]
 fn constants_test() {
@@ -26,8 +33,9 @@ fn constants_test() {
 // }
 
 fn setup_test() -> IDAOracleDispatcher {
+    let owner: felt252 = OWNER().into();
     let contract = declare('Blobstream');
-    let calldata = array!['1', '1231132', 12301230123, 413431231];
+    let calldata = array!['1', '1231132', 12301230123, 413431231, owner];
     let contract_address = contract.deploy(@calldata).unwrap();
     let dispatcher = IDAOracleDispatcher { contract_address };
     dispatcher
@@ -112,4 +120,72 @@ fn blobstream_error_data_rtr_nonce() {
         .submit_data_root_tuple_root(
             '1', '34123413', 21323123, _current_validator_set.span(), _sigs.span()
         );
+}
+
+#[test]
+fn blobstream_upgrade() {
+    let dispatcher = setup_test();
+
+    let new_class: ClassHash = declare('MockUpgraded').class_hash;
+    start_prank(CheatTarget::One(dispatcher.contract_address), OWNER());
+    IUpgradeableDispatcher { contract_address: dispatcher.contract_address }.upgrade(new_class);
+    stop_prank(CheatTarget::One(dispatcher.contract_address));
+
+    assert(
+        IMockUpgradedDispatcher { contract_address: dispatcher.contract_address }.get_version(),
+        'Upgrade failed'
+    );
+}
+
+#[test]
+#[should_panic(expected: ('Caller is not the owner',))]
+fn blobstream_upgrade_not_owner() {
+    let dispatcher = setup_test();
+
+    let new_class: ClassHash = declare('MockUpgraded').class_hash;
+    IUpgradeableDispatcher { contract_address: dispatcher.contract_address }.upgrade(new_class);
+
+    assert(
+        IMockUpgradedDispatcher { contract_address: dispatcher.contract_address }.get_version(),
+        'Upgrade failed'
+    );
+}
+
+#[test]
+fn blobstream_transfer_ownership() {
+    let dispatcher = setup_test();
+
+    let current_owner = IOwnableDispatcher { contract_address: dispatcher.contract_address }
+        .owner();
+    assert(current_owner == OWNER().into(), 'initial owner wrong');
+
+    let new_owner = contract_address_const::<'new_owner'>();
+    start_prank(CheatTarget::One(dispatcher.contract_address), OWNER());
+    IOwnableDispatcher { contract_address: dispatcher.contract_address }
+        .transfer_ownership(new_owner);
+    stop_prank(CheatTarget::One(dispatcher.contract_address));
+
+    assert(
+        IOwnableDispatcher { contract_address: dispatcher.contract_address }
+            .owner() == new_owner
+            .into(),
+        'transfer owner failed'
+    );
+}
+
+#[test]
+#[should_panic(expected: ('Caller is not the owner',))]
+fn blobstream_transfer_ownership_no_owner() {
+    let dispatcher = setup_test();
+
+    let new_owner = contract_address_const::<'new_owner'>();
+    IOwnableDispatcher { contract_address: dispatcher.contract_address }
+        .transfer_ownership(new_owner);
+
+    assert(
+        IOwnableDispatcher { contract_address: dispatcher.contract_address }
+            .owner() == new_owner
+            .into(),
+        'transfer owner failed'
+    );
 }
