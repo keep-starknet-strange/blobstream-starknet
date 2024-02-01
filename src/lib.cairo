@@ -90,7 +90,24 @@ mod Blobstream {
         #[flat]
         OwnableEvent: OwnableComponent::Event,
         #[flat]
-        UpgradeableEvent: UpgradeableComponent::Event
+        UpgradeableEvent: UpgradeableComponent::Event,
+        data_root_tuple_root_event: data_root_tuple_root_event,
+        validator_set_updated_event: validator_set_updated_event
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct data_root_tuple_root_event {
+        #[key]
+        nonce: felt252,
+        data_root_tuple_root: u256,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct validator_set_updated_event {
+        #[key]
+        nonce: felt252,
+        power_threshold: felt252,
+        validator_set_hash: u256
     }
 
     #[constructor]
@@ -183,7 +200,14 @@ mod Blobstream {
             self.state_last_validator_checkpoint.write(new_checkpoint);
             self.state_power_threshold.write(_new_power_threshold);
             self.state_event_nonce.write(_new_nonce);
-        // TODO(#25): Add event emission
+            self
+                .emit(
+                    validator_set_updated_event {
+                        nonce: _new_nonce,
+                        power_threshold: _new_power_threshold,
+                        validator_set_hash: _new_validator_set_hash
+                    }
+                );
         }
 
         fn submit_data_root_tuple_root(
@@ -230,7 +254,13 @@ mod Blobstream {
 
             self.state_event_nonce.write(_new_nonce);
             self.state_data_root_tuple_roots.write(_new_nonce, _data_root_tuple_root);
-        // TODO(#25): Add event emission
+
+            self
+                .emit(
+                    data_root_tuple_root_event {
+                        nonce: _new_nonce, data_root_tuple_root: _data_root_tuple_root,
+                    }
+                );
         }
     }
 
