@@ -48,6 +48,7 @@ We live on contributions. If you'd like to contribute please follow the [guide](
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/drspacemn"><img src="https://avatars.githubusercontent.com/u/16685321?v=4?s=100" width="100px;" alt="drspacemn"/><br /><sub><b>drspacemn</b></sub></a><br /><a href="https://github.com/keep-starknet-strange/blobstream-starknet/commits?author=drspacemn" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/JordyRo1"><img src="https://avatars.githubusercontent.com/u/87231934?v=4?s=100" width="100px;" alt="Jordy Romuald"/><br /><sub><b>Jordy Romuald</b></sub></a><br /><a href="https://github.com/keep-starknet-strange/blobstream-starknet/commits?author=JordyRo1" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ermvrs"><img src="https://avatars.githubusercontent.com/u/3417324?v=4?s=100" width="100px;" alt="Erim"/><br /><sub><b>Erim</b></sub></a><br /><a href="https://github.com/keep-starknet-strange/blobstream-starknet/commits?author=ermvrs" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/othman-sefraoui/"><img src="https://avatars.githubusercontent.com/u/50746496?v=4?s=100" width="100px;" alt="OthmanSefraoui"/><br /><sub><b>OthmanSefraoui</b></sub></a><br /><a href="https://github.com/keep-starknet-strange/blobstream-starknet/commits?author=OthmanSefraoui" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
