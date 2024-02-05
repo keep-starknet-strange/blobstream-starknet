@@ -1,5 +1,5 @@
-use blobstream_sn::tree::binary::hasher::{leafDigest, nodeDigest};
 use alexandria_bytes::BytesTrait;
+use blobstream_sn::tree::binary::hasher::{leafDigest, nodeDigest};
 
 #[test]
 fn leaf_digest_empty_test() {
