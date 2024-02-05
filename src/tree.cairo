@@ -1,10 +1,12 @@
 mod consts;
 mod binary {
     mod hasher;
+    mod merkle_tree;
     mod merkle_proof;
     #[cfg(test)]
     mod tests {
         mod test_hasher;
+        mod test_merkle_proof;
     }
 }
 mod namespace {
