@@ -7,4 +7,3 @@ struct BinaryMerkleProof {
     // number of leaves in the tree
     num_leaves: u256,
 }
-
