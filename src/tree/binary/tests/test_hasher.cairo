@@ -24,7 +24,7 @@ fn node_digest_empty_test() {
     let left: u256 = 0x6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d;
     let right: u256 = 0x6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d;
     let digest = nodeDigest(left, right);
-    assert_eq!(digest, exp, "leaf digest");
+    assert_eq!(digest, exp, "empty node digest");
 }
 
 #[test]
@@ -33,5 +33,5 @@ fn node_digest_children_test() {
     let left: u256 = 0xdb55da3fc3098e9c42311c6013304ff36b19ef73d12ea932054b5ad51df4f49d;
     let right: u256 = 0xc75cb66ae28d8ebc6eded002c28a8ba0d06d3a78c6b5cbf9b2ade051f0775ac4;
     let digest = nodeDigest(left, right);
-    assert_eq!(digest, exp, "leaf digest");
+    assert_eq!(digest, exp, "node digest");
 }
