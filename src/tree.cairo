@@ -9,6 +9,7 @@ mod binary {
 }
 mod namespace {
     mod merkle_tree;
+    mod hasher;
     #[cfg(test)]
     mod tests {
         mod test_merkle_tree;
