@@ -13,16 +13,11 @@ alexandria_bytes = { git = "https://github.com/keep-starknet-strange/alexandria.
 alexandria_math = { git = "https://github.com/keep-starknet-strange/alexandria.git" }
 
 [[target.starknet-contract]]
-sierra = true
 casm = true
+sierra = true
 
 [cairo]
 sierra-replace-ids = true
 
 [tool.fmt]
 sort-module-level-items = true
-
-[[tool.snforge.fork]]
-name = "Mainnet"
-url = ""
-block_id.tag = "Latest"

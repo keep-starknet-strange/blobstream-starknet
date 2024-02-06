@@ -1,12 +1,17 @@
 use blobstream_sn::BlobstreamX;
 use blobstream_sn::interfaces::{IDAOracleDispatcher, IDAOracleDispatcherTrait, Validator};
-use blobstream_sn::tests::common::setup_base;
+use blobstream_sn::tests::common::{setup_base, setup_spied};
+use snforge_std::EventSpy;
 use starknet::EthAddress;
 use starknet::secp256_trait::Signature;
 
-
 fn setup_blobstreamx() -> IDAOracleDispatcher {
     IDAOracleDispatcher { contract_address: setup_base() }
+}
+
+fn setup_blobstreamx_spied() -> (IDAOracleDispatcher, EventSpy) {
+    let (contract_address, spy) = setup_spied();
+    (IDAOracleDispatcher { contract_address }, spy)
 }
 
 #[test]

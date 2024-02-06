@@ -1,20 +1,14 @@
 mod interfaces;
 mod tree;
-mod utils;
 mod verifier;
-
 
 #[starknet::contract]
 mod BlobstreamX {
-    use blobstream_sn::interfaces::{IUpgradeable};
     use openzeppelin::access::ownable::OwnableComponent;
-    use openzeppelin::access::ownable::interface::IOwnable;
-    use openzeppelin::access::ownable::ownable::OwnableComponent::InternalTrait as OwnableInternalTrait;
-    use openzeppelin::upgrades::upgradeable::UpgradeableComponent;
+    use openzeppelin::upgrades::{interface::IUpgradeable, upgradeable::UpgradeableComponent};
     use starknet::ClassHash;
     use starknet::ContractAddress;
 
-    // Components.
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
     #[abi(embed_v0)]
     impl OwnableImpl = OwnableComponent::OwnableImpl<ContractState>;
@@ -25,10 +19,8 @@ mod BlobstreamX {
 
     #[storage]
     struct Storage {
-        // Ownable component for access controlled methods.
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
-        // Upgradeable component for upgrade utility.
         #[substorage(v0)]
         upgradeable: UpgradeableComponent::Storage,
     }
@@ -36,17 +28,54 @@ mod BlobstreamX {
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
+        // component events(OZ)
         #[flat]
         OwnableEvent: OwnableComponent::Event,
         #[flat]
         UpgradeableEvent: UpgradeableComponent::Event,
+        // contract events
+        DataCommitmentStored: DataCommitmentStored,
+        NextHeaderRequested: NextHeaderRequested,
+    // TODO(#68): impl header range
+    }
+
+    /// Data commitment stored for the block range [startBlock, endBlock] with proof nonce
+    #[derive(Drop, starknet::Event)]
+    struct DataCommitmentStored {
+        // nonce of the proof
+        proof_nonce: felt252,
+        // start block of the block range
+        #[key]
+        start_block: u64,
+        // end block of the block range
+        #[key]
+        end_block: u64,
+        // data commitment for the block range
+        #[key]
+        data_commitment: u256,
+    }
+
+    /// Inputs of a next header request
+    #[derive(Drop, starknet::Event)]
+    struct NextHeaderRequested {
+        // trusted block for the next header request
+        #[key]
+        trusted_block: u64,
+        // header hash of the trusted block
+        #[key]
+        trusted_header: u64,
+    }
+
+    mod Errors {
+        /// Data commitment for specified block range does not exist
+        const DataCommitmentNotFound: felt252 = 'Data commitment not found';
     }
 
     #[abi(embed_v0)]
     impl Upgradeable of IUpgradeable<ContractState> {
-        fn upgrade(ref self: ContractState, new_hash: ClassHash) {
+        fn upgrade(ref self: ContractState, new_class_hash: ClassHash) {
             self.ownable.assert_only_owner();
-            self.upgradeable._upgrade(new_hash);
+            self.upgradeable._upgrade(new_class_hash);
         }
     }
 
@@ -56,13 +85,14 @@ mod BlobstreamX {
     }
 }
 
+mod mocks {
+    mod upgradeable;
+}
+
 #[cfg(test)]
 mod tests {
     mod common;
     mod test_blobstreamx;
     mod test_ownable;
     mod test_upgradeable;
-    mod mocks {
-        mod upgradeable;
-    }
 }

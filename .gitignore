@@ -16,3 +16,6 @@ book/book/
 package.json
 yarn.lock
 node_modules/
+
+# TODO: Delete
+x.cairo

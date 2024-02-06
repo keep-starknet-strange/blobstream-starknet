@@ -1,32 +1,49 @@
-use blobstream_sn::interfaces::{
-    IUpgradeableDispatcher, IUpgradeableDispatcherTrait, IDAOracleDispatcher,
-    IDAOracleDispatcherTrait
+use blobstream_sn::mocks::upgradeable::{
+    IMockUpgradeableDispatcher, IMockUpgradeableDispatcherTrait, MockUpgradeable
 };
-use blobstream_sn::tests::mocks::upgradeable::{
-    IMockUpgradedDispatcher, IMockUpgradedDispatcherTrait
-};
-use blobstream_sn::tests::test_blobstreamx::setup_base;
+use blobstream_sn::tests::common::{setup_base, setup_spied};
 use openzeppelin::tests::utils::constants::OWNER;
-use snforge_std::{declare, start_prank, stop_prank, CheatTarget};
-use starknet::{ClassHash, contract_address_const};
+use openzeppelin::upgrades::interface::{
+    IUpgradeable, IUpgradeableDispatcher, IUpgradeableDispatcherTrait
+};
+use openzeppelin::upgrades::upgradeable::UpgradeableComponent;
+use snforge_std::cheatcodes::events::EventAssertions;
+use snforge_std::{declare, start_prank, stop_prank, CheatTarget, EventSpy};
+
+const TEST_VAL: felt252 = 420;
 
 fn setup_upgradeable() -> IUpgradeableDispatcher {
     IUpgradeableDispatcher { contract_address: setup_base() }
 }
 
+fn setup_upgradeable_spied() -> (IUpgradeableDispatcher, EventSpy) {
+    let (contract_address, spy) = setup_spied();
+    (IUpgradeableDispatcher { contract_address }, spy)
+}
+
 #[test]
 fn blobstreamx_upgrade() {
-    let upgradeable = setup_upgradeable();
+    let (upgradeable, mut spy) = setup_upgradeable_spied();
+    let v2_class = declare('MockUpgradeable');
 
-    let new_class: ClassHash = declare('MockUpgraded').class_hash;
     start_prank(CheatTarget::One(upgradeable.contract_address), OWNER());
-    upgradeable.upgrade(new_class);
+    upgradeable.upgrade(v2_class.class_hash);
     stop_prank(CheatTarget::One(upgradeable.contract_address));
 
-    assert(
-        IMockUpgradedDispatcher { contract_address: upgradeable.contract_address }.get_version(),
-        'Upgrade failed'
-    );
+    let expected_event = UpgradeableComponent::Upgraded { class_hash: v2_class.class_hash };
+    spy
+        .assert_emitted(
+            @array![
+                (
+                    upgradeable.contract_address,
+                    UpgradeableComponent::Event::Upgraded(expected_event)
+                )
+            ]
+        );
+
+    let v2 = IMockUpgradeableDispatcher { contract_address: upgradeable.contract_address };
+    v2.set_gateway_v2(TEST_VAL.try_into().unwrap());
+    assert!(v2.get_gateway_v2().into() == TEST_VAL, "upgraded contract selector incorrect");
 }
 
 #[test]
@@ -34,6 +51,6 @@ fn blobstreamx_upgrade() {
 fn blobstreamx_upgrade_not_owner() {
     let upgradeable = setup_upgradeable();
 
-    let new_class: ClassHash = declare('MockUpgraded').class_hash;
-    upgradeable.upgrade(new_class);
+    let v2_class = declare('MockUpgradeable');
+    upgradeable.upgrade(v2_class.class_hash);
 }

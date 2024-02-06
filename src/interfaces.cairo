@@ -7,7 +7,6 @@ struct Validator {
     power: u256
 }
 
-
 #[starknet::interface]
 trait IDAOracle<TContractState> {
     fn verify_sig(self: @TContractState, digest: u256, sig: Signature, signer: EthAddress) -> bool;
@@ -28,9 +27,4 @@ trait IDAOracle<TContractState> {
         _current_validator_set: Span<Validator>,
         _sigs: Span<Signature>
     );
-}
-
-#[starknet::interface]
-trait IUpgradeable<TContractState> {
-    fn upgrade(ref self: TContractState, new_hash: ClassHash);
 }
