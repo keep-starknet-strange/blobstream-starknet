@@ -1,8 +1,9 @@
 mod consts;
+mod utils;
 mod binary {
     mod hasher;
-    mod merkle_tree;
     mod merkle_proof;
+    mod merkle_tree;
     #[cfg(test)]
     mod tests {
         mod test_hasher;
@@ -20,4 +21,5 @@ mod namespace {
 #[cfg(test)]
 mod tests {
     mod test_consts;
+    mod test_utils;
 }
