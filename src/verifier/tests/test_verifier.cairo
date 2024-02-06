@@ -1,6 +1,6 @@
-use blobstream_sn::DataRoot;
 use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
-use blobstream_sn::verifier::AttestationProof;
+use blobstream_sn::verifier::types::AttestationProof;
+use blobstream_sn::verifier::types::DataRoot;
 
 #[test]
 fn attestation_proof_test() {
