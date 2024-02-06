@@ -1,30 +1,43 @@
+use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
 use starknet::secp256_trait::Signature;
 use starknet::{EthAddress, ContractAddress, ClassHash};
 
-#[derive(Copy, Drop, Serde)]
+#[derive(Drop, Serde)]
 struct Validator {
     addr: EthAddress,
-    power: u256
+    power: u256,
+}
+
+/// Each data root is associated with a Celestia block height. `availableDataRoot` in
+/// https://github.com/celestiaorg/celestia-specs/blob/master/src/specs/data_structures.md#header
+#[derive(Drop, Serde)]
+struct DataRoot {
+    height: felt252,
+    data_root: u256,
+}
+
+/// Data Availability Oracle interface.
+#[starknet::interface]
+trait IDAOracle<TContractState> {
+    /// Verify a Data Availability attestation.
+    /// * `proof_nonce` - Nonce of the tuple root to prove against.
+    /// * `root` -  Data root tuple to prove inclusion of.
+    /// * `proof` - Binary Merkle tree proof that `tuple` is in the root at `_tupleRootNonce`.
+    fn verify_attestation(
+        self: @TContractState, proof_nonce: u64, root: DataRoot, proof: BinaryMerkleProof
+    ) -> bool;
 }
 
 #[starknet::interface]
-trait IDAOracle<TContractState> {
-    fn verify_sig(self: @TContractState, digest: u256, sig: Signature, signer: EthAddress) -> bool;
-    fn submit_data_root_tuple_root(
-        ref self: TContractState,
-        _new_nonce: felt252,
-        _validator_set_nonce: felt252,
-        _data_root_tuple_root: u256,
-        _current_validator_set: Span<Validator>,
-        _sigs: Span<Signature>
-    );
-    fn update_validator_set(
-        ref self: TContractState,
-        _new_nonce: felt252,
-        _old_nonce: felt252,
-        _new_power_threshold: felt252,
-        _new_validator_set_hash: u256,
-        _current_validator_set: Span<Validator>,
-        _sigs: Span<Signature>
-    );
+trait IBlobstreamX<TContractState> {
+    /// Max num of blocks that can be skipped in a single request
+    /// ref: https://github.com/celestiaorg/celestia-core/blob/main/pkg/consts/consts.go#L43-L44
+    fn DATA_COMMITMENT_MAX(self: @TContractState) -> u64;
+    // Address of the gateway contract
+    fn set_gateway(ref self: TContractState, new_gateway: ContractAddress);
+    fn get_gateway(self: @TContractState) -> ContractAddress;
+    // Block is the first one in the next data commitment
+    fn get_latest_block(self: @TContractState) -> u64;
+    // Nonce for proof events. Must be incremented sequentially
+    fn get_state_proof_nonce(self: @TContractState) -> u64;
 }

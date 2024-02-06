@@ -1,4 +1,4 @@
-#[derive(Drop)]
+#[derive(Drop, Serde)]
 struct BinaryMerkleProof {
     // list of side nodes to verify and calculate tree
     side_nodes: Array<u256>,

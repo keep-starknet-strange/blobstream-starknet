@@ -5,9 +5,9 @@ use blobstream_sn::verifier::types::DataRoot;
 #[test]
 fn attestation_proof_test() {
     let checkpoint = AttestationProof {
-        tuple_root_nonce: 1,
-        data_root_tuple: DataRoot { height: 2, data_root: 3 },
+        commit_nonce: 1,
+        data_root: DataRoot { height: 2, data_root: 3 },
         proof: BinaryMerkleProof { side_nodes: array![1], key: 4, num_leaves: 5 },
     };
-    assert!(checkpoint.tuple_root_nonce == 1, "stub for verifier test");
+    assert!(checkpoint.commit_nonce == 1, "stub for verifier test");
 }

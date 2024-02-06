@@ -4,10 +4,13 @@ mod verifier;
 
 #[starknet::contract]
 mod BlobstreamX {
+    use blobstream_sn::interfaces::{IBlobstreamX, IDAOracle, DataRoot};
+    use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
+    use core::traits::Into;
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::upgrades::{interface::IUpgradeable, upgradeable::UpgradeableComponent};
-    use starknet::ClassHash;
-    use starknet::ContractAddress;
+    use starknet::info::get_block_number;
+    use starknet::{ClassHash, ContractAddress};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
     #[abi(embed_v0)]
@@ -19,6 +22,13 @@ mod BlobstreamX {
 
     #[storage]
     struct Storage {
+        // CONTRACT STORAGE
+        DATA_COMMITMENT_MAX: u64,
+        gateway: ContractAddress,
+        latest_block: u64,
+        state_proof_nonce: u64,
+        state_data_commitments: LegacyMap::<u64, u256>,
+        // COMPONENT STORAGE
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
         #[substorage(v0)]
@@ -28,15 +38,15 @@ mod BlobstreamX {
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
-        // component events(OZ)
+        // CONTRACT EVENTS
+        // TODO(#68): impl header range
+        DataCommitmentStored: DataCommitmentStored,
+        NextHeaderRequested: NextHeaderRequested,
+        // COMPONENT EVENTS
         #[flat]
         OwnableEvent: OwnableComponent::Event,
         #[flat]
         UpgradeableEvent: UpgradeableComponent::Event,
-        // contract events
-        DataCommitmentStored: DataCommitmentStored,
-        NextHeaderRequested: NextHeaderRequested,
-    // TODO(#68): impl header range
     }
 
     /// Data commitment stored for the block range [startBlock, endBlock] with proof nonce
@@ -67,8 +77,17 @@ mod BlobstreamX {
     }
 
     mod Errors {
-        /// Data commitment for specified block range does not exist
+        /// data commitment for specified block range does not exist
         const DataCommitmentNotFound: felt252 = 'Data commitment not found';
+    }
+
+    #[constructor]
+    fn constructor(ref self: ContractState, gateway: ContractAddress, owner: ContractAddress) {
+        self.DATA_COMMITMENT_MAX.write(1000);
+        self.gateway.write(gateway);
+        self.latest_block.write(get_block_number());
+        self.state_proof_nonce.write(1);
+        self.ownable.initializer(owner);
     }
 
     #[abi(embed_v0)]
@@ -79,9 +98,42 @@ mod BlobstreamX {
         }
     }
 
-    #[constructor]
-    fn constructor(ref self: ContractState, owner: ContractAddress) {
-        self.ownable.initializer(owner);
+    #[abi(embed_v0)]
+    impl IDAOracleImpl of IDAOracle<ContractState> {
+        fn verify_attestation(
+            self: @ContractState, proof_nonce: u64, root: DataRoot, proof: BinaryMerkleProof
+        ) -> bool {
+            if (proof_nonce >= self.state_proof_nonce.read()) {
+                return false;
+            }
+
+            // load the tuple root at the given index from storage.
+            let data_root = self.state_data_commitments.read(proof_nonce);
+
+            // return isProofValid;
+            // TODO(#69 + #24): BinaryMerkleTree.verify(root, _proof, abi.encode(_tuple));
+            false
+        }
+    }
+
+    #[abi(embed_v0)]
+    impl IBlobstreamXImpl of IBlobstreamX<ContractState> {
+        fn DATA_COMMITMENT_MAX(self: @ContractState) -> u64 {
+            self.DATA_COMMITMENT_MAX.read()
+        }
+        fn set_gateway(ref self: ContractState, new_gateway: ContractAddress) {
+            self.ownable.assert_only_owner();
+            self.gateway.write(new_gateway);
+        }
+        fn get_gateway(self: @ContractState) -> ContractAddress {
+            self.gateway.read()
+        }
+        fn get_latest_block(self: @ContractState) -> u64 {
+            self.latest_block.read()
+        }
+        fn get_state_proof_nonce(self: @ContractState) -> u64 {
+            self.state_proof_nonce.read()
+        }
     }
 }
 
