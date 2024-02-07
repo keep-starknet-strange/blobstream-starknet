@@ -51,6 +51,9 @@ We live on contributions. If you'd like to contribute please follow the [guide](
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/b-j-roberts"><img src="https://avatars.githubusercontent.com/u/54774639?v=4?s=100" width="100px;" alt="Brandon R"/><br /><sub><b>Brandon R</b></sub></a><br /><a href="https://github.com/keep-starknet-strange/blobstream-starknet/commits?author=b-j-roberts" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Akashneelesh"><img src="https://avatars.githubusercontent.com/u/66639153?v=4?s=100" width="100px;" alt="Akashneelesh"/><br /><sub><b>Akashneelesh</b></sub></a><br /><a href="https://github.com/keep-starknet-strange/blobstream-starknet/commits?author=Akashneelesh" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/FlorianLgrs"><img src="https://avatars.githubusercontent.com/u/96090364?v=4?s=100" width="100px;" alt="FlorianLgrs"/><br /><sub><b>FlorianLgrs</b></sub></a><br /><a href="https://github.com/keep-starknet-strange/blobstream-starknet/commits?author=FlorianLgrs" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
