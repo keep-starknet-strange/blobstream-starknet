@@ -1,6 +1,7 @@
 use alexandria_math::U256BitShift;
 use blobstream_sn::tree::consts::MAX_HEIGHT;
 
+// Calculate the starting bit of the path to a leaf
 fn get_starting_bit(num_leaves: u256) -> u256 {
     let mut starting_bit: u256 = 0;
     loop {
@@ -10,15 +11,16 @@ fn get_starting_bit(num_leaves: u256) -> u256 {
             break;
         }
     };
-    MAX_HEIGHT - starting_bit
+    starting_bit
 }
 
+// Calculate the length of the path to a leaf with a given key
 fn path_length_from_key(key: u256, num_leaves: u256) -> u256 {
     if (num_leaves <= 1) {
         return 0;
     }
 
-    let mut path_length: u256 = MAX_HEIGHT - get_starting_bit(num_leaves);
+    let mut path_length: u256 = get_starting_bit(num_leaves);
 
     let num_leaves_left_sub_tree: u256 = U256BitShift::shl(1, (path_length - 1));
 
@@ -34,6 +36,7 @@ fn path_length_from_key(key: u256, num_leaves: u256) -> u256 {
     }
 }
 
+// Calculate the minimum number of bits needed to represent `x`
 fn bits_len(mut x: u256) -> u256 {
     let mut count: u256 = 0;
     loop {
@@ -47,6 +50,7 @@ fn bits_len(mut x: u256) -> u256 {
     count
 }
 
+// Calculate the largest power of 2 less than `x`
 fn get_split_point(x: u256) -> u256 {
     assert!(x >= 1, "get split point");
 

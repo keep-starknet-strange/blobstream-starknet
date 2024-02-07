@@ -1,5 +1,6 @@
 use alexandria_bytes::BytesTrait;
 use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
+use blobstream_sn::tree::binary::merkle_tree::ErrorCodes;
 use blobstream_sn::tree::binary::merkle_tree;
 
 #[test]
@@ -23,7 +24,7 @@ fn verify_one_leaf_empty_test() {
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty();
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
-    assert!(merkle_tree::is_no_error(error_code), "verify one leaf empty test failed with error");
+    assert!(error_code == ErrorCodes::NoError, "verify one leaf empty test failed with error");
     assert!(is_valid, "verify one leaf empty test invalid");
 }
 
@@ -37,7 +38,7 @@ fn verify_one_leaf_test() {
     let mut data = BytesTrait::new_empty();
     data.append_u32(0xdeadbeef);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
-    assert!(merkle_tree::is_no_error(error_code), "verify one leaf test failed with error");
+    assert!(error_code == ErrorCodes::NoError, "verify one leaf test failed with error");
     assert!(is_valid, "verify one leaf test invalid");
 }
 
@@ -51,7 +52,7 @@ fn verify_one_leaf_01_test() {
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
-    assert!(merkle_tree::is_no_error(error_code), "verify one leaf 01 test failed with error");
+    assert!(error_code == ErrorCodes::NoError, "verify one leaf 01 test failed with error");
     assert!(is_valid, "verify one leaf 01 test invalid");
 }
 
@@ -69,9 +70,7 @@ fn verify_leaf_one_of_eight_test() {
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
-    assert!(
-        merkle_tree::is_no_error(error_code), "verify leaf one of eight test failed with error"
-    );
+    assert!(error_code == ErrorCodes::NoError, "verify leaf one of eight test failed with error");
     assert!(is_valid, "verify leaf one of eight test invalid");
 }
 
@@ -89,9 +88,7 @@ fn verify_leaf_two_of_eight_test() {
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x02);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
-    assert!(
-        merkle_tree::is_no_error(error_code), "verify leaf two of eight test failed with error"
-    );
+    assert!(error_code == ErrorCodes::NoError, "verify leaf two of eight test failed with error");
     assert!(is_valid, "verify leaf two of eight test invalid");
 }
 
@@ -109,9 +106,7 @@ fn verify_leaf_three_of_eight_test() {
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x03);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
-    assert!(
-        merkle_tree::is_no_error(error_code), "verify leaf three of eight test failed with error"
-    );
+    assert!(error_code == ErrorCodes::NoError, "verify leaf three of eight test failed with error");
     assert!(is_valid, "verify leaf three of eight test invalid");
 }
 
@@ -129,9 +124,7 @@ fn verify_leaf_seven_of_eight_test() {
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x07);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
-    assert!(
-        merkle_tree::is_no_error(error_code), "verify leaf seven of eight test failed with error"
-    );
+    assert!(error_code == ErrorCodes::NoError, "verify leaf seven of eight test failed with error");
     assert!(is_valid, "verify leaf seven of eight test invalid");
 }
 
@@ -149,9 +142,7 @@ fn verify_leaf_eight_of_eight_test() {
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x08);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
-    assert!(
-        merkle_tree::is_no_error(error_code), "verify leaf eight of eight test failed with error"
-    );
+    assert!(error_code == ErrorCodes::NoError, "verify leaf eight of eight test failed with error");
     assert!(is_valid, "verify leaf eight of eight test invalid");
 }
 
@@ -171,7 +162,7 @@ fn verify_proof_of_five_leaves_test() {
     data.append_u8(0x01);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
     assert!(
-        merkle_tree::is_no_error(error_code), "verify proof of five leaves test failed with error"
+        error_code == ErrorCodes::NoError, "verify proof of five leaves test failed with error"
     );
     assert!(is_valid, "verify proof of five leaves test invalid");
 }
@@ -192,9 +183,7 @@ fn verify_invalid_proof_root_test() {
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
-    assert!(
-        merkle_tree::is_no_error(error_code), "verify invalid proof root test failed with error"
-    );
+    assert!(error_code == ErrorCodes::NoError, "verify invalid proof root test failed with error");
     assert_eq!(is_valid, false, "verify invalid proof root test should be invalid");
 }
 
@@ -214,9 +203,7 @@ fn verify_invalid_proof_key_test() {
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
-    assert!(
-        merkle_tree::is_no_error(error_code), "verify invalid proof key test failed with error"
-    );
+    assert!(error_code == ErrorCodes::NoError, "verify invalid proof key test failed with error");
     assert_eq!(is_valid, false, "verify invalid proof key test should be invalid");
 }
 
@@ -236,6 +223,10 @@ fn verify_invalid_proof_number_of_leaves_test() {
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
+    assert!(
+        error_code == ErrorCodes::InvalidNumberOfSideNodes,
+        "verify invalid proof number of leaves test failed with error"
+    );
     assert_eq!(is_valid, false, "verify invalid proof number of leaves test should be invalid");
 }
 
@@ -256,8 +247,7 @@ fn verify_invalid_proof_side_nodes_test() {
     data.append_u8(0x01);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
     assert!(
-        merkle_tree::is_no_error(error_code),
-        "verify invalid proof side nodes test failed with error"
+        error_code == ErrorCodes::NoError, "verify invalid proof side nodes test failed with error"
     );
     assert_eq!(is_valid, false, "verify invalid proof side nodes test should be invalid");
 }
@@ -278,18 +268,8 @@ fn verify_invalid_proof_data_test() {
     // correct data.append_u8(0x01);
     data.append_u32(0x012345);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
-    assert!(
-        merkle_tree::is_no_error(error_code), "verify invalid proof data test failed with error"
-    );
+    assert!(error_code == ErrorCodes::NoError, "verify invalid proof data test failed with error");
     assert_eq!(is_valid, false, "verify invalid proof data test should be invalid");
-}
-
-#[test]
-fn valid_slice_test() {
-    let data: Array<u256> = array!['a', 'b', 'c', 'd'];
-    let result: Array<u256> = merkle_tree::slice(data.span(), 1, 3);
-    assert_eq!(result.at(0), data.at(1), "valid slice test failed with first element");
-    assert_eq!(result.at(1), data.at(2), "valid slice test failed with second element");
 }
 
 #[test]
@@ -302,6 +282,10 @@ fn same_key_and_leaves_number_test() {
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
+    assert!(
+        error_code == ErrorCodes::InvalidNumberOfSideNodes,
+        "same key and leaves number test failed with error"
+    );
     assert_eq!(is_valid, false, "same key and leaves number test failed");
 }
 
@@ -315,19 +299,27 @@ fn consecutive_key_and_number_of_leaves_test() {
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
+    assert!(
+        error_code == ErrorCodes::InvalidNumberOfSideNodes,
+        "consecutive key and number of leaves test failed with error"
+    );
     assert_eq!(is_valid, false, "consecutive key and number of leaves test failed");
 }
 
 #[test]
-#[should_panic(expected: ("slice: begin > end",))]
-fn invalid_slice_begin_end_test() {
-    let data: Array<u256> = array!['a', 'b', 'c', 'd'];
-    let result: Array<u256> = merkle_tree::slice(data.span(), 2, 1);
-}
-
-#[test]
-#[should_panic(expected: ("slice: begin or end out of bounds",))]
-fn out_of_bounds_slice_test() {
-    let data: Array<u256> = array!['a', 'b', 'c', 'd'];
-    let result: Array<u256> = merkle_tree::slice(data.span(), 2, 5);
+fn key_not_in_tree_test() {
+    let root: u256 = 0xc1ad6548cb4c7663110df219ec8b36ca63b01158956f4be31a38a88d0c7f7071;
+    let side_nodes: Array<u256> = array![
+        0xfcf0a6c700dd13e274b6fba8deea8dd9b26e4eedde3495717cac8408c9c5177f,
+        0x78850a5ab36238b076dd99fd258c70d523168704247988a94caa8c9ccd056b8d,
+        0x4301a067262bbb18b4919742326f6f6d706099f9c0e8b0f2db7b88f204b2cf09
+    ];
+    let key: u256 = 9;
+    let num_leaves: u256 = 8;
+    let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
+    let mut data = BytesTrait::new_empty();
+    data.append_u8(0x01);
+    let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
+    assert!(error_code == ErrorCodes::KeyNotInTree, "key not in tree test failed with error");
+    assert_eq!(is_valid, false, "key not in tree test failed");
 }
