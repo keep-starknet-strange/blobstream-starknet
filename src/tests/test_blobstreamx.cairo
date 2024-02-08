@@ -28,10 +28,10 @@ fn blobstreamx_constructor_vals() {
 fn blobstreamx_commit_header_range() {
     let blobstreamx = setup_blobstreamx();
     let state_proof_nonce = blobstreamx.get_state_proof_nonce();
-    let latest_block = blobstreamx.get_latest_block();
+    let _ = blobstreamx.get_latest_block();
     let block_number = get_block_number();
     blobstreamx.commit_header_range(block_number, block_number + 1);
-    let test = blobstreamx.get_state_proof_nonce();
+    let _ = blobstreamx.get_state_proof_nonce();
     assert!(
         blobstreamx.get_state_proof_nonce() == state_proof_nonce + 1, "state proof nonce invalid"
     );
@@ -67,10 +67,10 @@ fn blobstreamx_commit_header_range_target_block_not_in_range_2() {
 fn blobstreamx_commit_next_header() {
     let blobstreamx = setup_blobstreamx();
     let state_proof_nonce = blobstreamx.get_state_proof_nonce();
-    let latest_block = blobstreamx.get_latest_block();
+    let _ = blobstreamx.get_latest_block();
     let block_number = get_block_number();
     blobstreamx.commit_next_header(block_number);
-    let test = blobstreamx.get_state_proof_nonce();
+    let _ = blobstreamx.get_state_proof_nonce();
     assert!(
         blobstreamx.get_state_proof_nonce() == state_proof_nonce + 1, "state proof nonce invalid"
     );
