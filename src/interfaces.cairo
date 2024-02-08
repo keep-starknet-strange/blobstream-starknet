@@ -16,6 +16,17 @@ struct DataRoot {
     data_root: u256,
 }
 
+#[derive(Drop, Serde)]
+struct InitParameters {
+    guardian: ContractAddress,
+    gateway: ContractAddress,
+    height: u64,
+    header: u256,
+    next_jeadjer_function_id: u256,
+    header_range_function_id: u256
+}
+
+
 /// Data Availability Oracle interface.
 #[starknet::interface]
 trait IDAOracle<TContractState> {
@@ -40,4 +51,12 @@ trait IBlobstreamX<TContractState> {
     fn get_latest_block(self: @TContractState) -> u64;
     // Nonce for proof events. Must be incremented sequentially
     fn get_state_proof_nonce(self: @TContractState) -> u64;
+    // Commits the new header at targetBlock and the data commitment for the block range [trustedBlock, targetBlock).
+    fn commit_header_range(ref self: TContractState, _trusted_block: u64, _target_block: u64);
+    // Prove the validity of the next header and a data commitment for the block range [latestBlock, latestBlock + 1).
+    fn request_next_header(ref self: TContractState);
+    // Stores the new header for _trustedBlock + 1 and the data commitment for the block range [_trustedBlock, _trustedBlock + 1).
+    fn commit_next_header(ref self: TContractState, _trusted_block: u64);
+    // Get the header hash for a block height.
+    fn get_header_hash(self: @TContractState, _height: u64) -> u256;
 }
