@@ -6,7 +6,7 @@ mod verifier;
 mod BlobstreamX {
     use alexandria_bytes::Bytes;
     use alexandria_bytes::BytesTrait;
-    use blobstream_sn::interfaces::{IBlobstreamX, IDAOracle, DataRoot, InitParameters};
+    use blobstream_sn::interfaces::{IBlobstreamX, IDAOracle, DataRoot};
     use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
     use core::starknet::event::EventEmitter;
     use core::traits::Into;
@@ -100,12 +100,17 @@ mod BlobstreamX {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, gateway: ContractAddress, owner: ContractAddress) {
+    fn constructor(
+        ref self: ContractState, gateway: ContractAddress, owner: ContractAddress, header: u256
+    ) {
         self.DATA_COMMITMENT_MAX.write(1000);
         self.gateway.write(gateway);
         self.latest_block.write(get_block_number());
         self.state_proof_nonce.write(1);
         self.ownable.initializer(owner);
+        self.block_height_to_header_hash.write(get_block_number(), header);
+    // self.header_range_function_id.write(header_range_function_id); 
+    // self.next_header_function_id.write(next_header_function_id); 
     }
 
     #[abi(embed_v0)]
@@ -153,6 +158,24 @@ mod BlobstreamX {
             self.state_proof_nonce.read()
         }
 
+        fn get_header_range_id(self: @ContractState) -> u256 {
+            self.header_range_function_id.read()
+        }
+
+        fn set_header_range_id(ref self: ContractState, _function_id: u256) {
+            self.ownable.assert_only_owner();
+            self.header_range_function_id.write(_function_id);
+        }
+
+        fn get_next_header_id(self: @ContractState) -> u256 {
+            self.next_header_function_id.read()
+        }
+
+        fn set_next_header_id(ref self: ContractState, _function_id: u256) {
+            self.ownable.assert_only_owner();
+            self.next_header_function_id.write(_function_id);
+        }
+
         /// @notice Commits the new header at targetBlock and the data commitment for the block range [trustedBlock, targetBlock).
         /// # Arguments 
         /// * `_trustedBlock` -  The latest block when the request was made.
@@ -170,9 +193,12 @@ mod BlobstreamX {
             // MOCK INFORMATION FOR NOW 
             //TODO(#73): SunccinctGateway 
             // let request_result = ISuccinctGateway...
-            let request_result: Bytes = BytesTrait::new(0, array![0]);
+            let mut request_result: Bytes = BytesTrait::new(32, array![0]);
+            request_result.append_u256(12314123123);
+            request_result.append_u256(32131232);
             let (_, data_commitment) = request_result.read_u256(0);
             let (_, target_header) = request_result.read_u256(0);
+            //// END 
 
             assert(_target_block > latest_block, Errors::TargetBlockNotInRange);
             assert(
@@ -181,7 +207,6 @@ mod BlobstreamX {
             );
             self.block_height_to_header_hash.write(_target_block, target_header);
             self.state_data_commitments.write(state_proof_nonce, data_commitment);
-
             self
                 .emit(
                     DataCommitmentStored {
@@ -230,10 +255,12 @@ mod BlobstreamX {
             // MOCK INFORMATION FOR NOW 
             //TODO(#73): SunccinctGateway 
             // let request_result = ISuccinctGateway...
-
-            let request_result: Bytes = BytesTrait::new(0, array![0]);
+            let mut request_result: Bytes = BytesTrait::new(32, array![0]);
+            request_result.append_u256(12314123123);
+            request_result.append_u256(32131232);
             let (_, data_commitment) = request_result.read_u256(0);
             let (_, next_header) = request_result.read_u256(0);
+            //END 
 
             let next_block = _trusted_block + 1;
             assert(next_block > latest_block, Errors::TargetBlockNotInRange);
