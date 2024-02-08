@@ -1,6 +1,12 @@
 ## 🛠️ Contributing to Blobstream Starknet 🛠️
 
-Welcome, contributing to is easy!
+<!-- markdownlint-disable MD051 -->
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
+<!-- markdownlint-enable MD051 -->
+
+Welcome, contributing to `blobstream_sn` is easy!
 
 1. Submit or comment your intent on an issue
 1. We will try to respond quickly
@@ -10,7 +16,7 @@ Welcome, contributing to is easy!
 
 ### Issue
 
-Project tracking is done via GitHub [issues](https://github.com/keep-starknet-strange/blobstream-sn/issues).
+Project tracking is done via GitHub [issues](https://github.com/keep-starknet-strange/blobstream-starknet/issues).
 First look at open issues to see if your request is already submitted.
 If it is comment on the issue requesting assignment, if not open an issue.
 
@@ -26,11 +32,16 @@ These labels are used as prefixes as follows for `issue`, `branch name`, `pr tit
 - `[bug]` -> `bug/{issue #}-{issue name}` -> `bug:`
 - `[dev]` -> `dev/{issue #}-{issue name}` -> `dev:`
 
+#### TODO
+
+If your PR includes a `TODO` comment please open an issue and comment the relevant
+code with `TODO(#ISSUE_NUM):`.
+
 ### Submit PR
 
 Ensure your code is well formatted, well tested and well documented. A core contributor
 will review your work. Address changes, ensure ci passes,
-and voilà you're a blobstream-sn contributor.
+and voilà you're a `blobstream_sn` contributor.
 
 Markdown [linter](https://github.com/markdownlint/markdownlint?tab=readme-ov-file#markdown-lint-tool):
 
@@ -42,13 +53,6 @@ Scarb linter:
 
 ```bash
 scarb fmt
-```
-
-To add via [all-contributors](https://allcontributors.org/docs/en/cli/installation):
-
-```bash
-yarn all-contributors add jfmengels code
-yarn all-contributors generate
 ```
 
 ### Additional Resources

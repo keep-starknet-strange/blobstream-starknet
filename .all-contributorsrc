@@ -1,14 +1,16 @@
 {
-  "projectName": "blobstream-sn",
+  "projectName": "blobstream-starknet",
   "projectOwner": "keep-starknet-strange",
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
-    "README.md"
+    "README.md",
+    "CONTRIBUTING.md"
   ],
   "imageSize": 100,
   "commit": true,
   "commitConvention": "gitmoji",
+  "contributorsPerLine": 7,
   "contributors": [
     {
       "login": "AbdelStark",
@@ -27,8 +29,60 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "JordyRo1",
+      "name": "Jordy Romuald",
+      "avatar_url": "https://avatars.githubusercontent.com/u/87231934?v=4",
+      "profile": "https://github.com/JordyRo1",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ermvrs",
+      "name": "Erim",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3417324?v=4",
+      "profile": "https://github.com/ermvrs",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "OthmanSefraoui",
+      "name": "OthmanSefraoui",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50746496?v=4",
+      "profile": "https://www.linkedin.com/in/othman-sefraoui/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "b-j-roberts",
+      "name": "Brandon R",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54774639?v=4",
+      "profile": "https://github.com/b-j-roberts",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Akashneelesh",
+      "name": "Akashneelesh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/66639153?v=4",
+      "profile": "https://github.com/Akashneelesh",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "FlorianLgrs",
+      "name": "FlorianLgrs",
+      "avatar_url": "https://avatars.githubusercontent.com/u/96090364?v=4",
+      "profile": "https://github.com/FlorianLgrs",
+      "contributions": [
+        "code"
+      ]
     }
-  ],
-  "contributorsPerLine": 7,
-  "linkToUsage": false
+  ]
 }

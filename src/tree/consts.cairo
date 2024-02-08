@@ -1,9 +1,9 @@
 use blobstream_sn::tree::namespace::merkle_tree::Namespace;
 use core::bytes_31::bytes31_const;
 
-const MAX_HEIGHT: felt252 = 256;
-const LEAF_PREFIX: u128 = 0x00;
-const NODE_PREFIX: u128 = 0x01;
+const MAX_HEIGHT: u256 = 256;
+const LEAF_PREFIX: u8 = 0x00;
+const NODE_PREFIX: u8 = 0x01;
 
 // utility function to provide the parity share namespace as a Namespace struct
 fn parity_share_namespace() -> Namespace {
