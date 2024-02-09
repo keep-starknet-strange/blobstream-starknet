@@ -6,9 +6,9 @@ version = "0.1.0"
 test = "snforge test"
 
 [dependencies]
-snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.16.0" }
-starknet = "2.4.4"
-openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", tag = "v0.8.1" }
+snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.17.0" }
+starknet = ">=2.5.3"
+openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", rev = "2815498" }
 alexandria_bytes = { git = "https://github.com/keep-starknet-strange/alexandria.git" }
 alexandria_math = { git = "https://github.com/keep-starknet-strange/alexandria.git" }
 
@@ -21,3 +21,6 @@ sierra-replace-ids = true
 
 [tool.fmt]
 sort-module-level-items = true
+
+
+

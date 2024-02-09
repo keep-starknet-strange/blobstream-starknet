@@ -131,7 +131,7 @@ mod BlobstreamX {
             }
 
             // load the tuple root at the given index from storage.
-            let data_root = self.state_data_commitments.read(proof_nonce);
+            let _ = self.state_data_commitments.read(proof_nonce);
 
             // return isProofValid;
             // TODO(#69 + #24): BinaryMerkleTree.verify(root, _proof, abi.encode(_tuple));

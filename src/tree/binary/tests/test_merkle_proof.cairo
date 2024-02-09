@@ -11,7 +11,7 @@ fn verify_none_test() {
     let num_leaves: u256 = 0;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty();
-    let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
+    let (is_valid, _) = merkle_tree::verify(root, @proof, @data);
     assert_eq!(is_valid, false, "verify none test failed");
 }
 
