@@ -48,6 +48,7 @@ mod BlobstreamX {
         // TODO(#68): impl header range
         DataCommitmentStored: DataCommitmentStored,
         NextHeaderRequested: NextHeaderRequested,
+        HeaderRangeRequested: HeaderRangeRequested,
         HeadUpdate: HeadUpdate,
         // COMPONENT EVENTS
         #[flat]
@@ -81,6 +82,19 @@ mod BlobstreamX {
         // header hash of the trusted block
         #[key]
         trusted_header: u256,
+    }
+
+    /// Inputs of a header range request
+    #[derive(Drop, starknet::Event)]
+    struct HeaderRangeRequested {
+        // trusted block for the header range request
+        #[key]
+        trusted_block: u64,
+        // header hash of the trusted block
+        #[key]
+        trusted_header: u256,
+        // target block of the header range request
+        target_block: u64
     }
 
     /// Head Update
@@ -174,6 +188,31 @@ mod BlobstreamX {
         fn set_next_header_id(ref self: ContractState, _function_id: u256) {
             self.ownable.assert_only_owner();
             self.next_header_function_id.write(_function_id);
+        }
+
+        /// @notice Prove the validity of the header at the target block and a data commitment for the block range [latestBlock, _targetBlock).
+        /// # Arguments 
+        ///  _target_block The end block of the header range proof.
+        /// @dev requestHeaderRange is used to skip from the latest block to the target block.
+        fn request_header_range(ref self: ContractState, _target_block: u64) {
+            let latest_block = self.get_latest_block();
+            let latest_header = self.block_height_to_header_hash.read(latest_block);
+            assert(latest_header != 0, Errors::LatestHeaderNotFound);
+            // A request can be at most DATA_COMMITMENT_MAX blocks ahead of the latest block.
+            assert(_target_block > latest_block, Errors::TargetBlockNotInRange);
+            assert(
+                _target_block - latest_block <= self.DATA_COMMITMENT_MAX(),
+                Errors::TargetBlockNotInRange
+            );
+            //TODO: SunccinctGateway call
+            self
+                .emit(
+                    HeaderRangeRequested {
+                        trusted_block: latest_block,
+                        trusted_header: latest_header,
+                        target_block: _target_block
+                    }
+                );
         }
 
         /// @notice Commits the new header at targetBlock and the data commitment for the block range [trustedBlock, targetBlock).
