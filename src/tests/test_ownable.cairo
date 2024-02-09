@@ -1,4 +1,4 @@
-use blobstream_sn::BlobstreamX;
+use blobstream_sn::blobstreamx::BlobstreamX;
 use blobstream_sn::tests::common::{setup_base, setup_spied};
 use openzeppelin::access::ownable::OwnableComponent;
 use openzeppelin::access::ownable::interface::{IOwnableDispatcher, IOwnableDispatcherTrait};

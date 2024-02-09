@@ -1,5 +1,8 @@
-use blobstream_sn::BlobstreamX;
-use blobstream_sn::interfaces::{IBlobstreamXDispatcher, IBlobstreamXDispatcherTrait, Validator};
+use blobstream_sn::blobstreamx::BlobstreamX;
+use blobstream_sn::interfaces::{
+    IBlobstreamXDispatcher, IBlobstreamXDispatcherTrait, Validator, ITendermintXDispatcher,
+    ITendermintXDispatcherTrait
+};
 use blobstream_sn::tests::common::{setup_base, setup_spied, TEST_GATEWAY};
 use snforge_std::EventSpy;
 use starknet::secp256_trait::Signature;
@@ -28,16 +31,16 @@ fn blobstreamx_constructor_vals() {
 fn blobstreamx_commit_header_range() {
     let blobstreamx = setup_blobstreamx();
     let state_proof_nonce = blobstreamx.get_state_proof_nonce();
-    let latest_block = blobstreamx.get_latest_block();
     let block_number = get_block_number();
     blobstreamx.commit_header_range(block_number, block_number + 1);
-    let test = blobstreamx.get_state_proof_nonce();
+
+    let latest_block = ITendermintXDispatcher { contract_address: blobstreamx.contract_address }
+        .get_latest_block();
+    assert!(latest_block == block_number + 1, "latest block does not match");
     assert!(
         blobstreamx.get_state_proof_nonce() == state_proof_nonce + 1, "state proof nonce invalid"
     );
-    assert!(blobstreamx.get_latest_block() == block_number + 1, "latest block does not match");
 }
-
 
 #[test]
 #[should_panic(expected: ('Trusted header not found',))]
@@ -67,14 +70,15 @@ fn blobstreamx_commit_header_range_target_block_not_in_range_2() {
 fn blobstreamx_commit_next_header() {
     let blobstreamx = setup_blobstreamx();
     let state_proof_nonce = blobstreamx.get_state_proof_nonce();
-    let latest_block = blobstreamx.get_latest_block();
     let block_number = get_block_number();
     blobstreamx.commit_next_header(block_number);
-    let test = blobstreamx.get_state_proof_nonce();
+
+    let latest_block = ITendermintXDispatcher { contract_address: blobstreamx.contract_address }
+        .get_latest_block();
+    assert!(latest_block == block_number + 1, "latest block does not match");
     assert!(
         blobstreamx.get_state_proof_nonce() == state_proof_nonce + 1, "state proof nonce invalid"
     );
-    assert!(blobstreamx.get_latest_block() == block_number + 1, "latest block does not match");
 }
 
 
