@@ -47,6 +47,8 @@ trait IBlobstreamX<TContractState> {
     // Next header function id.
     fn get_next_header_id(self: @TContractState) -> u256;
     fn set_next_header_id(ref self: TContractState, _function_id: u256);
+    // Prove the validity of the header at the target block and a data commitment for the block range [latestBlock, _targetBlock)
+    fn request_header_range(ref self: TContractState, _target_block: u64);
     // Commits the new header at targetBlock and the data commitment for the block range [trustedBlock, targetBlock).
     fn commit_header_range(ref self: TContractState, _trusted_block: u64, _target_block: u64);
     // Prove the validity of the next header and a data commitment for the block range [latestBlock, latestBlock + 1).
