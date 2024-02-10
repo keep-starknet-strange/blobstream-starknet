@@ -19,19 +19,25 @@ const Inputs = () => {
   return (
     <>
       <div className="flex gap-4 w-full justify-between my-4">
-        <div className="bg-[#0d0d50] w-[48px] h-[48px] border-l border-gray-500 rounded-full flex justify-center items-center">
-          <span className="text-[#ffffff] text-center text-[16px]">1</span>
+        <div className="flex flex-col gap-2 items-center">
+          <div className="bg-[#0d0d50] w-[48px] h-[48px] rounded-full flex justify-center items-center">
+            <span className="text-[#ffffff] text-center text-[16px]">1</span>
+          </div>
+          <div
+            style={{ display }}
+            className="w-[5px] bg-[#E2E8F0] h-full"
+          ></div>
         </div>
         <div className="bg-[#ffffff] p-4 border border-[#e2e8f0] rounded-md w-full">
           <h3 className="text-[#1A202C] text-[20px] font-bold">
             🎨 Start typing to generate your SVG
           </h3>
           <div className="flex flex-col">
-            <label htmlFor="svg" className="text-[#6b7280] text-[16px]">
+            <label htmlFor="svg" className="text-[#6b7280] text-[16px] mt-4">
               Enter a text for your SVG
             </label>
             <input
-              className="border border-[#e2e8f0] text-[16px] rounded-md"
+              className="border border-[#e2e8f0] text-[16px] h-[40px] rounded-md"
               type="text"
               id="svg"
               name="svg"
@@ -59,8 +65,8 @@ const Inputs = () => {
           title="✉️ Post the data to Celestia as plain text "
           description="First, set your auth token:"
           value={`export AUTH_TOKEN=$(celestia light auth admin --p2p.network mocha)`}
-          description1="Display only the data retrieved:"
-          value1={`celestia blob get-all $HEIGHT 0x42690c204d39600fddd3 --token $AUTH_TOKEN | jq '.result[0].data'`}
+          description1="Next, post the SVG and save the output:"
+          value1={`export OUTPUT=$(celestia blob submit 0x42690c204d39600fddd3 "$SVG" --token $AUTH_TOKEN)`}
         />
         <SetInputs
           num={4}
@@ -87,7 +93,7 @@ const Inputs = () => {
               🔗 Display the SVG you retrieved from Celestia
             </h3>
             <div className="flex flex-col">
-              <label htmlFor="svg" className="text-[#6b7280] text-[16px]">
+              <label htmlFor="svg" className="text-[#6b7280] text-[16px] mt-4">
                 Enter the parsed base64 SVG
               </label>
               <input
@@ -112,12 +118,16 @@ const SetInputs: React.FC<{
   value: string;
 }> = ({ num, title, description, value }) => (
   <div className="flex gap-4 w-full justify-between my-4">
-    <div className="bg-[#0d0d50] w-[48px] h-[48px] rounded-full flex justify-center items-center">
-      <span className="text-[#ffffff] text-center text-[16px]">{num}</span>
+    <div className="flex flex-col gap-2 items-center">
+      <div className="bg-[#0d0d50] w-[48px] h-[48px] rounded-full flex justify-center items-center">
+        <span className="text-[#ffffff] text-center text-[16px]">{num}</span>
+      </div>
+      <div className="w-[5px] bg-[#E2E8F0] h-full"></div>
     </div>
+
     <div className="bg-[#ffffff] p-4 border border-[#e2e8f0] rounded-md w-full">
       <h3 className="text-[#1A202C] text-[20px] font-bold">{title}</h3>
-      <div className="w-full">
+      <div className="w-full mt-4">
         <div className="text-[#6b7280] text-[16px]">{description}</div>
         <div className="w-full flex justify-between items-start border border-[#e2e8f0] text-[16px] text-[#000000] bg-[#e5e5e5] rounded-md">
           <span className="w-[218px] m-2 break-all">{value}</span>
@@ -137,13 +147,16 @@ const SetInputs1: React.FC<{
   value1: string;
 }> = ({ num, title, description, value, description1, value1 }) => (
   <div className="flex gap-4 w-full justify-between my-4">
-    <div className="bg-[#0d0d50] w-[48px] h-[48px] rounded-full flex justify-center items-center">
-      <span className="text-[#ffffff] text-center text-[16px]">{num}</span>
+    <div className="flex flex-col gap-2 items-center">
+      <div className="bg-[#0d0d50] w-[48px] h-[48px] rounded-full flex justify-center items-center">
+        <span className="text-[#ffffff] text-center text-[16px]">{num}</span>
+      </div>
+      <div className="w-[5px] bg-[#E2E8F0] h-full"></div>
     </div>
     <div className="bg-[#ffffff] p-4 border border-[#e2e8f0] rounded-md w-full">
       <h3 className="text-[#1A202C] text-[20px] font-bold">{title}</h3>
       <div>
-        <div className="w-full">
+        <div className="w-full mt-4">
           <div className="text-[#6b7280] text-[16px]">{description}</div>
           <div className="w-full flex justify-between items-start border border-[#e2e8f0] text-[16px] text-[#000000] bg-[#e5e5e5] rounded-md">
             <span className="w-[218px] m-2">{value}</span>
@@ -182,13 +195,16 @@ const SetInputs2: React.FC<{
   value2,
 }) => (
   <div className="flex gap-4 w-full justify-between my-4">
-    <div className="bg-[#0d0d50] w-[48px] h-[48px] rounded-full flex justify-center items-center">
-      <span className="text-[#ffffff] text-center text-[16px]">{num}</span>
+    <div className="flex flex-col gap-2 items-center">
+      <div className="bg-[#0d0d50] w-[48px] h-[48px] rounded-full flex justify-center items-center">
+        <span className="text-[#ffffff] text-center text-[16px]">{num}</span>
+      </div>
+      <div className="w-[5px] bg-[#E2E8F0] h-full"></div>
     </div>
     <div className="bg-[#ffffff] p-4 border border-[#e2e8f0] rounded-md w-full">
       <div>
         <h3 className="text-[#1A202C] text-[20px] font-bold">{title}</h3>
-        <div className="w-full">
+        <div className="w-full mt-4">
           <div className="text-[#6b7280] text-[16px]">{description}</div>
           <div className="w-full flex justify-between items-start border border-[#e2e8f0] text-[16px] text-[#000000] bg-[#e5e5e5] rounded-md">
             <span className="w-[218px] m-2">{value}</span>
