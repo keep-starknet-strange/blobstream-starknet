@@ -1,0 +1,86 @@
+use core::option::OptionTrait;
+use core::traits::Into;
+use alexandria_bytes::BytesTrait;
+use blobstream_sn::tree::namespace::hasher::{leaf_digest, node_digest};
+use blobstream_sn::tree::namespace::merkle_tree::{Namespace, NamespaceNode, namespace_node_eq};
+use debug::PrintTrait;
+
+#[test]
+fn leaf_digest_empty_test() {
+    // nid.print();
+
+    let bytesval: u128 = 0x00000000000000000000000000000000000000000000000000000000;
+
+    let nid: Namespace = Namespace { version: 0x00, id: bytesval.into() };
+
+    let expected: NamespaceNode = NamespaceNode {
+        min: nid,
+        max: nid,
+        digest: 0x0679246d6c4216de0daa08e5523fb2674db2b6599c3b72ff946b488a15290b62
+    };
+
+    let data = BytesTrait::zero(0);
+
+    let node: NamespaceNode = leaf_digest(nid, @data);
+
+    let res = namespace_node_eq(node, expected);
+    assert(res, 'Empty leaf digest');
+}
+
+#[test]
+fn test_leaf_digest_some() {
+    let bytesval: bytes31 = bytes31_const::<
+        0xadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefde
+    >();
+    let nid = Namespace { version: 0xde, id: bytesval, };
+
+    let expected = NamespaceNode {
+        min: nid,
+        max: nid,
+        digest: 0x3624c7f7169cb5bbd0d010b851ebd0edca10b2a1b126f5fb1a6d5e0d98356e63
+    };
+
+    let mut data = BytesTrait::new_empty();
+    data.append_u8(0x69);
+
+    let node = leaf_digest(nid, @data);
+    // node.digest.print();
+    assert(node.digest == expected.digest, 'leaf digest');
+}
+// #[test]
+// fn test_node_digest() {
+//     let nid_left = Namespace {
+//         version: 0x00,
+//         id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000000>()
+//     };
+//     let nid_right = Namespace {
+//         version: 0xde,
+//         id: bytes31_const::<0xadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefde>()
+//     };
+//     let expected = NamespaceNode {
+//         min: nid_left,
+//         max: nid_right,
+//         digest: 0x95cad48bc181484c851004cf772abe767391e19549d3b8192b55b1d654a71bcd
+//     };
+//     let left = NamespaceNode {
+//         min: nid_left,
+//         max: nid_left,
+//         digest: 0xdb55da3fc3098e9c42311c6013304ff36b19ef73d12ea932054b5ad51df4f49d
+//     };
+
+//     let right = NamespaceNode {
+//         min: nid_right,
+//         max: nid_right,
+//         digest: 0xc75cb66ae28d8ebc6eded002c28a8ba0d06d3a78c6b5cbf9b2ade051f0775ac4
+//     };
+//     let node = node_digest(left, right);
+//     let res = namespace_node_eq(node, expected);
+//     assert(res, 'node digest');
+// }
+impl NamespacePrintTrait of PrintTrait<Namespace> {
+    fn print(self: Namespace) {
+        let message = array!['Namespace:', self.version.into(), self.id.into(),];
+        message.print();
+    }
+}
+

@@ -15,6 +15,7 @@ mod namespace {
     mod hasher;
     #[cfg(test)]
     mod tests {
+        mod test_hasher;
         mod test_merkle_tree;
     }
 }
