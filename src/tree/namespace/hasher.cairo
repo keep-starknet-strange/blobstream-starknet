@@ -75,7 +75,7 @@ fn node_digest(left: NamespaceNode, right: NamespaceNode) -> NamespaceNode {
 
 fn append_bytes31(ref self: Bytes, value: bytes31) {
     let mut value_u256: u256 = value.into();
-    value_u256 = U256BitShift::shl(value_u256, 8);
+    value_u256 = U256BitShift::shl(value_u256, 32);
     let mut bytes28Bytes: Bytes = BytesTrait::new(28, array![value_u256.high, value_u256.low]);
     self.concat(@bytes28Bytes);
 }

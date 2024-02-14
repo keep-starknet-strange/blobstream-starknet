@@ -42,9 +42,6 @@ mod NamespaceMerkleTree {
         namespace: Namespace,
         data: alexandria_bytes::bytes::Bytes
     ) -> bool {
-        // let node: NamespaceNode = leaf_digest(namespace, data);
-
-        // return ()
         true
     }
     // fn verify_inner(
