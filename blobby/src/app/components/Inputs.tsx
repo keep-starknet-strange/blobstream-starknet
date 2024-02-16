@@ -2,10 +2,19 @@
 import React, { ChangeEvent, useState } from "react";
 import CopyToClipboardButton from "./CopyButton";
 
+const BASE64_SVG_MIME = "data:image/svg+xml;base64,";
+
 const Inputs = () => {
   const [svg, setSvg] = useState("");
   const [text, setText] = useState("");
   const [display, setDisplay] = useState("none");
+  const [decodedBase64SVGData, setDecodedBase64SVGData] = useState("");
+  const [decodedBase64SVGError, setDecodedBase64SVGError] = useState("");
+
+  const isBase64 = (s: string) => {
+    const re = /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/;
+    return re.test(s);
+  };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.value.trim() !== "") {
@@ -13,6 +22,28 @@ const Inputs = () => {
       setSvg(e.target.value);
     } else {
       setDisplay("none");
+    }
+  };
+
+  const handleBase64SVGChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const data = e.target.value;
+
+    if (data.startsWith(BASE64_SVG_MIME)) {
+      const base64Data = data.replace(BASE64_SVG_MIME, "");
+
+      if (isBase64(base64Data)) {
+        const decodedData = atob(base64Data);
+        setDecodedBase64SVGData(decodedData);
+        setDecodedBase64SVGError("");
+      } else {
+        setDecodedBase64SVGData("");
+        setDecodedBase64SVGError(`Provided data are not base64 encoded`);
+      }
+    } else {
+      setDecodedBase64SVGData("");
+      setDecodedBase64SVGError(
+        `Invalid MIME type: does not start with ${BASE64_SVG_MIME}`
+      );
     }
   };
 
@@ -25,8 +56,7 @@ const Inputs = () => {
           </div>
           <div
             style={{ display }}
-            className="w-[5px] bg-[#E2E8F0] h-full"
-          ></div>
+            className="w-[5px] bg-[#E2E8F0] h-full"></div>
         </div>
         <div className="bg-[#ffffff] p-4 border border-[#e2e8f0] rounded-md w-full">
           <h3 className="text-[#1A202C] text-[20px] font-bold">
@@ -46,8 +76,7 @@ const Inputs = () => {
             />
             <div
               style={{ display }}
-              className=" text-white bg-[#F37567] p-2 w-[128px] h-[128px] self-center items-center justify-center mt-4 font-bold rounded-full"
-            >
+              className=" text-white bg-[#F37567] p-2 w-[128px] h-[128px] self-center items-center justify-center mt-4 font-bold rounded-full">
               <span className="text-center">{svg}</span>
             </div>
           </div>
@@ -102,7 +131,18 @@ const Inputs = () => {
                 id="svg"
                 name="svg"
                 required
+                onChange={handleBase64SVGChange}
               />
+              {decodedBase64SVGError && (
+                <div className="mt-1 text-xs text-red-500">
+                  {decodedBase64SVGError}
+                </div>
+              )}
+              {decodedBase64SVGData && (
+                <div
+                  dangerouslySetInnerHTML={{ __html: decodedBase64SVGData }}
+                />
+              )}
             </div>
           </div>
         </div>
