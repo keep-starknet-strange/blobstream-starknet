@@ -5,43 +5,78 @@ import CopyToClipboardButton from "./CopyButton";
 const BASE64_SVG_MIME = "data:image/svg+xml;base64,";
 
 const Inputs = () => {
-  const [svg, setSvg] = useState("");
-  const [text, setText] = useState("");
+  const [svgText, setSvgText] = useState("");
   const [display, setDisplay] = useState("none");
-  const [decodedBase64SVGData, setDecodedBase64SVGData] = useState("");
-  const [decodedBase64SVGError, setDecodedBase64SVGError] = useState("");
+  const [svgEncodedData, setSvgEncodedData] = useState("");
+
+  const [svgDecodedData, setSvgDecodedData] = useState("");
+  const [svgDecodingError, setSvgDecodingError] = useState("");
 
   const isBase64 = (s: string) => {
     const re = /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/;
     return re.test(s);
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.trim() !== "") {
+  const buildSvgFromText = (userText: string) => {
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="128px" height="128px">
+      <circle cx="64" cy="64" r="64" fill="#F37567" />
+      <text
+        x="64"
+        y="64"
+        font-size="16px"
+        font-weight="700"
+        font-family="sans-serif"
+        text-anchor="middle"
+        dy=".3em"
+        fill="white">
+        ${userText}
+      </text>
+    </svg>`;
+  };
+
+  const encodeSvg = (userText: string) => {
+    const svg = buildSvgFromText(userText);
+    const svgInBase64 = btoa(svg);
+    setSvgEncodedData(`${BASE64_SVG_MIME}${svgInBase64}`);
+  };
+
+  const handleSVGTextChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const userText = e.target.value;
+
+    if (userText.trim() !== "") {
       setDisplay("flex");
-      setSvg(e.target.value);
+      setSvgText(userText);
+      encodeSvg(userText);
     } else {
       setDisplay("none");
+      setSvgText("");
+      setSvgEncodedData("");
     }
   };
 
   const handleBase64SVGChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const data = e.target.value;
+    const eventData = e.target.value;
 
-    if (data.startsWith(BASE64_SVG_MIME)) {
-      const base64Data = data.replace(BASE64_SVG_MIME, "");
+    if (eventData.length === 0) {
+      setSvgDecodedData("");
+      setSvgDecodingError("");
+      return;
+    }
+
+    if (eventData.startsWith(BASE64_SVG_MIME)) {
+      const base64Data = eventData.replace(BASE64_SVG_MIME, "");
 
       if (isBase64(base64Data)) {
         const decodedData = atob(base64Data);
-        setDecodedBase64SVGData(decodedData);
-        setDecodedBase64SVGError("");
+        setSvgDecodedData(decodedData);
+        setSvgDecodingError("");
       } else {
-        setDecodedBase64SVGData("");
-        setDecodedBase64SVGError(`Provided data are not base64 encoded`);
+        setSvgDecodedData("");
+        setSvgDecodingError(`Provided data are not base64 encoded`);
       }
     } else {
-      setDecodedBase64SVGData("");
-      setDecodedBase64SVGError(
+      setSvgDecodedData("");
+      setSvgDecodingError(
         `Invalid MIME type: does not start with ${BASE64_SVG_MIME}`
       );
     }
@@ -72,13 +107,14 @@ const Inputs = () => {
               id="svg"
               name="svg"
               required
-              onChange={handleInputChange}
+              onChange={handleSVGTextChange}
             />
-            <div
-              style={{ display }}
-              className=" text-white bg-[#F37567] p-2 w-[128px] h-[128px] self-center items-center justify-center mt-4 font-bold rounded-full">
-              <span className="text-center">{svg}</span>
-            </div>
+            {svgText.length > 0 && (
+              <div
+                className="my-4 mx-auto"
+                dangerouslySetInnerHTML={{ __html: buildSvgFromText(svgText) }}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -87,7 +123,7 @@ const Inputs = () => {
           num={2}
           title="💾 Save the SVG as a variable "
           description="In your terminal, set the SVG variable: "
-          value={`export SVG="data:image/svg+xml;base64,CiAgICAgIDxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+CiAgICAgICAgPGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNDAiIGZpbGw9IiNhZDExZjciIC8+CiAgICAgICAgPHRleHQgeD0iNTAiIHk9IjUwIiBmb250LXNpemU9IjEyIiBmb250LWZhbWlseT0ic2Fucy1zZXJpZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZpbGw9IndoaXRlIj5GbG9yaWFuPC90ZXh0PgogICAgICA8L3N2Zz4KICAgIA=="`}
+          value={`export SVG="${svgEncodedData || ""}"`}
         />
         <SetInputs1
           num={3}
@@ -133,14 +169,15 @@ const Inputs = () => {
                 required
                 onChange={handleBase64SVGChange}
               />
-              {decodedBase64SVGError && (
+              {svgDecodingError && (
                 <div className="mt-1 text-xs text-red-500">
-                  {decodedBase64SVGError}
+                  {svgDecodingError}
                 </div>
               )}
-              {decodedBase64SVGData && (
+              {svgDecodedData && (
                 <div
-                  dangerouslySetInnerHTML={{ __html: decodedBase64SVGData }}
+                  className="my-4 mx-auto"
+                  dangerouslySetInnerHTML={{ __html: svgDecodedData }}
                 />
               )}
             </div>
