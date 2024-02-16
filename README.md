@@ -55,6 +55,7 @@ We live on contributions. If you'd like to contribute please follow the [guide](
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/FlorianLgrs"><img src="https://avatars.githubusercontent.com/u/96090364?v=4?s=100" width="100px;" alt="FlorianLgrs"/><br /><sub><b>FlorianLgrs</b></sub></a><br /><a href="https://github.com/keep-starknet-strange/blobstream-starknet/commits?author=FlorianLgrs" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ametel01"><img src="https://avatars.githubusercontent.com/u/91626827?v=4?s=100" width="100px;" alt="Alex Metelli"/><br /><sub><b>Alex Metelli</b></sub></a><br /><a href="https://github.com/keep-starknet-strange/blobstream-starknet/commits?author=ametel01" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/faytey"><img src="https://avatars.githubusercontent.com/u/40033608?v=4?s=100" width="100px;" alt="faytey"/><br /><sub><b>faytey</b></sub></a><br /><a href="https://github.com/keep-starknet-strange/blobstream-starknet/commits?author=faytey" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/remybar"><img src="https://avatars.githubusercontent.com/u/57539816?v=4?s=100" width="100px;" alt="Rémy Baranx"/><br /><sub><b>Rémy Baranx</b></sub></a><br /><a href="https://github.com/keep-starknet-strange/blobstream-starknet/commits?author=remybar" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

@@ -12,6 +12,7 @@ const HeroText = () => {
         <a
           href="https://docs.celestia.org/developers/node-tutorial"
           target="_blank"
+          className="text-[#F37567]"
         >
           run a Celestia light node
         </a>
@@ -20,6 +21,7 @@ const HeroText = () => {
         <a
           href="https://docs.celestia.org/developers/node-tutorial"
           target="_blank"
+          className="text-[#F37567]"
         >
           RPC API and the Celestia Node CLI guide.
         </a>
