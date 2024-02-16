@@ -1,9 +1,9 @@
-use core::option::OptionTrait;
-use core::traits::Into;
 use alexandria_bytes::BytesTrait;
+use blobstream_sn::tree::consts::{parity_share_namespace};
 use blobstream_sn::tree::namespace::hasher::{leaf_digest, node_digest};
 use blobstream_sn::tree::namespace::merkle_tree::{Namespace, NamespaceNode, namespace_node_eq};
-use blobstream_sn::tree::consts::{parity_share_namespace};
+use core::option::OptionTrait;
+use core::traits::Into;
 use debug::PrintTrait;
 
 #[test]

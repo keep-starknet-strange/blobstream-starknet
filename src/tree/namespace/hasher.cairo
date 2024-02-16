@@ -1,11 +1,11 @@
 use alexandria_bytes::Bytes;
 use alexandria_bytes::BytesTrait;
+use alexandria_math::U256BitShift;
+use blobstream_sn::tree::consts::{LEAF_PREFIX, NODE_PREFIX, parity_share_namespace};
 use blobstream_sn::tree::namespace::merkle_tree::{
     Namespace, NamespaceNode, NamespaceMerkleMultiproof, NamespaceMerkleProof
 };
-use alexandria_math::U256BitShift;
 use debug::PrintTrait;
-use blobstream_sn::tree::consts::{LEAF_PREFIX, NODE_PREFIX, parity_share_namespace};
 
 fn leaf_digest(namespace: Namespace, data: @Bytes) -> NamespaceNode {
     let mut bytes = BytesTrait::new_empty();

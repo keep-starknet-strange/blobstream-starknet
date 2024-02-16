@@ -11,8 +11,8 @@ mod binary {
     }
 }
 mod namespace {
-    mod merkle_tree;
     mod hasher;
+    mod merkle_tree;
     #[cfg(test)]
     mod tests {
         mod test_hasher;

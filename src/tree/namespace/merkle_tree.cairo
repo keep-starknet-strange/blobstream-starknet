@@ -28,14 +28,14 @@ struct NamespaceMerkleProof {
     num_leaves: u256,
 }
 mod NamespaceMerkleTree {
-    use alexandria_math::{pow, BitShift};
-    use alexandria_math::U256BitShift;
-    use alexandria_bytes::bytes::Bytes;
-    use super::namespace_node_eq;
-    use super::{Namespace, NamespaceNode, NamespaceMerkleMultiproof, NamespaceMerkleProof};
     use alexandria_bytes::BytesTrait;
+    use alexandria_bytes::bytes::Bytes;
+    use alexandria_math::U256BitShift;
+    use alexandria_math::{pow, BitShift};
     use blobstream_sn::tree::namespace::hasher::{leaf_digest, node_digest};
     use blobstream_sn::tree::utils::{path_length_from_key, get_split_point};
+    use super::namespace_node_eq;
+    use super::{Namespace, NamespaceNode, NamespaceMerkleMultiproof, NamespaceMerkleProof};
     fn verify(
         root: NamespaceNode,
         proof: NamespaceMerkleProof,
