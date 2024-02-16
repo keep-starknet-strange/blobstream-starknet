@@ -8,9 +8,9 @@ use debug::PrintTrait;
 
 #[test]
 fn leaf_digest_empty_test() {
-    // nid.print();
-
-    let bytesval: u128 = 0x00000000000000000000000000000000000000000000000000000000;
+    let bytesval: bytes31 = bytes31_const::<
+        0x00000000000000000000000000000000000000000000000000000000
+    >();
 
     let nid: Namespace = Namespace { version: 0x00, id: bytesval.into() };
 
@@ -20,12 +20,12 @@ fn leaf_digest_empty_test() {
         digest: 0x0679246d6c4216de0daa08e5523fb2674db2b6599c3b72ff946b488a15290b62
     };
 
-    let data = BytesTrait::zero(0);
+    let data = BytesTrait::new_empty();
 
     let node: NamespaceNode = leaf_digest(nid, @data);
 
     let res = namespace_node_eq(node, expected);
-    assert(res, 'Not equal to expected digest');
+    assert!(res, "Not equal to expected digest");
 }
 
 #[test]
@@ -45,7 +45,7 @@ fn test_leaf_digest_some() {
     data.append_u8(0x69);
 
     let node = leaf_digest(nid, @data);
-    assert(node.digest == expected.digest, 'Not equal to expected digest');
+    assert!(node.digest == expected.digest, "Not equal to expected digest");
 }
 #[test]
 fn test_node_digest() {
@@ -75,7 +75,7 @@ fn test_node_digest() {
     };
     let node = node_digest(left, right);
     let res = namespace_node_eq(node, expected);
-    assert(res, 'Not equal to expected digest');
+    assert!(res, "Not equal to expected digest");
 }
 
 #[test]
@@ -108,14 +108,6 @@ fn test_node_parity() {
 
     let node = node_digest(left, right);
     let res = namespace_node_eq(node, expected);
-    assert(res, 'Not equal to expected digest');
-}
-
-
-impl NamespacePrintTrait of PrintTrait<Namespace> {
-    fn print(self: Namespace) {
-        let message = array!['Namespace:', self.version.into(), self.id.into(),];
-        message.print();
-    }
+    assert!(res, "Not equal to expected digest");
 }
 
