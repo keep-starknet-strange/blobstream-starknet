@@ -5,7 +5,6 @@ use blobstream_sn::tree::consts::{LEAF_PREFIX, NODE_PREFIX, parity_share_namespa
 use blobstream_sn::tree::namespace::merkle_tree::{
     Namespace, NamespaceNode, NamespaceMerkleMultiproof, NamespaceMerkleProof
 };
-use debug::PrintTrait;
 
 fn leaf_digest(namespace: Namespace, data: @Bytes) -> NamespaceNode {
     let mut bytes = BytesTrait::new_empty();
@@ -29,6 +28,7 @@ fn namespace_max(l: Namespace, r: Namespace) -> Namespace {
     }
     return r;
 }
+
 fn node_digest(left: NamespaceNode, right: NamespaceNode) -> NamespaceNode {
     let mut min: Namespace = namespace_min(left.min, right.min);
     let mut max: Namespace = namespace_max(left.max, right.max);

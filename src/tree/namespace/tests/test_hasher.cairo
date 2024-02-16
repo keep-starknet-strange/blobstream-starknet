@@ -4,7 +4,6 @@ use blobstream_sn::tree::namespace::hasher::{leaf_digest, node_digest};
 use blobstream_sn::tree::namespace::merkle_tree::{Namespace, NamespaceNode, namespace_node_eq};
 use core::option::OptionTrait;
 use core::traits::Into;
-use debug::PrintTrait;
 
 #[test]
 fn leaf_digest_empty_test() {
@@ -12,7 +11,7 @@ fn leaf_digest_empty_test() {
         0x00000000000000000000000000000000000000000000000000000000
     >();
 
-    let nid: Namespace = Namespace { version: 0x00, id: bytesval.into() };
+    let nid: Namespace = Namespace { version: 0x00, id: bytesval };
 
     let expected: NamespaceNode = NamespaceNode {
         min: nid,
@@ -47,6 +46,7 @@ fn test_leaf_digest_some() {
     let node = leaf_digest(nid, @data);
     assert!(node.digest == expected.digest, "Not equal to expected digest");
 }
+
 #[test]
 fn test_node_digest() {
     let nid_left = Namespace {
@@ -110,4 +110,3 @@ fn test_node_parity() {
     let res = namespace_node_eq(node, expected);
     assert!(res, "Not equal to expected digest");
 }
-
