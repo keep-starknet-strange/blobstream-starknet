@@ -2,15 +2,42 @@
 
 ![BSN Module](../assets/blobstreamSnModule.png)
 
-Blobstream allows Celestia block header data roots to be relayed
-***from Celestia to Starknet.***
+Blobstream Starknet is an integration of Celestia's modular Data Availability layer with Starknet. This solution allows Starknet L3 to submit data to Celestia though Blobstream.
 
-It does not support bridging assets such as fungible
-or non-fungible tokens directly, and cannot send messages from the Starknet
-back to Celestia.
+## Blobstream : Modular Data Availability Layer
 
-`blobstream_sn` is a port of Celestia Blobstream in Cairo deployed on Starknet:
+Blobstream is a solution developed by Celestia Labs to stream Celestia's modular DA layer to Ethereum. It relays commitments of Celestia's data root using an on-chain light client. This enables Ethereum developers to create scalable L2.
 
-- [Solidity Blobstream Contracts](https://github.com/celestiaorg/blobstream-contracts)
+Blobstream is based on Data Availability Sampling (DAS). It allows any user to contribute to DA for rollups by running a sampling light node. As the light node network grows, Celestia can scale without compromising security for end users.
+
+To optimize Celestia as a DA layer, Succinct Labs contributed **Blobstream X**, a zero-knowledge (ZK) implementation that uses a ZK light client to verify Celestia validator signatures on-chain with a single ZK proof. This approach reduces overhead for validators, simplifies the core Celestia protocol, and enables faster streaming of data root commitments for Ethereum L2s.
+
+## Why Starknet L3 should use Blobstream
+
+Several key differences highlight the advantages of using Celestia's Blobstream for DA instead of relying on Data Availability Committee (DAC).
+
+### Scalability
+
+The scalability of a DAC can be limited by its structure. With a modular approach to DA, Blobstream maximise data throughput by providing dedicated blobspace that is priced independently of Ethereum gas costs and unrelated to execution.
+
+### Decentralization
+
+DACs relies on a select group of nodes which can lead to points of failure. Blobstream decentralizes the process by spreading data across wider network to enhance security. Light nodes can detect if up to two-thirds of Celestia validators withhold data or produce invalid blocks, holding them accountable via slashing.
+
+### Trust and transparency
+
+In a DAC, users must trust the commitee to act honestly and make data available whereas Blobstream's use of cryptographic proofs for data availability offers a higher degree of transparency and trustlessness. Users don't need to trust individual actors anymore. 
+
+## How does it work ? 
+
+As Starknet does not natively support Ethereum Virtual Machine (EVM). The Blobstream X contracts had to rewrited from Solidity to Cairo. 
+
+For a Starknet L3 to use Celestia as DA, it needs to : 
+- Post data to Celestia
+- Interact with the [core contract](./l3_starknet/core_contract.md) on Starknet to verify proofs and check DA via the blobstream DA contract  
+
+
+Useful links : 
+- [Solidity Blobstream X Contracts](https://github.com/succinctlabs/blobstreamx)
 - [Cairo](https://book.cairo-lang.org/)
 - [Starknet](https://docs.starknet.io/documentation)
