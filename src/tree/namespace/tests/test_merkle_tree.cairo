@@ -1,4 +1,7 @@
-use blobstream_sn::tree::namespace::merkle_tree::{NamespaceNode, Namespace};
+use blobstream_sn::tree::namespace::merkle_tree::{NamespaceNode, Namespace, NamespaceMerkleProof};
+use blobstream_sn::tree::namespace::merkle_tree::NamespaceMerkleTree::verify;
+use alexandria_bytes::BytesTrait;
+use debug::PrintTrait;
 
 #[test]
 fn testing_partial_ord_and_eq() {
@@ -13,3 +16,28 @@ fn testing_partial_ord_and_eq() {
     assert(b31.at(14) >= 0x03, 'Invalid assertion');
     assert(b31.at(17) <= 0x11, 'Invalid assertion');
 }
+#[test]
+fn test_verify_none() {
+    let nid: Namespace = Namespace {
+        version: 0x00,
+        id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000000>(),
+    };
+
+    let root: NamespaceNode = NamespaceNode {
+        min: nid, max: nid, digest: BytesTrait::new_empty().sha256()
+    };
+
+    let side_nodes: Array<NamespaceNode> = array![];
+    let key: u256 = 0;
+    let num_leaves: u256 = 0;
+    let proof: NamespaceMerkleProof = NamespaceMerkleProof {
+        side_nodes: side_nodes, key: key, num_leaves: num_leaves,
+    };
+
+    let data = BytesTrait::new_empty();
+    let is_valid = verify(root, proof, nid, data);
+    is_valid.print();
+
+    assert!(is_valid == true, "Invalid")
+}
+
