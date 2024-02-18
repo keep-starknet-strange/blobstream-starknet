@@ -96,12 +96,13 @@ fn fee_vault_deposit_native() {
     let (erc20, fee_vault) = setup_contracts();
     erc20.mint_to(SPENDER(), 0x10000);
     start_prank(CheatTarget::One(erc20.contract_address), SPENDER());
-    erc20.approve(fee_vault.contract_address, 0x10000);
+    let fee = starknet::info::get_tx_info().unbox().max_fee.into();
+    erc20.approve(fee_vault.contract_address, fee);
     stop_prank(CheatTarget::One(erc20.contract_address));
     start_prank(CheatTarget::One(fee_vault.contract_address), SPENDER());
-    fee_vault.deposit_native(SPENDER(), 0x10000);
+    fee_vault.deposit_native(SPENDER());
     assert(
-        fee_vault.get_balances_infos(SPENDER(), erc20.contract_address) == 0x10000,
+        fee_vault.get_balances_infos(SPENDER(), erc20.contract_address) == fee,
         'balances not updated'
     );
     stop_prank(CheatTarget::One(fee_vault.contract_address));
@@ -154,6 +155,7 @@ fn fee_vault_deposit_fails_if_insufficent_allowance() {
 #[test]
 fn fee_vault_deduct_native() {
     let (erc20, fee_vault) = setup_contracts();
+    let fee = starknet::info::get_tx_info().unbox().max_fee.into();
     start_prank(CheatTarget::One(fee_vault.contract_address), OWNER());
     fee_vault.add_deductor(SPENDER());
     stop_prank(CheatTarget::One(fee_vault.contract_address));
@@ -162,10 +164,14 @@ fn fee_vault_deduct_native() {
     erc20.approve(fee_vault.contract_address, 0x10000);
     stop_prank(CheatTarget::One(erc20.contract_address));
     start_prank(CheatTarget::One(fee_vault.contract_address), SPENDER());
-    fee_vault.deposit_native(SPENDER(), 0x10000);
-    fee_vault.deduct_native(SPENDER(), 0x8000);
+    fee_vault.deposit_native(SPENDER());
     assert(
-        fee_vault.get_balances_infos(SPENDER(), erc20.contract_address) == 0x10000 - 0x8000,
+        fee_vault.get_balances_infos(SPENDER(), erc20.contract_address) == fee ,
+        'balances deposit not updated'
+    );
+    fee_vault.deduct_native(SPENDER());
+    assert(
+        fee_vault.get_balances_infos(SPENDER(), erc20.contract_address) == 0,
         'balances deduct not updated'
     );
     stop_prank(CheatTarget::One(fee_vault.contract_address));

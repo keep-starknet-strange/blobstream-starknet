@@ -155,7 +155,7 @@ mod gateway {
             let fee_vault = IFeeVaultDispatcher { contract_address: fee_vault_address };
             fee_vault
                 .deposit_native(
-                    callback_addr, starknet::info::get_tx_info().unbox().max_fee.into()
+                    callback_addr
                 );
 
             request_hash
@@ -197,8 +197,7 @@ mod gateway {
             let fee_vault = IFeeVaultDispatcher { contract_address: fee_vault_address };
             fee_vault
                 .deposit_native(
-                    starknet::info::get_caller_address(),
-                    starknet::info::get_tx_info().unbox().max_fee.into()
+                    starknet::info::get_caller_address()
                 );
         }
 

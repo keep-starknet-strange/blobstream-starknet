@@ -60,11 +60,11 @@ trait IFeeVault<TContractState> {
     ) -> u256;
     fn add_deductor(ref self: TContractState, _deductor: ContractAddress);
     fn remove_deductor(ref self: TContractState, _deductor: ContractAddress);
-    fn deposit_native(ref self: TContractState, _account: ContractAddress, _amount: u256);
+    fn deposit_native(ref self: TContractState, _account: ContractAddress);
     fn deposit(
         ref self: TContractState, _account: ContractAddress, _token: ContractAddress, _amount: u256
     );
-    fn deduct_native(ref self: TContractState, _account: ContractAddress, _amount: u256);
+    fn deduct_native(ref self: TContractState, _account: ContractAddress);
     fn deduct(
         ref self: TContractState, _account: ContractAddress, _token: ContractAddress, _amount: u256
     );

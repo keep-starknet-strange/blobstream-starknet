@@ -146,10 +146,9 @@ mod succinct_fee_vault {
         /// Dev: MUST approve this contract to spend at least _amount of the native_currency before calling this.
         /// # Arguments
         /// * `_account` - The account to deposit the native currency for.
-        /// * `_amount` - The amoun to deposit. 
-        fn deposit_native(ref self: ContractState, _account: ContractAddress, _amount: u256) {
+        fn deposit_native(ref self: ContractState, _account: ContractAddress) {
             let native_currency = self.native_currency_address.read();
-            self.deposit(_account, native_currency, _amount);
+            self.deposit(_account, native_currency, starknet::info::get_tx_info().unbox().max_fee.into());
         }
 
         /// Deposit the specified amount of the specified token from the caller.
@@ -180,12 +179,11 @@ mod succinct_fee_vault {
         /// Deduct the specified amount of native currency from the specified account.
         /// # Arguments
         /// * `_account` - The account to deduct the native currency from.
-        /// * `_amount` - The amount of native currency to deduct.
-        fn deduct_native(ref self: ContractState, _account: ContractAddress, _amount: u256) {
+        fn deduct_native(ref self: ContractState, _account: ContractAddress) {
             let caller_address = get_caller_address();
             let native_currency = self.native_currency_address.read();
             assert(self.allowed_deductors.read(caller_address), Errors::OnlyDeductor);
-            self.deduct(_account, native_currency, _amount);
+            self.deduct(_account, native_currency, starknet::info::get_tx_info().unbox().max_fee.into());
         }
 
         /// Deduct the specified amount of native currency from the specified account.
