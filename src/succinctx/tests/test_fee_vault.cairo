@@ -166,7 +166,7 @@ fn fee_vault_deduct_native() {
     start_prank(CheatTarget::One(fee_vault.contract_address), SPENDER());
     fee_vault.deposit_native(SPENDER());
     assert(
-        fee_vault.get_balances_infos(SPENDER(), erc20.contract_address) == fee ,
+        fee_vault.get_balances_infos(SPENDER(), erc20.contract_address) == fee,
         'balances deposit not updated'
     );
     fee_vault.deduct_native(SPENDER());

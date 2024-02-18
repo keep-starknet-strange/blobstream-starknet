@@ -153,10 +153,7 @@ mod gateway {
             let fee_vault_address = self.fee_vault_address.read();
             assert(!fee_vault_address.is_zero(), Errors::FEE_VAULT_NOT_INITIALIZED);
             let fee_vault = IFeeVaultDispatcher { contract_address: fee_vault_address };
-            fee_vault
-                .deposit_native(
-                    callback_addr
-                );
+            fee_vault.deposit_native(callback_addr);
 
             request_hash
         }
@@ -195,10 +192,7 @@ mod gateway {
             let fee_vault_address = self.fee_vault_address.read();
             assert(!fee_vault_address.is_zero(), Errors::FEE_VAULT_NOT_INITIALIZED);
             let fee_vault = IFeeVaultDispatcher { contract_address: fee_vault_address };
-            fee_vault
-                .deposit_native(
-                    starknet::info::get_caller_address()
-                );
+            fee_vault.deposit_native(starknet::info::get_caller_address());
         }
 
         /// If the call matches the currently verified function, returns the output. 

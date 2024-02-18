@@ -148,7 +148,10 @@ mod succinct_fee_vault {
         /// * `_account` - The account to deposit the native currency for.
         fn deposit_native(ref self: ContractState, _account: ContractAddress) {
             let native_currency = self.native_currency_address.read();
-            self.deposit(_account, native_currency, starknet::info::get_tx_info().unbox().max_fee.into());
+            self
+                .deposit(
+                    _account, native_currency, starknet::info::get_tx_info().unbox().max_fee.into()
+                );
         }
 
         /// Deposit the specified amount of the specified token from the caller.
@@ -183,7 +186,10 @@ mod succinct_fee_vault {
             let caller_address = get_caller_address();
             let native_currency = self.native_currency_address.read();
             assert(self.allowed_deductors.read(caller_address), Errors::OnlyDeductor);
-            self.deduct(_account, native_currency, starknet::info::get_tx_info().unbox().max_fee.into());
+            self
+                .deduct(
+                    _account, native_currency, starknet::info::get_tx_info().unbox().max_fee.into()
+                );
         }
 
         /// Deduct the specified amount of native currency from the specified account.
