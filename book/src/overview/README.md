@@ -2,7 +2,7 @@
 
 ![BSN Module](../assets/blobstreamSnModule.png)
 
-Blobstream Starknet is an integration of Celestia's modular Data Availability layer with Starknet. This solution allows Starknet L3 to submit data to Celestia though Blobstream.
+Blobstream Starknet is an integration of Celestia's modular Data Availability layer with Starknet. This solution allows Starknet L3 to submit data to Celestia through Blobstream.
 
 ## Blobstream : Modular Data Availability Layer
 
@@ -18,11 +18,11 @@ Several key differences highlight the advantages of using Celestia's Blobstream 
 
 ### Scalability
 
-The scalability of a DAC can be limited by its structure. With a modular approach to DA, Blobstream maximise data throughput by providing dedicated blobspace that is priced independently of Ethereum gas costs and unrelated to execution.
+The scalability of a DAC can be limited by its structure. With a modular approach to DA, Blobstream maximises data throughout by providing dedicated blobspace that is priced independently of Ethereum gas costs and unrelated to execution.
 
 ### Decentralization
 
-DACs relies on a select group of nodes which can lead to points of failure. Blobstream decentralizes the process by spreading data across wider network to enhance security. Light nodes can detect if up to two-thirds of Celestia validators withhold data or produce invalid blocks, holding them accountable via slashing.
+DACs rely on a selected group of nodes which can lead to points of failure. Blobstream decentralizes the process by spreading data across a wider network to enhance security. Light nodes can detect if up to two-thirds of Celestia validators withhold data or produce invalid blocks, holding them accountable via slashing.
 
 ### Trust and transparency
 
@@ -30,11 +30,13 @@ In a DAC, users must trust the commitee to act honestly and make data available 
 
 ## How does it work ? 
 
-As Starknet does not natively support Ethereum Virtual Machine (EVM). The Blobstream X contracts had to rewrited from Solidity to Cairo. 
+As Starknet does not natively support Ethereum Virtual Machine (EVM). The Blobstream X contracts had to be rewrited from Solidity to Cairo. 
 
-For a Starknet L3 to use Celestia as DA, it needs to : 
-- Post data to Celestia
-- Interact with the [core contract](./l3_starknet/core_contract.md) on Starknet to verify proofs and check DA via the blobstream DA contract  
+Each L3 would need to deploy a [core contract](./l3_starknet/core_contract.md). They would need to either fork [piltover](https://github.com/keep-starknet-strange/piltover) or create new core contracts if they work significantly different from Starknet.
+
+Then the Starknet L3 can use Celestia as DA by : 
+- Posting data to Celestia
+- Interacting with the Core Contract to verify proofs and check DA via the [blobstream DA contract](./l3_starknet/verifier.md)  
 
 
 Useful links : 
