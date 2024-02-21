@@ -181,14 +181,51 @@
                     <main>
                         <h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
 <p><img src="../assets/blobstreamSnModule.png" alt="BSN Module" /></p>
-<p>Blobstream allows Celestia block header data roots to be relayed
-<em><strong>from Celestia to Starknet.</strong></em></p>
-<p>It does not support bridging assets such as fungible
-or non-fungible tokens directly, and cannot send messages from the Starknet
-back to Celestia.</p>
-<p><code>blobstream_sn</code> is a port of Celestia Blobstream in Cairo deployed on Starknet:</p>
+<p>Blobstream Starknet integrates Celestia's modular Data Availability layer with
+Starknet, allowing L3s and dapps to submit DA to Celestia and then verify DA on
+Starknet through Blobstream.</p>
+<h2 id="blobstream--modular-data-availability-layer"><a class="header" href="#blobstream--modular-data-availability-layer">Blobstream : Modular Data Availability Layer</a></h2>
+<p><a href="https://blog.celestia.org/introducing-blobstream/">Blobstream</a> is a solution
+developed by Celestia Labs to stream Celestia's modular DA layer to Ethereum.
+Blobstream relays commitments of Celestia's data root using an on-chain light
+client. This enables Ethereum developers to create scalable L2s.</p>
+<p>Celestia is based on Data Availability Sampling (DAS), which allows any user
+to contribute to DA for rollups by running a sampling light node. As the light
+node network grows, Celestia can scale without compromising security for end users.</p>
+<p>To optimize Celestia as a DA layer, Succinct Labs contributed <strong>Blobstream X</strong>,
+a zero-knowledge (ZK) implementation that uses a ZK light client to verify
+Celestia validator signatures on-chain with a single ZK proof. This approach
+reduces overhead for validators, simplifies the core Celestia protocol, and
+enables faster streaming of data root commitments for Ethereum L2s.</p>
+<h2 id="why-starknet-l3s-should-use-celestia"><a class="header" href="#why-starknet-l3s-should-use-celestia">Why Starknet L3s should use Celestia</a></h2>
+<p>Several key differences highlight the advantages of using Celestia for DA.</p>
+<h3 id="scalability"><a class="header" href="#scalability">Scalability</a></h3>
+<p>With a modular approach to DA, Celestia maximizes data throughout by providing
+dedicated blobspace that is priced independently of Ethereum gas costs and
+unrelated execution. Also, by taking advantage of <a href="https://hackmd.io/@vbuterin/sharding_proposal">DAS and erasure codings</a>,
+Celestia nodes can verify DA without checking all of the blob data posted.</p>
+<h3 id="decentralization-and-transparency"><a class="header" href="#decentralization-and-transparency">Decentralization and Transparency</a></h3>
+<p>Other DA solutions, such as <a href="https://celestia.org/glossary/data-availability-committee/">Data Availability Committees</a>,
+introduce significant trust assumptions and liveness issues. This includes
+relying on a small committee of nodes to not withhold data. Celestia decentralizes
+the process by introducing a POS network where light nodes can detect if up to
+two-thirds of validators withhold data or produce invalid blocks, holding them
+accountable via slashing.</p>
+<h2 id="how-does-it-work"><a class="header" href="#how-does-it-work">How does it work</a></h2>
+<p>The Blobstream Starknet contracts are ported into Cairo from their
+<a href="https://github.com/succinctlabs/blobstreamx">Solidity counterparts</a>, allowing
+for more efficient and STARK-friendly execution.</p>
+<p>L3s using Blobstream for DA verification must deploy a <a href="./l3_starknet/core_contract.html">core contract</a>
+onto Starknet L2. Starknet-like L3s could use <a href="https://github.com/keep-starknet-strange/piltover">piltover</a>,
+a Cairo port for Starknet's L1 core contract.</p>
+<p>Then the Starknet L3 can use Celestia as DA by :</p>
 <ul>
-<li><a href="https://github.com/celestiaorg/blobstream-contracts">Solidity Blobstream Contracts</a></li>
+<li>Posting blob data to Celestia</li>
+<li>Verifying the blobs DA on L2 via the <a href="https://github.com/keep-starknet-strange/blobstream-starknet/blob/main/src/lib.cairo">BlobstreamX contract</a></li>
+</ul>
+<p>Useful links :</p>
+<ul>
+<li><a href="https://github.com/succinctlabs/blobstreamx">Solidity Blobstream X Contracts</a></li>
 <li><a href="https://book.cairo-lang.org/">Cairo</a></li>
 <li><a href="https://docs.starknet.io/documentation">Starknet</a></li>
 </ul>
