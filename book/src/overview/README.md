@@ -24,18 +24,19 @@ With a modular approach to DA, Celestia maximizes data throughout by providing d
 
 Other DA solutions, such as [Data Availability Committees](https://celestia.org/glossary/data-availability-committee/), introduce significant trust assumptions and liveness issues. This includes relying on a small committee of nodes to not withhold data. Celestia decentralizes the process by introducing a POS network where light nodes can detect if up to two-thirds of validators withhold data or produce invalid blocks, holding them accountable via slashing.
 
-## How does it work ? 
+## How does it work ?
 
 The Blobstream Starknet contracts are ported into Cairo from their [Solidity counterparts](https://github.com/succinctlabs/blobstreamx), allowing for more efficient and STARK-friendly execution.
 
 L3s using Blobstream for DA verification must deploy a [core contract](./l3_starknet/core_contract.md) onto Starknet L2. Starknet-like L3s could use [piltover](https://github.com/keep-starknet-strange/piltover), a Cairo port for Starknet's L1 core contract.
 
-Then the Starknet L3 can use Celestia as DA by : 
+Then the Starknet L3 can use Celestia as DA by :
+
 - Posting blob data to Celestia
 - Interacting with the Core Contract to verify proofs and check DA via the [BlobstreamX contract](https://github.com/keep-starknet-strange/blobstream-starknet/blob/main/src/lib.cairo) to produce a state update
 
+Useful links :
 
-Useful links : 
 - [Solidity Blobstream X Contracts](https://github.com/succinctlabs/blobstreamx)
 - [Cairo](https://book.cairo-lang.org/)
 - [Starknet](https://docs.starknet.io/documentation)
