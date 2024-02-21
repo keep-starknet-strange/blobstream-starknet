@@ -12,7 +12,7 @@
 
 ## Overview
 
-`blobstream_sn` is a port of Celestia Blobstream X [contracts](https://github.com/celestiaorg/blobstream-contracts)
+`blobstream_sn` is a port of Celestia Blobstream X [contracts](https://github.com/succinctlabs/blobstreamx)
 in [Cairo](https://book.cairo-lang.org/) for [Starknet](https://starknet.io/).
 
 See the book to dive down the [blobhole...](https://blobstream-stark.net)
