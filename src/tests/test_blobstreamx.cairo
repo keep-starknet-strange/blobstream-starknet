@@ -3,7 +3,8 @@ use blobstream_sn::interfaces::{
     IBlobstreamXDispatcher, IBlobstreamXDispatcherTrait, Validator, ITendermintXDispatcher,
     ITendermintXDispatcherTrait
 };
-use blobstream_sn::tests::common::{setup_base, setup_spied, TEST_GATEWAY};
+use blobstream_sn::succinctx::interfaces::{ISuccinctGateway, ISuccinctGatewayDispatcher};
+use blobstream_sn::tests::common::{setup_base, setup_spied, setup_succinct_gateway};
 use snforge_std::{EventSpy, EventAssertions, store, map_entry_address};
 use starknet::secp256_trait::Signature;
 use starknet::{EthAddress, info::get_block_number};
@@ -22,10 +23,8 @@ fn blobstreamx_constructor_vals() {
     let blobstreamx = setup_blobstreamx();
 
     assert!(blobstreamx.data_commitment_max() == 1000, "max skip constnat invalid");
-    assert!(blobstreamx.get_gateway().into() == TEST_GATEWAY, "gateway addr invalid");
     assert!(blobstreamx.get_state_proof_nonce() == 1, "state proof nonce invalid");
 }
-
 
 #[test]
 fn blobstreamx_commit_header_range() {
@@ -133,7 +132,6 @@ fn blobstreamx_request_header_range_latest_header_null() {
 #[should_panic(expected: ('Target block not in range',))]
 fn blobstreamx_request_header_range_target_block_not_in_range() {
     let blobstreamx = setup_blobstreamx();
-    let block_number = get_block_number();
     blobstreamx.request_header_range(1);
 }
 

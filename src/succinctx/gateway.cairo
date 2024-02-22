@@ -1,6 +1,6 @@
 /// TODO: Implement a feevault
 #[starknet::contract]
-mod gateway {
+mod SuccinctGateway {
     use alexandria_bytes::{Bytes, BytesTrait};
     use blobstream_sn::succinctx::function_registry::component::function_registry_cpt;
     use blobstream_sn::succinctx::function_registry::interfaces::IFunctionRegistry;

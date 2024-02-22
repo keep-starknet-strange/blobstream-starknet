@@ -13,7 +13,7 @@ mod BlobstreamX {
     use core::traits::Into;
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::upgrades::{interface::IUpgradeable, upgradeable::UpgradeableComponent};
-    use starknet::info::get_block_number;
+    use starknet::info::{get_block_number, get_contract_address};
     use starknet::{ClassHash, ContractAddress};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
@@ -212,10 +212,25 @@ mod BlobstreamX {
                 _target_block - latest_block <= self.data_commitment_max(),
                 TendermintXErrors::TargetBlockNotInRange
             );
-            
-            ISuccinctGatewayDispatcher {
-                contract_address: self.gateway.read()
-            }.request_call(self.header_range_function_id.read(), input);
+
+            let mut input: Bytes = BytesTrait::new(0, array![0]);
+            input.append_u64(latest_block);
+            input.append_u256(latest_header);
+            input.append_u64(_target_block);
+
+            let mut entry_calldata: Bytes = BytesTrait::new(0, array![0]);
+            entry_calldata.append_felt252(selector!("commit_header_range"));
+            input.append_u64(latest_block);
+            input.append_u64(_target_block);
+
+            ISuccinctGatewayDispatcher { contract_address: self.gateway.read() }
+                .request_call(
+                    self.header_range_function_id.read(),
+                    input,
+                    get_contract_address(),
+                    entry_calldata,
+                    500000
+                );
 
             self
                 .emit(
@@ -233,14 +248,16 @@ mod BlobstreamX {
         /// * `_target_block` -  The end block of the header range request
         fn commit_header_range(ref self: ContractState, _trusted_block: u64, _target_block: u64) {
             let trusted_header = self.block_height_to_header_hash.read(_trusted_block);
+            assert(trusted_header != 0, TendermintXErrors::TrustedHeaderNotFound);
+
             let latest_block = self.get_latest_block();
             let state_proof_nonce = self.get_state_proof_nonce();
-            assert(trusted_header != 0, TendermintXErrors::TrustedHeaderNotFound);
+
             let mut input: Bytes = BytesTrait::new(0, array![0]);
             input.append_u64(_trusted_block);
             input.append_u256(trusted_header);
 
-            let (data_commitment, target_header) = ISuccinctGatewayDispatcher {
+            let (target_header, data_commitment) = ISuccinctGatewayDispatcher {
                 contract_address: self.gateway.read()
             }
                 .verified_call(self.header_range_function_id.read(), input);
@@ -273,8 +290,22 @@ mod BlobstreamX {
             let latest_header = self.block_height_to_header_hash.read(latest_block);
             assert(latest_header != 0, TendermintXErrors::LatestHeaderNotFound);
 
-            //TODO(#73): SunccinctGateway 
-            // ISuccintGateway... 
+            let mut input: Bytes = BytesTrait::new(0, array![0]);
+            input.append_u64(latest_block);
+            input.append_u256(latest_header);
+
+            let mut entry_calldata: Bytes = BytesTrait::new(0, array![0]);
+            entry_calldata.append_felt252(selector!("commit_next_header"));
+            input.append_u64(latest_block);
+
+            ISuccinctGatewayDispatcher { contract_address: self.gateway.read() }
+                .request_call(
+                    self.next_header_function_id.read(),
+                    input,
+                    get_contract_address(),
+                    entry_calldata,
+                    500000
+                );
 
             self
                 .emit(
@@ -293,19 +324,15 @@ mod BlobstreamX {
             let state_proof_nonce = self.get_state_proof_nonce();
             let latest_block = self.latest_block.read();
             assert(trusted_header != 0, TendermintXErrors::TrustedHeaderNotFound);
-            let mut bytes: Bytes = BytesTrait::new(0, array![0]);
-            bytes.append_u64(_trusted_block);
-            bytes.append_u256(trusted_header);
 
-            // MOCK INFORMATION FOR NOW 
-            //TODO(#73): SunccinctGateway 
-            // let request_result = ISuccinctGateway...
-            let mut request_result: Bytes = BytesTrait::new(32, array![0]);
-            request_result.append_u256(12314123123);
-            request_result.append_u256(32131232);
-            let (_, data_commitment) = request_result.read_u256(0);
-            let (_, next_header) = request_result.read_u256(0);
-            //END 
+            let mut input: Bytes = BytesTrait::new(0, array![0]);
+            input.append_u64(_trusted_block);
+            input.append_u256(trusted_header);
+
+            let (next_header, data_commitment) = ISuccinctGatewayDispatcher {
+                contract_address: self.gateway.read()
+            }
+                .verified_call(self.next_header_function_id.read(), input);
 
             let next_block = _trusted_block + 1;
             assert(next_block > latest_block, TendermintXErrors::TargetBlockNotInRange);
