@@ -35,7 +35,8 @@ mod gateway {
         requests: LegacyMap<u64, u256>,
         verified_function_id: u256,
         verified_input_hash: u256,
-        verified_output: Bytes,
+        // TODO: change to Bytes after refactor succinctx
+        verified_output: u256,
         #[substorage(v0)]
         function_registry: function_registry_cpt::Storage,
         #[substorage(v0)]
@@ -184,11 +185,11 @@ mod gateway {
         /// # Arguments
         /// * `function_id` The function identifier.
         /// * `input` The function input.
-        fn verified_call(self: @ContractState, function_id: u256, input: Bytes) -> Bytes {
+        fn verified_call(self: @ContractState, function_id: u256, input: Bytes) -> (u256, u256) {
             assert(self.verified_function_id.read() == function_id, Errors::INVALID_CALL);
             assert(self.verified_input_hash.read() == input.sha256(), Errors::INVALID_CALL);
 
-            self.verified_output.read()
+            (self.verified_output.read(), 1) // TODO: placeholder for return for refactor
         }
 
         fn fulfill_callback(

@@ -26,8 +26,7 @@ mod BlobstreamX {
 
     #[storage]
     struct Storage {
-        // CONTRACT STORAGE
-        DATA_COMMITMENT_MAX: u64,
+        data_commitment_max: u64,
         gateway: ContractAddress,
         latest_block: u64,
         state_proof_nonce: u64,
@@ -35,7 +34,6 @@ mod BlobstreamX {
         block_height_to_header_hash: LegacyMap::<u64, u256>,
         header_range_function_id: u256,
         next_header_function_id: u256,
-        // COMPONENT STORAGE
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
         #[substorage(v0)]
@@ -48,8 +46,9 @@ mod BlobstreamX {
         // CONTRACT EVENTS
         // TODO(#68): impl header range
         DataCommitmentStored: DataCommitmentStored,
-        NextHeaderRequested: NextHeaderRequested,
+        HeaderRangeRequested: HeaderRangeRequested,
         HeadUpdate: HeadUpdate,
+        NextHeaderRequested: NextHeaderRequested,
         // COMPONENT EVENTS
         #[flat]
         OwnableEvent: OwnableComponent::Event,
@@ -71,6 +70,19 @@ mod BlobstreamX {
         // data commitment for the block range
         #[key]
         data_commitment: u256,
+    }
+
+    /// Inputs of a header range request
+    #[derive(Drop, starknet::Event)]
+    struct HeaderRangeRequested {
+        // trusted block for the header range request
+        #[key]
+        trusted_block: u64,
+        // header hash of the trusted block
+        #[key]
+        trusted_header: u256,
+        // target block of the header range request
+        target_block: u64
     }
 
     /// Inputs of a next header request
@@ -100,7 +112,7 @@ mod BlobstreamX {
     fn constructor(
         ref self: ContractState, gateway: ContractAddress, owner: ContractAddress, header: u256
     ) {
-        self.DATA_COMMITMENT_MAX.write(1000);
+        self.data_commitment_max.write(1000);
         self.gateway.write(gateway);
         self.latest_block.write(get_block_number());
         self.state_proof_nonce.write(1);
@@ -128,7 +140,7 @@ mod BlobstreamX {
             }
 
             // load the tuple root at the given index from storage.
-            let data_root = self.state_data_commitments.read(proof_nonce);
+            let _data_root = self.state_data_commitments.read(proof_nonce);
 
             // return isProofValid;
             // TODO(#69 + #24): BinaryMerkleTree.verify(root, _proof, abi.encode(_tuple));
@@ -150,10 +162,11 @@ mod BlobstreamX {
             self.latest_block.read()
         }
     }
+
     #[abi(embed_v0)]
     impl IBlobstreamXImpl of IBlobstreamX<ContractState> {
-        fn DATA_COMMITMENT_MAX(self: @ContractState) -> u64 {
-            self.DATA_COMMITMENT_MAX.read()
+        fn data_commitment_max(self: @ContractState) -> u64 {
+            self.data_commitment_max.read()
         }
         fn set_gateway(ref self: ContractState, new_gateway: ContractAddress) {
             self.ownable.assert_only_owner();
@@ -185,6 +198,35 @@ mod BlobstreamX {
             self.next_header_function_id.write(_function_id);
         }
 
+        /// @notice Prove the validity of the header at the target block and a data commitment for the block range [latestBlock, _targetBlock).
+        /// # Arguments 
+        ///  _target_block The end block of the header range proof.
+        /// @dev requestHeaderRange is used to skip from the latest block to the target block.
+        fn request_header_range(ref self: ContractState, _target_block: u64) {
+            let latest_block = self.get_latest_block();
+            let latest_header = self.block_height_to_header_hash.read(latest_block);
+            assert(latest_header != 0, TendermintXErrors::LatestHeaderNotFound);
+            // A request can be at most data_commitment_max blocks ahead of the latest block.
+            assert(_target_block > latest_block, TendermintXErrors::TargetBlockNotInRange);
+            assert(
+                _target_block - latest_block <= self.data_commitment_max(),
+                TendermintXErrors::TargetBlockNotInRange
+            );
+            
+            ISuccinctGatewayDispatcher {
+                contract_address: self.gateway.read()
+            }.request_call(self.header_range_function_id.read(), input);
+
+            self
+                .emit(
+                    HeaderRangeRequested {
+                        trusted_block: latest_block,
+                        trusted_header: latest_header,
+                        target_block: _target_block
+                    }
+                );
+        }
+
         /// @notice Commits the new header at targetBlock and the data commitment for the block range [trustedBlock, targetBlock).
         /// # Arguments 
         /// * `_trustedBlock` -  The latest block when the request was made.
@@ -198,16 +240,14 @@ mod BlobstreamX {
             input.append_u64(_trusted_block);
             input.append_u256(trusted_header);
 
-            let request_result = ISuccinctGatewayDispatcher {
+            let (data_commitment, target_header) = ISuccinctGatewayDispatcher {
                 contract_address: self.gateway.read()
             }
                 .verified_call(self.header_range_function_id.read(), input);
-            let (_, data_commitment) = request_result.read_u256(0);
-            let (_, target_header) = request_result.read_u256(0);
 
             assert(_target_block > latest_block, TendermintXErrors::TargetBlockNotInRange);
             assert(
-                _target_block - latest_block <= self.DATA_COMMITMENT_MAX(),
+                _target_block - latest_block <= self.data_commitment_max(),
                 TendermintXErrors::TargetBlockNotInRange
             );
             self.block_height_to_header_hash.write(_target_block, target_header);

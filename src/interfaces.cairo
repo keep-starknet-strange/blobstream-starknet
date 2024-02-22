@@ -46,7 +46,7 @@ trait IDAOracle<TContractState> {
 trait IBlobstreamX<TContractState> {
     /// Max num of blocks that can be skipped in a single request
     /// ref: https://github.com/celestiaorg/celestia-core/blob/main/pkg/consts/consts.go#L43-L44
-    fn DATA_COMMITMENT_MAX(self: @TContractState) -> u64;
+    fn data_commitment_max(self: @TContractState) -> u64;
     // Address of the gateway contract
     fn set_gateway(ref self: TContractState, new_gateway: ContractAddress);
     fn get_gateway(self: @TContractState) -> ContractAddress;

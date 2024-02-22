@@ -21,7 +21,7 @@ fn setup_blobstreamx_spied() -> (IBlobstreamXDispatcher, EventSpy) {
 fn blobstreamx_constructor_vals() {
     let blobstreamx = setup_blobstreamx();
 
-    assert!(blobstreamx.DATA_COMMITMENT_MAX() == 1000, "max skip constnat invalid");
+    assert!(blobstreamx.data_commitment_max() == 1000, "max skip constnat invalid");
     assert!(blobstreamx.get_gateway().into() == TEST_GATEWAY, "gateway addr invalid");
     assert!(blobstreamx.get_state_proof_nonce() == 1, "state proof nonce invalid");
 }
@@ -93,7 +93,9 @@ fn blobstreamx_commit_next_header_trusted_header_null() {
 fn blobstreamx_request_header_range() {
     let (blobstreamx, mut spy) = setup_blobstreamx_spied();
     let block_number = get_block_number();
-    let latest_header = blobstreamx.get_header_hash(block_number);
+
+    let latest_header = ITendermintXDispatcher { contract_address: blobstreamx.contract_address }
+        .get_header_hash(block_number);
     blobstreamx.request_header_range(block_number + 1);
     spy
         .assert_emitted(
