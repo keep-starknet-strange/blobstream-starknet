@@ -9,8 +9,12 @@ mod errors {
 
 #[starknet::component]
 mod function_registry_cpt {
+    use alexandria_bytes::{Bytes, BytesTrait};
     use blobstream_sn::succinctx::function_registry::interfaces::IFunctionRegistry;
+    use core::traits::Into;
+    use starknet::info::get_caller_address;
     use starknet::{ContractAddress, contract_address_const};
+    use super::errors;
 
     #[storage]
     struct Storage {
@@ -23,7 +27,6 @@ mod function_registry_cpt {
     enum Event {
         FunctionRegistered: FunctionRegistered,
         FunctionVerifierUpdated: FunctionVerifierUpdated,
-        Deployed: Deployed,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -42,32 +45,25 @@ mod function_registry_cpt {
         verifier: ContractAddress,
     }
 
-    #[derive(Drop, starknet::Event)]
-    struct Deployed {
-        #[key]
-        bytecode_hash: u256,
-        #[key]
-        salt: u256,
-        #[key]
-        deployed_address: ContractAddress,
-    }
-
     #[embeddable_as(FunctionRegistryImpl)]
     impl FunctionRegistry<
         TContractState, +HasComponent<TContractState>
     > of IFunctionRegistry<ComponentState<TContractState>> {
         fn verifiers(self: @ComponentState<TContractState>, function_id: u256) -> ContractAddress {
-            contract_address_const::<1>()
+            self.verifiers.read(function_id)
         }
         fn verifier_owners(
             self: @ComponentState<TContractState>, function_id: u256
         ) -> ContractAddress {
-            contract_address_const::<1>()
+            self.verifier_owners.read(function_id)
         }
         fn get_function_id(
             self: @ComponentState<TContractState>, owner: ContractAddress, name: felt252
         ) -> u256 {
-            1
+            let mut function_id_digest = BytesTrait::new_empty();
+            function_id_digest.append_felt252(owner.into());
+            function_id_digest.append_felt252(name);
+            function_id_digest.keccak()
         }
         fn register_function(
             ref self: ComponentState<TContractState>,
@@ -75,25 +71,32 @@ mod function_registry_cpt {
             verifier: ContractAddress,
             name: felt252
         ) -> u256 {
-            1
-        }
-        fn deploy_and_register_function(
-            ref self: ComponentState<TContractState>,
-            owner: ContractAddress,
-            bytecode: Span<u8>,
-            name: felt252
-        ) -> (u256, ContractAddress) {
-            (1, contract_address_const::<1>())
+            assert(verifier.is_non_zero(), errors::VERIFIER_CANNOT_BE_ZERO);
+
+            let function_id = self.get_function_id(owner, name);
+            assert(self.verifiers.read(function_id).is_zero(), errors::FUNCTION_ALREADY_REGISTERED);
+
+            self.verifier_owners.write(function_id, owner);
+            self.verifiers.write(function_id, verifier);
+
+            self.emit(FunctionRegistered { function_id, verifier, name, owner, });
+
+            function_id
         }
         fn update_function(
             ref self: ComponentState<TContractState>, verifier: ContractAddress, name: felt252
         ) -> u256 {
-            1
-        }
-        fn deploy_and_update_function(
-            ref self: ComponentState<TContractState>, bytescode: Span<u8>, _name: felt252
-        ) -> (u256, ContractAddress) {
-            (1, contract_address_const::<1>())
+            assert(verifier.is_non_zero(), errors::VERIFIER_CANNOT_BE_ZERO);
+
+            let caller = get_caller_address();
+            let function_id = self.get_function_id(caller, name);
+            assert(self.verifier_owners.read(function_id) != caller, errors::NOT_FUNCTION_OWNER);
+            assert(self.verifiers.read(function_id) == verifier, errors::VERIFIER_ALREADY_UPDATED);
+
+            self.verifiers.write(function_id, verifier);
+            self.emit(FunctionVerifierUpdated { function_id, verifier });
+
+            function_id
         }
     }
 }

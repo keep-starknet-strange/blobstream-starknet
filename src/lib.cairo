@@ -1,7 +1,8 @@
-mod blobstreamx;
+pub mod blobstreamx;
 mod interfaces;
 
 mod mocks {
+    mod function_verifier;
     mod upgradeable;
 }
 

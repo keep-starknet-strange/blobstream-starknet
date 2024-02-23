@@ -27,6 +27,7 @@ struct NamespaceMerkleProof {
     key: u256,
     num_leaves: u256,
 }
+
 // mod NamespaceMerkleTree {
 //     use super::{Namespace, NamespaceNode, NamespaceMerkleMultiproof, NamespaceMerkleProof};
 //     use alexandria_bytes::BytesTrait;
@@ -86,6 +87,7 @@ impl NamespacePartialOrd of PartialOrd<Namespace> {
         }
     }
 }
+
 impl NamespacePartialEq of PartialEq<Namespace> {
     #[inline(always)]
     fn eq(lhs: @Namespace, rhs: @Namespace) -> bool {
@@ -109,8 +111,6 @@ impl NamespacePartialEq of PartialEq<Namespace> {
     }
 }
 
-
 fn namespace_node_eq(first: NamespaceNode, second: NamespaceNode) -> bool {
     return first.min == second.min && first.max == second.max && (first.digest == second.digest);
 }
-

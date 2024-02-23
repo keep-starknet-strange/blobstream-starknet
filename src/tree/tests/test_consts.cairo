@@ -7,7 +7,6 @@ fn constants_test() {
     assert!(MAX_HEIGHT == 256, "max height");
     assert!(NODE_PREFIX == 0x01, "node prefix");
 }
-
 #[test]
 fn parity_share_namespace_test() {
     let parity_id = bytes31_const::<0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF>();
@@ -15,3 +14,4 @@ fn parity_share_namespace_test() {
     assert!(result.version == 0xFF, "parity namespace version");
     assert!(result.id == parity_id, "parity namespace id");
 }
+

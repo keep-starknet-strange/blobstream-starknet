@@ -25,14 +25,15 @@ trait ISuccinctGateway<TContractState> {
         entry_calldata: Bytes,
         entry_gas_limit: u32
     );
-    fn verified_call(self: @TContractState, function_id: u256, input: Bytes) -> Bytes;
+    fn verified_call(self: @TContractState, function_id: u256, input: Bytes) -> (u256, u256);
     fn fulfill_callback(
         ref self: TContractState,
-        nonce: u64,
+        nonce: u32,
         function_id: u256,
         input_hash: u256,
         callback_addr: ContractAddress,
         callback_selector: felt252,
+        callback_calldata: Span<felt252>,
         callback_gas_limit: u32,
         context: Bytes,
         output: Bytes,
@@ -45,6 +46,7 @@ trait ISuccinctGateway<TContractState> {
         output: Bytes,
         proof: Bytes,
         callback_addr: ContractAddress,
+        callback_selector: felt252,
         callback_calldata: felt252,
     );
 }
