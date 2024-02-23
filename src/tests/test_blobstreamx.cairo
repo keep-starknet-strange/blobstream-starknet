@@ -1,3 +1,4 @@
+use alexandria_bytes::{Bytes, BytesTrait};
 use blobstream_sn::blobstreamx::blobstreamx;
 use blobstream_sn::interfaces::{
     IBlobstreamXDispatcher, IBlobstreamXDispatcherTrait, Validator, ITendermintXDispatcher,
@@ -7,7 +8,7 @@ use blobstream_sn::succinctx::interfaces::{
     ISuccinctGatewayDispatcher, ISuccinctGatewayDispatcherTrait
 };
 use blobstream_sn::tests::common::{
-    setup_base, setup_spied, setup_succinct_gateway, TEST_BLOCK_HEIGHT
+    setup_base, setup_spied, setup_succinct_gateway, TEST_START_BLOCK, TEST_END_BLOCK, TEST_HEADER,
 };
 use snforge_std::{EventSpy, EventAssertions, store, map_entry_address};
 use starknet::secp256_trait::Signature;
@@ -44,20 +45,35 @@ fn blobstreamx_constructor_vals() {
 }
 
 #[test]
-#[ignore]
 fn blobstreamx_fullfil_commit_header_range() {
     let bsx = setup_blobstreamx();
-    let state_proof_nonce = bsx.get_state_proof_nonce();
-    let next_block = get_bsx_latest_block(bsx.contract_address) + 1;
-
     let gateway = get_gateway_contract(bsx.contract_address);
-    // gateway.fulfill_call();
-    bsx.commit_header_range(next_block);
+
+    // test data: https://sepolia.etherscan.io/tx/0x38ff4174e1e2c56d26f1f54e564fe282a662cff8335b3cd368e9a29004cee04d#eventlog
+    let mut input = BytesTrait::new_empty();
+    input.append_u64(TEST_START_BLOCK);
+    input.append_u256(TEST_HEADER);
+    input.append_u64(TEST_END_BLOCK);
+
+    let mut output = BytesTrait::new_empty();
+    output.append_u256(0x94a3afe8ce56375bedcb401c07a38a93a6b9d47461a01b6a410d5a958ca9bc7a);
+    output.append_u256(0xAAA0E18EB3689B8D88BE03EA19589E3565DB343F6509C8601DB6AFA01255A488);
+
+    gateway
+        .fulfill_call(
+            bsx.get_header_range_id(),
+            input,
+            output,
+            BytesTrait::new_empty(),
+            bsx.contract_address,
+            selector!("commit_header_range"),
+            array![TEST_END_BLOCK.into()].span(),
+        );
 
     assert!(
-        get_bsx_latest_block(bsx.contract_address) == next_block, "latest block does not match"
+        get_bsx_latest_block(bsx.contract_address) == TEST_END_BLOCK, "latest block does not match"
     );
-    assert!(bsx.get_state_proof_nonce() == state_proof_nonce + 1, "state proof nonce invalid");
+    assert!(bsx.get_state_proof_nonce() == 2, "state proof nonce invalid");
 }
 
 #[test]
@@ -81,21 +97,31 @@ fn blobstreamx_commit_header_range_target_block_not_in_range_2() {
     bsx.commit_header_range(get_block_number() + 1001);
 }
 
-
+// TODO: fix with refactor
 #[test]
 #[ignore]
 fn blobstreamx_commit_next_header() {
     let bsx = setup_blobstreamx();
-    let state_proof_nonce = bsx.get_state_proof_nonce();
+    let gateway = get_gateway_contract(bsx.contract_address);
     let latest_block = get_bsx_latest_block(bsx.contract_address);
 
-    bsx.commit_next_header(latest_block);
+    // TODO: need test data for input, output, and proof as no txs on testnet
+    gateway
+        .fulfill_call(
+            bsx.get_next_header_id(),
+            BytesTrait::new_empty(),
+            BytesTrait::new_empty(),
+            BytesTrait::new_empty(),
+            bsx.contract_address,
+            selector!("commit_next_header"),
+            array![latest_block.into()].span(),
+        );
 
     assert!(
         get_bsx_latest_block(bsx.contract_address) == latest_block + 1,
         "latest block does not match"
     );
-    assert!(bsx.get_state_proof_nonce() == state_proof_nonce + 1, "state proof nonce invalid");
+    assert!(bsx.get_state_proof_nonce() == 2, "state proof nonce invalid");
 }
 
 

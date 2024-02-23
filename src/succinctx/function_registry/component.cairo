@@ -60,7 +60,7 @@ mod function_registry_cpt {
         fn get_function_id(
             self: @ComponentState<TContractState>, owner: ContractAddress, name: felt252
         ) -> u256 {
-            let mut function_id_digest: Bytes = BytesTrait::new(0, array![]);
+            let mut function_id_digest = BytesTrait::new_empty();
             function_id_digest.append_felt252(owner.into());
             function_id_digest.append_felt252(name);
             function_id_digest.keccak()
@@ -73,7 +73,7 @@ mod function_registry_cpt {
         ) -> u256 {
             assert(verifier.is_non_zero(), errors::VERIFIER_CANNOT_BE_ZERO);
 
-            let mut function_id_digest: Bytes = BytesTrait::new(0, array![]);
+            let mut function_id_digest = BytesTrait::new_empty();
             function_id_digest.append_felt252(owner.into());
             function_id_digest.append_felt252(name);
             let function_id = function_id_digest.keccak();
@@ -93,7 +93,7 @@ mod function_registry_cpt {
             assert(verifier.is_non_zero(), errors::VERIFIER_CANNOT_BE_ZERO);
 
             let caller = get_caller_address();
-            let mut function_id_digest: Bytes = BytesTrait::new(0, array![]);
+            let mut function_id_digest = BytesTrait::new_empty();
             function_id_digest.append_felt252(caller.into());
             function_id_digest.append_felt252(name);
             let function_id = function_id_digest.keccak();

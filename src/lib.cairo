@@ -1,4 +1,4 @@
-mod blobstreamx;
+pub mod blobstreamx;
 mod interfaces;
 
 mod mocks {

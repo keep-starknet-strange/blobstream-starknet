@@ -7,9 +7,10 @@ use snforge_std::{
 };
 use starknet::ContractAddress;
 
-// https://sepolia.etherscan.io/tx/0xee66e35658b8465ed36a51a56ddb621ce7f8bbb56a36e79eed38f62907238dc7#eventlog
-const TEST_BLOCK_HEIGHT: u64 = 845748;
-const TEST_HEADER: u256 = 0xD079130B15F0B5A903AEB8A5B494BD9C6D6A711E4BB8B1BBD1BF422399DA1545;
+// https://sepolia.etherscan.io/tx/0xadced8dc7f4bb01d730ed78daecbf9640417c5bd60b0ada23c9045cc953481a5#eventlog
+const TEST_START_BLOCK: u64 = 846054;
+const TEST_END_BLOCK: u64 = 846360;
+const TEST_HEADER: u256 = 0x47D040565942B111F7CD569BE78CE310644596F3929DF25584F3E5ADFD9F5001;
 const HEADER_RANGE_DIGEST: u256 = 0xb646edd6dbb2e5482b2449404cf1888b8f4cd6958c790aa075e99226c2c1d62;
 const NEXT_HEADER_DIGEST: u256 = 0xfd6c88812a160ff288fe557111815b3433c539c77a3561086cfcdd9482bceb8;
 
@@ -39,7 +40,7 @@ fn setup_base() -> ContractAddress {
     let calldata = array![
         gateway_addr.into(),
         OWNER().into(),
-        TEST_BLOCK_HEIGHT.into(),
+        TEST_START_BLOCK.into(),
         TEST_HEADER.low.into(),
         TEST_HEADER.high.into(),
         header_range_func_id.low.into(),

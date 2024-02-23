@@ -216,12 +216,12 @@ mod blobstreamx {
                 TendermintXErrors::TargetBlockNotInRange
             );
 
-            let mut input: Bytes = BytesTrait::new(0, array![]);
+            let mut input = BytesTrait::new_empty();
             input.append_u64(latest_block);
             input.append_u256(latest_header);
             input.append_u64(_target_block);
 
-            let mut entry_calldata: Bytes = BytesTrait::new(0, array![]);
+            let mut entry_calldata = BytesTrait::new_empty();
             entry_calldata.append_felt252(selector!("commit_header_range"));
             input.append_u64(latest_block);
             input.append_u64(_target_block);
@@ -261,7 +261,7 @@ mod blobstreamx {
                 TendermintXErrors::TargetBlockNotInRange
             );
 
-            let mut input: Bytes = BytesTrait::new(0, array![]);
+            let mut input = BytesTrait::new_empty();
             input.append_u64(latest_block);
             input.append_u256(trusted_header);
             input.append_u64(_target_block);
@@ -295,11 +295,11 @@ mod blobstreamx {
             let latest_header = self.block_height_to_header_hash.read(latest_block);
             assert(latest_header != 0, TendermintXErrors::LatestHeaderNotFound);
 
-            let mut input: Bytes = BytesTrait::new(0, array![]);
+            let mut input = BytesTrait::new_empty();
             input.append_u64(latest_block);
             input.append_u256(latest_header);
 
-            let mut entry_calldata: Bytes = BytesTrait::new(0, array![]);
+            let mut entry_calldata = BytesTrait::new_empty();
             entry_calldata.append_felt252(selector!("commit_next_header"));
             input.append_u64(latest_block);
 
@@ -333,7 +333,7 @@ mod blobstreamx {
             let next_block = _trusted_block + 1;
             assert(next_block > self.get_latest_block(), TendermintXErrors::TargetBlockNotInRange);
 
-            let mut input: Bytes = BytesTrait::new(0, array![]);
+            let mut input = BytesTrait::new_empty();
             input.append_u64(_trusted_block);
             input.append_u256(trusted_header);
 

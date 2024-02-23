@@ -273,6 +273,7 @@ mod succinct_gateway {
             let output_hash = output.sha256();
 
             let verifier = self.function_registry.verifiers.read(function_id);
+
             let is_valid_proof: bool = IFunctionVerifierDispatcher { contract_address: verifier }
                 .verify(input_hash, output_hash, proof);
             assert(is_valid_proof, Errors::INVALID_PROOF);
@@ -283,7 +284,9 @@ mod succinct_gateway {
 
             // TODO: make generic after refactor
             let (_, data_commitment) = output.read_u256(0);
-            let (_, next_header) = output.read_u256(0);
+            let (_, next_header) = output.read_u256(1);
+            println!("COMMIT: {}", data_commitment);
+            println!("HEADER: {}", next_header);
             self.verified_output.write((data_commitment, next_header));
 
             call_contract_syscall(
