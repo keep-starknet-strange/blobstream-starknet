@@ -73,11 +73,7 @@ mod function_registry_cpt {
         ) -> u256 {
             assert(verifier.is_non_zero(), errors::VERIFIER_CANNOT_BE_ZERO);
 
-            let mut function_id_digest = BytesTrait::new_empty();
-            function_id_digest.append_felt252(owner.into());
-            function_id_digest.append_felt252(name);
-            let function_id = function_id_digest.keccak();
-
+            let function_id = self.get_function_id(owner, name);
             assert(self.verifiers.read(function_id).is_zero(), errors::FUNCTION_ALREADY_REGISTERED);
 
             self.verifier_owners.write(function_id, owner);
@@ -93,11 +89,7 @@ mod function_registry_cpt {
             assert(verifier.is_non_zero(), errors::VERIFIER_CANNOT_BE_ZERO);
 
             let caller = get_caller_address();
-            let mut function_id_digest = BytesTrait::new_empty();
-            function_id_digest.append_felt252(caller.into());
-            function_id_digest.append_felt252(name);
-            let function_id = function_id_digest.keccak();
-
+            let function_id = self.get_function_id(caller, name);
             assert(self.verifier_owners.read(function_id) != caller, errors::NOT_FUNCTION_OWNER);
             assert(self.verifiers.read(function_id) == verifier, errors::VERIFIER_ALREADY_UPDATED);
 

@@ -31,8 +31,8 @@ mod succinct_gateway {
     struct Storage {
         allowed_provers: LegacyMap<ContractAddress, bool>,
         is_callback: bool,
-        nonce: u64,
-        requests: LegacyMap<u64, u256>,
+        nonce: u32,
+        requests: LegacyMap<u32, u256>,
         verified_function_id: u256,
         verified_input_hash: u256,
         verified_output: (u256, u256),
@@ -74,7 +74,7 @@ mod succinct_gateway {
     #[derive(Drop, starknet::Event)]
     struct RequestCallback {
         #[key]
-        nonce: u64,
+        nonce: u32,
         #[key]
         function_id: u256,
         input: Bytes,
@@ -88,7 +88,7 @@ mod succinct_gateway {
     #[derive(Drop, starknet::Event)]
     struct RequestFulfilled {
         #[key]
-        nonce: u64,
+        nonce: u32,
         #[key]
         function_id: u256,
         input_hash: u256,
@@ -213,7 +213,7 @@ mod succinct_gateway {
 
         fn fulfill_callback(
             ref self: ContractState,
-            nonce: u64,
+            nonce: u32,
             function_id: u256,
             input_hash: u256,
             callback_addr: ContractAddress,
@@ -283,10 +283,8 @@ mod succinct_gateway {
             self.verified_input_hash.write(input_hash);
 
             // TODO: make generic after refactor
-            let (_, data_commitment) = output.read_u256(0);
-            let (_, next_header) = output.read_u256(1);
-            println!("COMMIT: {}", data_commitment);
-            println!("HEADER: {}", next_header);
+            let (offset, data_commitment) = output.read_u256(0);
+            let (_, next_header) = output.read_u256(offset);
             self.verified_output.write((data_commitment, next_header));
 
             call_contract_syscall(
@@ -321,7 +319,7 @@ mod succinct_gateway {
         /// * `callback_selector` The selector of the callback function.
         /// * `callback_gas_limit` The gas limit for the callback function.
         fn _request_hash(
-            nonce: u64,
+            nonce: u32,
             function_id: u256,
             input_hash: u256,
             context_hash: u256,
@@ -330,7 +328,7 @@ mod succinct_gateway {
             callback_gas_limit: u32
         ) -> u256 {
             let mut packed_req = BytesTrait::new_empty();
-            packed_req.append_u64(nonce);
+            packed_req.append_u32(nonce);
             packed_req.append_u256(function_id);
             packed_req.append_u256(input_hash);
             packed_req.append_u256(context_hash);

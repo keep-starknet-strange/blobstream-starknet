@@ -45,7 +45,7 @@ fn blobstreamx_constructor_vals() {
 }
 
 #[test]
-fn blobstreamx_fullfil_commit_header_range() {
+fn blobstreamx_fulfill_commit_header_range() {
     let bsx = setup_blobstreamx();
     let gateway = get_gateway_contract(bsx.contract_address);
 

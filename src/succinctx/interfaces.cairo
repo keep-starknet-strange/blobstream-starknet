@@ -28,7 +28,7 @@ trait ISuccinctGateway<TContractState> {
     fn verified_call(self: @TContractState, function_id: u256, input: Bytes) -> (u256, u256);
     fn fulfill_callback(
         ref self: TContractState,
-        nonce: u64,
+        nonce: u32,
         function_id: u256,
         input_hash: u256,
         callback_addr: ContractAddress,

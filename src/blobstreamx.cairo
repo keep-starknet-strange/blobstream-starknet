@@ -223,8 +223,8 @@ mod blobstreamx {
 
             let mut entry_calldata = BytesTrait::new_empty();
             entry_calldata.append_felt252(selector!("commit_header_range"));
-            input.append_u64(latest_block);
-            input.append_u64(_target_block);
+            entry_calldata.append_u64(latest_block);
+            entry_calldata.append_u64(_target_block);
 
             ISuccinctGatewayDispatcher { contract_address: self.gateway.read() }
                 .request_call(
@@ -301,7 +301,7 @@ mod blobstreamx {
 
             let mut entry_calldata = BytesTrait::new_empty();
             entry_calldata.append_felt252(selector!("commit_next_header"));
-            input.append_u64(latest_block);
+            entry_calldata.append_u64(latest_block);
 
             ISuccinctGatewayDispatcher { contract_address: self.gateway.read() }
                 .request_call(
