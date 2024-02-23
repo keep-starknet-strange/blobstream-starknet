@@ -33,6 +33,7 @@ trait ISuccinctGateway<TContractState> {
         input_hash: u256,
         callback_addr: ContractAddress,
         callback_selector: felt252,
+        callback_calldata: Span<felt252>,
         callback_gas_limit: u32,
         context: Bytes,
         output: Bytes,
@@ -45,6 +46,7 @@ trait ISuccinctGateway<TContractState> {
         output: Bytes,
         proof: Bytes,
         callback_addr: ContractAddress,
-        callback_calldata: felt252,
+        callback_selector: felt252,
+        callback_calldata: Span<felt252>,
     );
 }

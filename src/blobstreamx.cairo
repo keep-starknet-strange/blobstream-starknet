@@ -1,7 +1,6 @@
 #[starknet::contract]
-mod BlobstreamX {
-    use alexandria_bytes::Bytes;
-    use alexandria_bytes::BytesTrait;
+mod blobstreamx {
+    use alexandria_bytes::{Bytes, BytesTrait};
     use blobstream_sn::interfaces::{
         DataRoot, TendermintXErrors, IBlobstreamX, IDAOracle, ITendermintX
     };
@@ -43,13 +42,10 @@ mod BlobstreamX {
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
-        // CONTRACT EVENTS
-        // TODO(#68): impl header range
         DataCommitmentStored: DataCommitmentStored,
         HeaderRangeRequested: HeaderRangeRequested,
         HeadUpdate: HeadUpdate,
         NextHeaderRequested: NextHeaderRequested,
-        // COMPONENT EVENTS
         #[flat]
         OwnableEvent: OwnableComponent::Event,
         #[flat]
@@ -104,13 +100,17 @@ mod BlobstreamX {
     }
 
     mod Errors {
-        /// Data commitment for specified block range does not exist
-        const DataCommitmentNotFound: felt252 = 'Data commitment not found';
+        const DataCommitmentNotFound: felt252 = 'bad data commitment for range';
     }
 
     #[constructor]
     fn constructor(
-        ref self: ContractState, gateway: ContractAddress, owner: ContractAddress, header: u256
+        ref self: ContractState,
+        gateway: ContractAddress,
+        owner: ContractAddress,
+        header: u256,
+        header_range_function_id: u256,
+        next_header_function_id: u256,
     ) {
         self.data_commitment_max.write(1000);
         self.gateway.write(gateway);
@@ -118,8 +118,8 @@ mod BlobstreamX {
         self.state_proof_nonce.write(1);
         self.ownable.initializer(owner);
         self.block_height_to_header_hash.write(get_block_number(), header);
-    // self.header_range_function_id.write(header_range_function_id); 
-    // self.next_header_function_id.write(next_header_function_id); 
+        self.header_range_function_id.write(header_range_function_id);
+        self.next_header_function_id.write(next_header_function_id);
     }
 
     #[abi(embed_v0)]
@@ -213,12 +213,12 @@ mod BlobstreamX {
                 TendermintXErrors::TargetBlockNotInRange
             );
 
-            let mut input: Bytes = BytesTrait::new(0, array![0]);
+            let mut input: Bytes = BytesTrait::new(0, array![]);
             input.append_u64(latest_block);
             input.append_u256(latest_header);
             input.append_u64(_target_block);
 
-            let mut entry_calldata: Bytes = BytesTrait::new(0, array![0]);
+            let mut entry_calldata: Bytes = BytesTrait::new(0, array![]);
             entry_calldata.append_felt252(selector!("commit_header_range"));
             input.append_u64(latest_block);
             input.append_u64(_target_block);
@@ -253,7 +253,7 @@ mod BlobstreamX {
             let latest_block = self.get_latest_block();
             let state_proof_nonce = self.get_state_proof_nonce();
 
-            let mut input: Bytes = BytesTrait::new(0, array![0]);
+            let mut input: Bytes = BytesTrait::new(0, array![]);
             input.append_u64(_trusted_block);
             input.append_u256(trusted_header);
 
@@ -290,11 +290,11 @@ mod BlobstreamX {
             let latest_header = self.block_height_to_header_hash.read(latest_block);
             assert(latest_header != 0, TendermintXErrors::LatestHeaderNotFound);
 
-            let mut input: Bytes = BytesTrait::new(0, array![0]);
+            let mut input: Bytes = BytesTrait::new(0, array![]);
             input.append_u64(latest_block);
             input.append_u256(latest_header);
 
-            let mut entry_calldata: Bytes = BytesTrait::new(0, array![0]);
+            let mut entry_calldata: Bytes = BytesTrait::new(0, array![]);
             entry_calldata.append_felt252(selector!("commit_next_header"));
             input.append_u64(latest_block);
 
@@ -325,7 +325,7 @@ mod BlobstreamX {
             let latest_block = self.latest_block.read();
             assert(trusted_header != 0, TendermintXErrors::TrustedHeaderNotFound);
 
-            let mut input: Bytes = BytesTrait::new(0, array![0]);
+            let mut input: Bytes = BytesTrait::new(0, array![]);
             input.append_u64(_trusted_block);
             input.append_u256(trusted_header);
 

@@ -1,3 +1,6 @@
+use blobstream_sn::succinctx::function_registry::interfaces::{
+    IFunctionRegistryDispatcher, IFunctionRegistryDispatcherTrait
+};
 use openzeppelin::tests::utils::constants::OWNER;
 use snforge_std::{
     declare, ContractClassTrait, start_prank, stop_prank, CheatTarget, spy_events, SpyOn, EventSpy
@@ -5,15 +8,41 @@ use snforge_std::{
 use starknet::ContractAddress;
 
 const TEST_HEADER: u256 = 132413413413241324134134134141;
+const HEADER_RANGE_DIGEST: u256 = 0xb646edd6dbb2e5482b2449404cf1888b8f4cd6958c790aa075e99226c2c1d62;
+const NEXT_HEADER_DIGEST: u256 = 0xfd6c88812a160ff288fe557111815b3433c539c77a3561086cfcdd9482bceb8;
 
 fn setup_base() -> ContractAddress {
-    let succinct_gateway_class = declare('SuccinctGateway');
-    let calldata = array![OWNER().into()];
-    let gateway = succinct_gateway_class.deploy(@calldata).unwrap();
+    // deploy the succinct gateway
+    let succinct_gateway_class = declare('succinct_gateway');
+    let gateway_addr = succinct_gateway_class.deploy(@array![OWNER().into()]).unwrap();
+    let gateway = IFunctionRegistryDispatcher { contract_address: gateway_addr };
 
-    let blobstreamx_class = declare('BlobstreamX');
+    // deploy the mock function verifier
+    let func_verifier_class = declare('function_verifier_mock');
+    let header_range_verifier = func_verifier_class
+        .deploy(@array![HEADER_RANGE_DIGEST.low.into(), HEADER_RANGE_DIGEST.high.into()])
+        .unwrap();
+    let next_header_verifier = func_verifier_class
+        .deploy(@array![NEXT_HEADER_DIGEST.low.into(), NEXT_HEADER_DIGEST.high.into()])
+        .unwrap();
+
+    // register verifier functions w/ gateway
+    let header_range_func_id = gateway
+        .register_function(OWNER(), header_range_verifier, 'HEADER_RANGE');
+    let next_header_func_id = gateway
+        .register_function(OWNER(), next_header_verifier, 'NEXT_HEADER');
+
+    // deploy blobstreamx
+    let blobstreamx_class = declare('blobstreamx');
     let calldata = array![
-        gateway.into(), OWNER().into(), TEST_HEADER.low.into(), TEST_HEADER.high.into()
+        gateway_addr.into(),
+        OWNER().into(),
+        TEST_HEADER.low.into(),
+        TEST_HEADER.high.into(),
+        header_range_func_id.low.into(),
+        header_range_func_id.high.into(),
+        next_header_func_id.low.into(),
+        next_header_func_id.high.into(),
     ];
     blobstreamx_class.deploy(@calldata).unwrap()
 }
@@ -26,7 +55,7 @@ fn setup_spied() -> (ContractAddress, EventSpy) {
 
 
 fn setup_succinct_gateway() -> ContractAddress {
-    let succinct_gateway_class = declare('SuccinctGateway');
+    let succinct_gateway_class = declare('succinct_gateway');
     let calldata = array![OWNER().into()];
     succinct_gateway_class.deploy(@calldata).unwrap()
 }

@@ -9,7 +9,7 @@ trait IMockUpgradeable<TState> {
 
 
 #[starknet::contract]
-mod MockUpgradeable {
+mod mock_upgradeable {
     use openzeppelin::upgrades::UpgradeableComponent;
     use starknet::{ClassHash, ContractAddress};
 
