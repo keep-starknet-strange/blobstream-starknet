@@ -134,7 +134,7 @@ fn fee_vault_deposit_fails_if_null_account() {
 #[test]
 #[should_panic(expected: ('Invalid token',))]
 fn fee_vault_deposit_fails_if_null_token() {
-    let (erc20, fee_vault) = setup_contracts();
+    let (_, fee_vault) = setup_contracts();
     fee_vault.deposit(SPENDER(), contract_address_const::<0>(), 0x10000);
 }
 

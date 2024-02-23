@@ -4,7 +4,8 @@ mod succinct_gateway {
     use blobstream_sn::succinctx::function_registry::component::function_registry_cpt;
     use blobstream_sn::succinctx::function_registry::interfaces::IFunctionRegistry;
     use blobstream_sn::succinctx::interfaces::{
-        ISuccinctGateway, IFunctionVerifierDispatcher, IFunctionVerifierDispatcherTrait,IFeeVaultDispatcher, IFeeVaultDispatcherTrait
+        ISuccinctGateway, IFunctionVerifierDispatcher, IFunctionVerifierDispatcherTrait,
+        IFeeVaultDispatcher, IFeeVaultDispatcherTrait
     };
     use core::array::SpanTrait;
     use openzeppelin::access::ownable::{OwnableComponent as ownable_cpt, interface::IOwnable};

@@ -47,7 +47,7 @@ trait ISuccinctGateway<TContractState> {
         proof: Bytes,
         callback_addr: ContractAddress,
         callback_selector: felt252,
-        callback_calldata: felt252,
+        callback_calldata: Span<felt252>,
     );
 }
 

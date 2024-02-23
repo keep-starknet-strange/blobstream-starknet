@@ -43,7 +43,7 @@ mod MockERC20 {
         self.erc20.initializer(name, symbol);
     }
 
-    #[external(v0)]
+    #[abi(embed_v0)]
     impl IMockERC20Impl of IMockERC20<ContractState> {
         fn mint_to(ref self: ContractState, recipient: ContractAddress, amount: u256) {
             self.erc20._mint(recipient, amount);

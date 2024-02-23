@@ -1,6 +1,11 @@
+use blobstream_sn::succinctx::fee_vault::succinct_fee_vault;
+use blobstream_sn::succinctx::function_registry::erc20_mock::{
+    IMockERC20Dispatcher, IMockERC20DispatcherTrait, MockERC20
+};
 use blobstream_sn::succinctx::function_registry::interfaces::{
     IFunctionRegistryDispatcher, IFunctionRegistryDispatcherTrait
 };
+use blobstream_sn::succinctx::interfaces::{IFeeVaultDispatcher, IFeeVaultDispatcherTrait};
 use openzeppelin::tests::utils::constants::OWNER;
 use snforge_std::{
     declare, ContractClassTrait, start_prank, stop_prank, CheatTarget, spy_events, SpyOn, EventSpy
@@ -15,9 +20,21 @@ const HEADER_RANGE_DIGEST: u256 = 0xb646edd6dbb2e5482b2449404cf1888b8f4cd6958c79
 const NEXT_HEADER_DIGEST: u256 = 0xfd6c88812a160ff288fe557111815b3433c539c77a3561086cfcdd9482bceb8;
 
 fn setup_base() -> ContractAddress {
+    // deploy the token associated with the fee vault
+    let token_class = declare('MockERC20');
+    let token_calldata = array!['FeeToken', 'FT'];
+    let token_address = token_class.deploy(@token_calldata).unwrap();
+
+    // deploy the fee vault 
+    let fee_vault_class = declare('succinct_fee_vault');
+    let fee_calldata = array![token_address.into(), OWNER().into()];
+    let fee_vault_address = fee_vault_class.deploy(@fee_calldata).unwrap();
+
     // deploy the succinct gateway
     let succinct_gateway_class = declare('succinct_gateway');
-    let gateway_addr = succinct_gateway_class.deploy(@array![OWNER().into()]).unwrap();
+    let gateway_addr = succinct_gateway_class
+        .deploy(@array![OWNER().into(), fee_vault_address.into()])
+        .unwrap();
     let gateway = IFunctionRegistryDispatcher { contract_address: gateway_addr };
 
     // deploy the mock function verifier
@@ -59,7 +76,17 @@ fn setup_spied() -> (ContractAddress, EventSpy) {
 
 
 fn setup_succinct_gateway() -> ContractAddress {
+    // deploy the token associated with the fee vault
+    let token_class = declare('MockERC20');
+    let token_calldata = array!['FeeToken', 'FT'];
+    let token_address = token_class.deploy(@token_calldata).unwrap();
+
+    // deploy the fee vault 
+    let fee_vault_class = declare('succinct_fee_vault');
+    let fee_calldata = array![token_address.into(), OWNER().into()];
+    let fee_vault_address = fee_vault_class.deploy(@fee_calldata).unwrap();
+
     let succinct_gateway_class = declare('succinct_gateway');
-    let calldata = array![OWNER().into()];
+    let calldata = array![OWNER().into(), fee_vault_address.into()];
     succinct_gateway_class.deploy(@calldata).unwrap()
 }
