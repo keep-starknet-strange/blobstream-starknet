@@ -1,11 +1,9 @@
-use blobstream_sn::BlobstreamX;
 use blobstream_sn::tests::common::{setup_base, setup_spied};
 use openzeppelin::access::ownable::OwnableComponent;
 use openzeppelin::access::ownable::interface::{IOwnableDispatcher, IOwnableDispatcherTrait};
 use openzeppelin::tests::utils::constants::{OWNER, NEW_OWNER};
 use snforge_std::cheatcodes::events::EventAssertions;
 use snforge_std::{declare, start_prank, stop_prank, CheatTarget, EventSpy};
-use starknet::contract_address_const;
 
 fn setup_ownable() -> IOwnableDispatcher {
     IOwnableDispatcher { contract_address: setup_base() }

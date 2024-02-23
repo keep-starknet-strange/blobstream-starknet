@@ -1,5 +1,4 @@
-use alexandria_bytes::Bytes;
-use alexandria_bytes::BytesTrait;
+use alexandria_bytes::{Bytes, BytesTrait};
 use blobstream_sn::tree::consts::{LEAF_PREFIX, NODE_PREFIX};
 
 fn node_digest(left: u256, right: u256) -> u256 {
