@@ -61,7 +61,7 @@ trait IBlobstreamX<TContractState> {
     // Prove the validity of the header at the target block and a data commitment for the block range [latestBlock, _targetBlock)
     fn request_header_range(ref self: TContractState, _target_block: u64);
     // Commits the new header at targetBlock and the data commitment for the block range [trustedBlock, targetBlock).
-    fn commit_header_range(ref self: TContractState, _trusted_block: u64, _target_block: u64);
+    fn commit_header_range(ref self: TContractState, _target_block: u64);
     // Prove the validity of the next header and a data commitment for the block range [latestBlock, latestBlock + 1).
     fn request_next_header(ref self: TContractState);
     // Stores the new header for _trustedBlock + 1 and the data commitment for the block range [_trustedBlock, _trustedBlock + 1).

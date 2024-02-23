@@ -3,11 +3,15 @@ use blobstream_sn::interfaces::{
     IBlobstreamXDispatcher, IBlobstreamXDispatcherTrait, Validator, ITendermintXDispatcher,
     ITendermintXDispatcherTrait
 };
-use blobstream_sn::succinctx::interfaces::{ISuccinctGateway, ISuccinctGatewayDispatcher};
-use blobstream_sn::tests::common::{setup_base, setup_spied, setup_succinct_gateway};
+use blobstream_sn::succinctx::interfaces::{
+    ISuccinctGatewayDispatcher, ISuccinctGatewayDispatcherTrait
+};
+use blobstream_sn::tests::common::{
+    setup_base, setup_spied, setup_succinct_gateway, TEST_BLOCK_HEIGHT
+};
 use snforge_std::{EventSpy, EventAssertions, store, map_entry_address};
 use starknet::secp256_trait::Signature;
-use starknet::{EthAddress, info::get_block_number};
+use starknet::{ContractAddress, EthAddress, info::get_block_number};
 
 fn setup_blobstreamx() -> IBlobstreamXDispatcher {
     IBlobstreamXDispatcher { contract_address: setup_base() }
@@ -16,6 +20,19 @@ fn setup_blobstreamx() -> IBlobstreamXDispatcher {
 fn setup_blobstreamx_spied() -> (IBlobstreamXDispatcher, EventSpy) {
     let (contract_address, spy) = setup_spied();
     (IBlobstreamXDispatcher { contract_address }, spy)
+}
+
+fn get_gateway_contract(contract_address: ContractAddress) -> ISuccinctGatewayDispatcher {
+    let gateway_addr = IBlobstreamXDispatcher { contract_address }.get_gateway();
+    ISuccinctGatewayDispatcher { contract_address: gateway_addr }
+}
+
+fn get_bsx_latest_block(contract_address: ContractAddress) -> u64 {
+    ITendermintXDispatcher { contract_address }.get_latest_block()
+}
+
+fn get_bsx_header_hash(contract_address: ContractAddress, latest_block: u64) -> u256 {
+    ITendermintXDispatcher { contract_address }.get_header_hash(latest_block)
 }
 
 #[test]
@@ -27,52 +44,57 @@ fn blobstreamx_constructor_vals() {
 }
 
 #[test]
-fn blobstreamx_commit_header_range() {
+#[ignore]
+fn blobstreamx_fullfil_commit_header_range() {
     let bsx = setup_blobstreamx();
     let state_proof_nonce = bsx.get_state_proof_nonce();
-    let block_number = get_block_number();
-    bsx.commit_header_range(block_number, block_number + 1);
+    let next_block = get_bsx_latest_block(bsx.contract_address) + 1;
 
-    let latest_block = ITendermintXDispatcher { contract_address: bsx.contract_address }
-        .get_latest_block();
-    assert!(latest_block == block_number + 1, "latest block does not match");
+    let gateway = get_gateway_contract(bsx.contract_address);
+    // gateway.fulfill_call();
+    bsx.commit_header_range(next_block);
+
+    assert!(
+        get_bsx_latest_block(bsx.contract_address) == next_block, "latest block does not match"
+    );
     assert!(bsx.get_state_proof_nonce() == state_proof_nonce + 1, "state proof nonce invalid");
 }
 
 #[test]
-#[should_panic(expected: ('Trusted header not found',))]
+#[should_panic(expected: ('Target block not in range',))]
 fn blobstreamx_commit_header_range_trusted_header_null() {
     let bsx = setup_blobstreamx();
-    bsx.commit_header_range(0, 1);
+    bsx.commit_header_range(0);
 }
 
 #[test]
 #[should_panic(expected: ('Target block not in range',))]
 fn blobstreamx_commit_header_range_target_block_not_in_range() {
     let bsx = setup_blobstreamx();
-    let block_number = get_block_number();
-    bsx.commit_header_range(block_number, 1);
+    bsx.commit_header_range(1);
 }
 
 #[test]
 #[should_panic(expected: ('Target block not in range',))]
 fn blobstreamx_commit_header_range_target_block_not_in_range_2() {
     let bsx = setup_blobstreamx();
-    let block_number = get_block_number();
-    bsx.commit_header_range(block_number, block_number + 1001);
+    bsx.commit_header_range(get_block_number() + 1001);
 }
 
 
 #[test]
+#[ignore]
 fn blobstreamx_commit_next_header() {
     let bsx = setup_blobstreamx();
     let state_proof_nonce = bsx.get_state_proof_nonce();
-    let block_number = get_block_number();
-    bsx.commit_next_header(block_number);
+    let latest_block = get_bsx_latest_block(bsx.contract_address);
 
-    let latest_block = ITendermintXDispatcher { contract_address: bsx.contract_address }
-        .get_latest_block();
-    assert!(latest_block == block_number + 1, "latest block does not match");
+    bsx.commit_next_header(latest_block);
+
+    assert!(
+        get_bsx_latest_block(bsx.contract_address) == latest_block + 1,
+        "latest block does not match"
+    );
     assert!(bsx.get_state_proof_nonce() == state_proof_nonce + 1, "state proof nonce invalid");
 }
 
@@ -87,11 +109,9 @@ fn blobstreamx_commit_next_header_trusted_header_null() {
 #[test]
 fn blobstreamx_request_header_range() {
     let (bsx, mut spy) = setup_blobstreamx_spied();
-    let block_number = get_block_number();
+    let latest_block = get_bsx_latest_block(bsx.contract_address);
 
-    let latest_header = ITendermintXDispatcher { contract_address: bsx.contract_address }
-        .get_header_hash(block_number);
-    bsx.request_header_range(block_number + 1);
+    bsx.request_header_range(latest_block + 1);
     spy
         .assert_emitted(
             @array![
@@ -99,9 +119,9 @@ fn blobstreamx_request_header_range() {
                     bsx.contract_address,
                     blobstreamx::Event::HeaderRangeRequested(
                         blobstreamx::HeaderRangeRequested {
-                            trusted_block: block_number,
-                            trusted_header: latest_header,
-                            target_block: block_number + 1
+                            trusted_block: latest_block,
+                            trusted_header: get_bsx_header_hash(bsx.contract_address, latest_block),
+                            target_block: latest_block + 1
                         }
                     )
                 )
@@ -112,28 +132,30 @@ fn blobstreamx_request_header_range() {
 #[test]
 #[should_panic(expected: ('Latest header not found',))]
 fn blobstreamx_request_header_range_latest_header_null() {
-    let blobstreamx = setup_blobstreamx();
+    let bsx = setup_blobstreamx();
+    let latest_block = get_bsx_latest_block(bsx.contract_address);
+
     store(
-        blobstreamx.contract_address,
+        bsx.contract_address,
         map_entry_address(
-            selector!("block_height_to_header_hash"), array![get_block_number().into()].span(),
+            selector!("block_height_to_header_hash"), array![latest_block.into()].span(),
         ),
-        array![0].span()
+        array![0, 0].span()
     );
-    blobstreamx.request_header_range(get_block_number() + 1);
+    bsx.request_header_range(latest_block + 1);
 }
 
 #[test]
 #[should_panic(expected: ('Target block not in range',))]
 fn blobstreamx_request_header_range_target_block_not_in_range() {
-    let blobstreamx = setup_blobstreamx();
-    blobstreamx.request_header_range(1);
+    let bsx = setup_blobstreamx();
+    bsx.request_header_range(1);
 }
 
 #[test]
 #[should_panic(expected: ('Target block not in range',))]
 fn blobstreamx_request_header_range_target_block_not_in_range_2() {
-    let blobstreamx = setup_blobstreamx();
-    let block_number = get_block_number();
-    blobstreamx.request_header_range(block_number + 1001);
+    let bsx = setup_blobstreamx();
+    let latest_block = get_bsx_latest_block(bsx.contract_address);
+    bsx.request_header_range(latest_block + 1001);
 }

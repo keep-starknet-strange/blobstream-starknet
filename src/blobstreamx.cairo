@@ -108,16 +108,17 @@ mod blobstreamx {
         ref self: ContractState,
         gateway: ContractAddress,
         owner: ContractAddress,
+        height: u64,
         header: u256,
         header_range_function_id: u256,
         next_header_function_id: u256,
     ) {
         self.data_commitment_max.write(1000);
         self.gateway.write(gateway);
-        self.latest_block.write(get_block_number());
+        self.latest_block.write(height);
         self.state_proof_nonce.write(1);
         self.ownable.initializer(owner);
-        self.block_height_to_header_hash.write(get_block_number(), header);
+        self.block_height_to_header_hash.write(height, header);
         self.header_range_function_id.write(header_range_function_id);
         self.next_header_function_id.write(next_header_function_id);
     }
@@ -198,10 +199,12 @@ mod blobstreamx {
             self.next_header_function_id.write(_function_id);
         }
 
-        /// @notice Prove the validity of the header at the target block and a data commitment for the block range [latestBlock, _targetBlock).
-        /// # Arguments 
-        ///  _target_block The end block of the header range proof.
-        /// @dev requestHeaderRange is used to skip from the latest block to the target block.
+        /// Prove the validity of the header at the target block and a data commitment for the block range [latestBlock, _targetBlock).
+        /// Used to skip from the latest block to the target block.
+        ///
+        /// # Arguments
+        ///
+        /// * `_target_block` - The end block of the header range proof.
         fn request_header_range(ref self: ContractState, _target_block: u64) {
             let latest_block = self.get_latest_block();
             let latest_header = self.block_height_to_header_hash.read(latest_block);
@@ -242,44 +245,46 @@ mod blobstreamx {
                 );
         }
 
-        /// @notice Commits the new header at targetBlock and the data commitment for the block range [trustedBlock, targetBlock).
+        /// Commits the new header at targetBlock and the data commitment for the block range [trustedBlock, targetBlock).
+        ///
         /// # Arguments 
-        /// * `_trustedBlock` -  The latest block when the request was made.
+        ///
         /// * `_target_block` -  The end block of the header range request
-        fn commit_header_range(ref self: ContractState, _trusted_block: u64, _target_block: u64) {
-            let trusted_header = self.block_height_to_header_hash.read(_trusted_block);
-            assert(trusted_header != 0, TendermintXErrors::TrustedHeaderNotFound);
-
+        fn commit_header_range(ref self: ContractState, _target_block: u64) {
             let latest_block = self.get_latest_block();
-            let state_proof_nonce = self.get_state_proof_nonce();
-
-            let mut input: Bytes = BytesTrait::new(0, array![]);
-            input.append_u64(_trusted_block);
-            input.append_u256(trusted_header);
-
-            let (target_header, data_commitment) = ISuccinctGatewayDispatcher {
-                contract_address: self.gateway.read()
-            }
-                .verified_call(self.header_range_function_id.read(), input);
+            let trusted_header = self.block_height_to_header_hash.read(latest_block);
+            assert(trusted_header != 0, TendermintXErrors::TrustedHeaderNotFound);
 
             assert(_target_block > latest_block, TendermintXErrors::TargetBlockNotInRange);
             assert(
                 _target_block - latest_block <= self.data_commitment_max(),
                 TendermintXErrors::TargetBlockNotInRange
             );
+
+            let mut input: Bytes = BytesTrait::new(0, array![]);
+            input.append_u64(latest_block);
+            input.append_u256(trusted_header);
+            input.append_u64(_target_block);
+
+            let (target_header, data_commitment) = ISuccinctGatewayDispatcher {
+                contract_address: self.get_gateway()
+            }
+                .verified_call(self.get_header_range_id(), input);
+
+            let proof_nonce = self.get_state_proof_nonce();
             self.block_height_to_header_hash.write(_target_block, target_header);
-            self.state_data_commitments.write(state_proof_nonce, data_commitment);
+            self.state_data_commitments.write(proof_nonce, data_commitment);
             self
                 .emit(
                     DataCommitmentStored {
-                        proof_nonce: state_proof_nonce,
-                        start_block: _trusted_block,
+                        proof_nonce,
+                        data_commitment,
+                        start_block: latest_block,
                         end_block: _target_block,
-                        data_commitment: data_commitment
                     }
                 );
-            self.emit(HeadUpdate { target_block: _trusted_block, target_header: target_header });
-            self.state_proof_nonce.write(state_proof_nonce + 1);
+            self.emit(HeadUpdate { target_block: latest_block, target_header: target_header });
+            self.state_proof_nonce.write(proof_nonce + 1);
             self.latest_block.write(_target_block);
         }
 
@@ -317,13 +322,16 @@ mod blobstreamx {
 
 
         /// Stores the new header for _trustedBlock + 1 and the data commitment for the block range [_trustedBlock, _trustedBlock + 1).
+        ///
         /// # Arguments
+        ///
         /// * `_trusted_block` - The latest block when the request was made.
         fn commit_next_header(ref self: ContractState, _trusted_block: u64) {
             let trusted_header = self.block_height_to_header_hash.read(_trusted_block);
-            let state_proof_nonce = self.get_state_proof_nonce();
-            let latest_block = self.latest_block.read();
             assert(trusted_header != 0, TendermintXErrors::TrustedHeaderNotFound);
+
+            let next_block = _trusted_block + 1;
+            assert(next_block > self.get_latest_block(), TendermintXErrors::TargetBlockNotInRange);
 
             let mut input: Bytes = BytesTrait::new(0, array![]);
             input.append_u64(_trusted_block);
@@ -334,21 +342,20 @@ mod blobstreamx {
             }
                 .verified_call(self.next_header_function_id.read(), input);
 
-            let next_block = _trusted_block + 1;
-            assert(next_block > latest_block, TendermintXErrors::TargetBlockNotInRange);
+            let proof_nonce = self.get_state_proof_nonce();
             self.block_height_to_header_hash.write(next_block, next_header);
-            self.state_data_commitments.write(state_proof_nonce, data_commitment);
+            self.state_data_commitments.write(proof_nonce, data_commitment);
             self
                 .emit(
                     DataCommitmentStored {
-                        proof_nonce: state_proof_nonce,
+                        proof_nonce,
+                        data_commitment,
                         start_block: _trusted_block,
-                        end_block: next_block,
-                        data_commitment: data_commitment
+                        end_block: next_block
                     }
                 );
             self.emit(HeadUpdate { target_block: next_block, target_header: next_header });
-            self.state_proof_nonce.write(state_proof_nonce + 1);
+            self.state_proof_nonce.write(proof_nonce + 1);
             self.latest_block.write(next_block);
         }
     }
