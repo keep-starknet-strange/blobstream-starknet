@@ -12,8 +12,8 @@ mod blobstreamx {
     use core::traits::Into;
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::upgrades::{interface::IUpgradeable, upgradeable::UpgradeableComponent};
-    use starknet::info::{get_block_number, get_contract_address};
-    use starknet::{ClassHash, ContractAddress};
+    use starknet::info::get_block_number;
+    use starknet::{ClassHash, ContractAddress, get_contract_address};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
     component!(path: UpgradeableComponent, storage: upgradeable, event: UpgradeableEvent);

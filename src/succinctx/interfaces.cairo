@@ -50,3 +50,28 @@ trait ISuccinctGateway<TContractState> {
         callback_calldata: Span<felt252>,
     );
 }
+
+
+#[starknet::interface]
+trait IFeeVault<TContractState> {
+    fn get_native_currency(self: @TContractState) -> ContractAddress;
+    fn set_native_currency(ref self: TContractState, _new_native_address: ContractAddress);
+    fn get_deductor_status(self: @TContractState, _deductor: ContractAddress) -> bool;
+    fn get_balances_infos(
+        self: @TContractState, _account: ContractAddress, _token: ContractAddress
+    ) -> u256;
+    fn add_deductor(ref self: TContractState, _deductor: ContractAddress);
+    fn remove_deductor(ref self: TContractState, _deductor: ContractAddress);
+    fn deposit_native(ref self: TContractState, _account: ContractAddress);
+    fn deposit(
+        ref self: TContractState, _account: ContractAddress, _token: ContractAddress, _amount: u256
+    );
+    fn deduct_native(ref self: TContractState, _account: ContractAddress);
+    fn deduct(
+        ref self: TContractState, _account: ContractAddress, _token: ContractAddress, _amount: u256
+    );
+    fn collect_native(ref self: TContractState, _to: ContractAddress, _amount: u256);
+    fn collect(
+        ref self: TContractState, _to: ContractAddress, _token: ContractAddress, _amount: u256
+    );
+}

@@ -4,7 +4,8 @@ mod succinct_gateway {
     use blobstream_sn::succinctx::function_registry::component::function_registry_cpt;
     use blobstream_sn::succinctx::function_registry::interfaces::IFunctionRegistry;
     use blobstream_sn::succinctx::interfaces::{
-        ISuccinctGateway, IFunctionVerifierDispatcher, IFunctionVerifierDispatcherTrait
+        ISuccinctGateway, IFunctionVerifierDispatcher, IFunctionVerifierDispatcherTrait,
+        IFeeVaultDispatcher, IFeeVaultDispatcherTrait
     };
     use core::array::SpanTrait;
     use openzeppelin::access::ownable::{OwnableComponent as ownable_cpt, interface::IOwnable};
@@ -36,6 +37,7 @@ mod succinct_gateway {
         verified_function_id: u256,
         verified_input_hash: u256,
         verified_output: (u256, u256),
+        fee_vault_address: ContractAddress,
         #[substorage(v0)]
         function_registry: function_registry_cpt::Storage,
         #[substorage(v0)]
@@ -107,11 +109,15 @@ mod succinct_gateway {
         const INVALID_CALL: felt252 = 'Invalid call to verify';
         const INVALID_REQUEST: felt252 = 'Invalid request for fullfilment';
         const INVALID_PROOF: felt252 = 'Invalid proof provided';
+        const FEE_VAULT_NOT_INITIALIZED: felt252 = 'Fee vault not initialized';
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, owner: ContractAddress) {
+    fn constructor(
+        ref self: ContractState, owner: ContractAddress, fee_vault_address: ContractAddress
+    ) {
         self.ownable.initializer(owner);
+        self.fee_vault_address.write(fee_vault_address);
     }
 
     #[abi(embed_v0)]
@@ -162,7 +168,12 @@ mod succinct_gateway {
 
             self.nonce.write(nonce + 1);
 
-            // TODO(#80): Implement Fee Vault and send fee
+            // Fee Vault
+
+            let fee_vault_address = self.fee_vault_address.read();
+            assert(!fee_vault_address.is_zero(), Errors::FEE_VAULT_NOT_INITIALIZED);
+            let fee_vault = IFeeVaultDispatcher { contract_address: fee_vault_address };
+            fee_vault.deposit_native(callback_addr);
 
             request_hash
         }
@@ -195,7 +206,13 @@ mod succinct_gateway {
                         fee_amount: starknet::info::get_tx_info().unbox().max_fee,
                     }
                 );
-        // TODO(#80): Implement Fee Vault and send fee
+
+            // Fee Vault
+
+            let fee_vault_address = self.fee_vault_address.read();
+            assert(!fee_vault_address.is_zero(), Errors::FEE_VAULT_NOT_INITIALIZED);
+            let fee_vault = IFeeVaultDispatcher { contract_address: fee_vault_address };
+            fee_vault.deposit_native(starknet::info::get_caller_address());
         }
 
         /// If the call matches the currently verified function, returns the output. 
