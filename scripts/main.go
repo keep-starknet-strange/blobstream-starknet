@@ -72,6 +72,7 @@ func main() {
 
 	// Fetch last transaction hash of starknet submitting blob to ETH
 	transaction_hash, _ := getLastTransactionHash()
+	fmt.Println()
 	fmt.Println("Found last transaction hash: " + transaction_hash)
 
 	// Get fees and size of blob from latest starknet submission
@@ -86,20 +87,25 @@ func main() {
 	gas_estimate_tia := (float64(gas_estimate) * tia_gas_price.Median / 1e6)
 
 	// 3. Print output
-	fmt.Println("Total Blob Size:", data.TotalBlobSize, "bytes")
-	fmt.Println("Number of Blobs:", len(data.Blobs))
-	fmt.Println("Blob Fee: ", data.BlobFee, "ETH")
-	fmt.Println("ETH: Gas Used if posted as calldata", data.GasIfEthCalldata)
+	fmt.Println("Total Blob Size :", data.TotalBlobSize, "bytes")
+	fmt.Println("Number of Blobs :", len(data.Blobs))
+	fmt.Println("Blob Fee paid   : ", data.BlobFee, "ETH")
 
 	fmt.Println()
-	fmt.Println("ETH: Gas Used:", data.TotalBlobSize)
-	fmt.Println("TIA: Gas Used:", tia_gas_price.Median)
+	fmt.Println("ETH: Gas Used as Blob     :", data.TotalBlobSize)
+	fmt.Println("ETH: Gas Used as Calldata :", data.GasIfEthCalldata)
+	fmt.Println("TIA: Gas Used             :", gas_estimate)
+
+	fmt.Println()
+	fmt.Println("ETH: Gas Price Blobs (wei) :", data.BlobGasPrice)
+	fmt.Println("ETH: Gas Price (wei)       :", data.GasPrice)
+	fmt.Println("TIA: Gas Price (utia)      :", tia_gas_price.Median)
 
 	fmt.Println()
 	gas_cost_if_calldata := float64(data.GasIfEthCalldata) * float64(data.GasPrice) / 1e18
-	fmt.Println("Cost when posted on ETH as blob:", data.BlobFee*eth_price, "USD")
-	fmt.Println("Cost when posted on ETH as calldata:", gas_cost_if_calldata*eth_price, "USD")
-	fmt.Println("Cost when posted on TIA:", gas_estimate_tia*tia_price, "USD")
+	fmt.Println("Cost when posted on ETH as blob     :", data.BlobFee*eth_price, "USD")
+	fmt.Println("Cost when posted on ETH as calldata :", gas_cost_if_calldata*eth_price, "USD")
+	fmt.Println("Cost when posted on TIA             :", gas_estimate_tia*tia_price, "USD")
 }
 
 func getTIAGasPrice() (TiaGasPrice, error) {
