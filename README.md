@@ -10,15 +10,9 @@
 
 </div>
 
-## Workshop
+## Workshop ([slides](https://docs.google.com/presentation/d/1SxFYrOHwFl_IQoI06_WB20Ge9A8qYE2bwkGr6pkif4g/edit?usp=sharing))
 
-[slides](https://docs.google.com/presentation/d/1SxFYrOHwFl_IQoI06_WB20Ge9A8qYE2bwkGr6pkif4g/edit?usp=sharing)
-
-Install [Golang](https://go.dev/doc/install)
-
-```bash
-cd sc
-```
+Install [Golang 1.21.1](https://go.dev/doc/install)
 
 ## Overview
 
