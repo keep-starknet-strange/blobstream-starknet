@@ -14,6 +14,12 @@
 
 Install [Golang 1.21.1](https://go.dev/doc/install)
 
+Install [Celestia Mocha Client](https://docs.celestia.org/developers/node-tutorial)
+
+```bash
+celestia blob submit 0x$(xxd -p <<< "SN_APP") $(xxd -p -c 0 src/tests/data/os_output.json) --token $AUTH_TOKEN
+```
+
 ## Overview
 
 `blobstream_sn` is a port of Celestia Blobstream X [contracts](https://github.com/succinctlabs/blobstreamx)
