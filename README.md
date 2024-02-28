@@ -10,6 +10,16 @@
 
 </div>
 
+## Workshop
+
+[slides](https://docs.google.com/presentation/d/1SxFYrOHwFl_IQoI06_WB20Ge9A8qYE2bwkGr6pkif4g/edit?usp=sharing)
+
+Install [Golang](https://go.dev/doc/install)
+
+```bash
+cd sc
+```
+
 ## Overview
 
 `blobstream_sn` is a port of Celestia Blobstream X [contracts](https://github.com/succinctlabs/blobstreamx)
