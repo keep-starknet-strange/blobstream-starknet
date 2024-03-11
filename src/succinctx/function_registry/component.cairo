@@ -49,10 +49,10 @@ mod function_registry_cpt {
     impl FunctionRegistry<
         TContractState, +HasComponent<TContractState>
     > of IFunctionRegistry<ComponentState<TContractState>> {
-        fn verifiers(self: @ComponentState<TContractState>, function_id: u256) -> ContractAddress {
+        fn get_verifier(self: @ComponentState<TContractState>, function_id: u256) -> ContractAddress {
             self.verifiers.read(function_id)
         }
-        fn verifier_owners(
+        fn get_verifier_owner(
             self: @ComponentState<TContractState>, function_id: u256
         ) -> ContractAddress {
             self.verifier_owners.read(function_id)
