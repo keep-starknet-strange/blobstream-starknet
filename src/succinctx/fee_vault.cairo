@@ -18,6 +18,7 @@ mod succinct_fee_vault {
 
     #[storage]
     struct Storage {
+        // balances[token][account] => token balance for Succinct services.
         balances: LegacyMap::<(ContractAddress, ContractAddress), u256>,
         allowed_deductors: LegacyMap::<ContractAddress, bool>,
         native_currency_address: ContractAddress,
@@ -42,20 +43,26 @@ mod succinct_fee_vault {
 
     #[derive(Drop, starknet::Event)]
     struct Received {
+        #[key]
         account: ContractAddress,
+        #[key]
         token: ContractAddress,
         amount: u256
     }
     #[derive(Drop, starknet::Event)]
     struct Deducted {
+        #[key]
         account: ContractAddress,
+        #[key]
         token: ContractAddress,
         amount: u256
     }
 
     #[derive(Drop, starknet::Event)]
     struct Collected {
+        #[key]
         to: ContractAddress,
+        #[key]
         token: ContractAddress,
         amount: u256,
     }
@@ -89,7 +96,7 @@ mod succinct_fee_vault {
     #[abi(embed_v0)]
     impl IFeeVaultImpl of IFeeVault<ContractState> {
         /// Get the current native currency address 
-        /// # Returns 
+        /// # Returns
         /// The native currency address defined. 
         fn get_native_currency(self: @ContractState) -> ContractAddress {
             self.native_currency_address.read()
@@ -105,26 +112,15 @@ mod succinct_fee_vault {
         }
 
 
-        /// Get the deductor status 
+        /// Check if the specified deductor is allowed to deduct from the vault.
         /// # Arguments
-        /// * `_deductor` - The deductor to retrieve the status. 
-        /// # Returns 
-        /// The boolean associated with the deductor status
-        fn get_deductor_status(self: @ContractState, _deductor: ContractAddress) -> bool {
+        /// * `_deductor` - The deductor to check.
+        /// # Returns
+        /// True if the deductor is allowed to deduct from the vault, false otherwise.
+        fn is_deductor(self: @ContractState, _deductor: ContractAddress) -> bool {
             self.allowed_deductors.read(_deductor)
         }
 
-        /// Get the balance for a given token and account
-        /// # Arguments
-        /// * `_account` - The account to retrieve the balance information.
-        /// * `_token` - The token address to consider.
-        /// # Returns 
-        /// The associated balance.
-        fn get_balances_infos(
-            self: @ContractState, _account: ContractAddress, _token: ContractAddress
-        ) -> u256 {
-            self.balances.read((_token, _account))
-        }
         /// Add the specified deductor 
         /// # Arguments
         /// * `_deductor` - The address of the deductor to add.
@@ -139,6 +135,18 @@ mod succinct_fee_vault {
         fn remove_deductor(ref self: ContractState, _deductor: ContractAddress) {
             self.ownable.assert_only_owner();
             self.allowed_deductors.write(_deductor, false);
+        }
+
+        /// Get the balance for a given token and account to use for Succinct services.
+        /// # Arguments
+        /// * `_account` - The account to retrieve the balance for.
+        /// * `_token` - The token address to consider.
+        /// # Returns
+        /// The associated balance.
+        fn get_account_balance(
+            self: @ContractState, _account: ContractAddress, _token: ContractAddress
+        ) -> u256 {
+            self.balances.read((_token, _account))
         }
 
         /// Deposit the specified amount of native currency from the caller.
@@ -183,9 +191,7 @@ mod succinct_fee_vault {
         /// # Arguments
         /// * `_account` - The account to deduct the native currency from.
         fn deduct_native(ref self: ContractState, _account: ContractAddress) {
-            let caller_address = get_caller_address();
             let native_currency = self.native_currency_address.read();
-            assert(self.allowed_deductors.read(caller_address), Errors::OnlyDeductor);
             self
                 .deduct(
                     _account, native_currency, starknet::info::get_tx_info().unbox().max_fee.into()
@@ -204,7 +210,7 @@ mod succinct_fee_vault {
             _amount: u256
         ) {
             let caller_address = get_caller_address();
-            assert(self.allowed_deductors.read(caller_address), Errors::OnlyDeductor);
+            assert(self.is_deductor(caller_address), Errors::OnlyDeductor);
             assert(!_account.is_zero(), Errors::InvalidAccount);
             assert(!_token.is_zero(), Errors::InvalidToken);
             let current_balance = self.balances.read((_token, _account));
