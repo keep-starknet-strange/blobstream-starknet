@@ -10,7 +10,9 @@ use blobstream_sn::succinctx::interfaces::{
 use blobstream_sn::tests::common::{
     setup_base, setup_spied, setup_succinct_gateway, TEST_START_BLOCK, TEST_END_BLOCK, TEST_HEADER,
 };
-use snforge_std::{EventSpy, EventAssertions, store, map_entry_address};
+use openzeppelin::tests::utils::constants::OWNER;
+use snforge_std as snf;
+use snforge_std::{CheatTarget, EventSpy, EventAssertions};
 use starknet::secp256_trait::Signature;
 use starknet::{ContractAddress, EthAddress, info::get_block_number};
 
@@ -161,9 +163,9 @@ fn blobstreamx_request_header_range_latest_header_null() {
     let bsx = setup_blobstreamx();
     let latest_block = get_bsx_latest_block(bsx.contract_address);
 
-    store(
+    snf::store(
         bsx.contract_address,
-        map_entry_address(
+        snf::map_entry_address(
             selector!("block_height_to_header_hash"), array![latest_block.into()].span(),
         ),
         array![0, 0].span()
@@ -184,4 +186,13 @@ fn blobstreamx_request_header_range_target_block_not_in_range_2() {
     let bsx = setup_blobstreamx();
     let latest_block = get_bsx_latest_block(bsx.contract_address);
     bsx.request_header_range(latest_block + 1001);
+}
+
+#[test]
+#[should_panic(expected: ('Contract is frozen',))]
+fn blobstreamx_frozen() {
+    let bsx = setup_blobstreamx();
+    snf::start_prank(CheatTarget::One(bsx.contract_address), OWNER());
+    bsx.set_frozen(true);
+    bsx.commit_header_range(0);
 }

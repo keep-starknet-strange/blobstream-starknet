@@ -33,6 +33,7 @@ mod blobstreamx {
         block_height_to_header_hash: LegacyMap::<u64, u256>,
         header_range_function_id: u256,
         next_header_function_id: u256,
+        frozen: bool,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
         #[substorage(v0)]
@@ -100,7 +101,8 @@ mod blobstreamx {
     }
 
     mod Errors {
-        const DataCommitmentNotFound: felt252 = 'bad data commitment for range';
+        const DataCommitmentNotFound: felt252 = 'Bad data commitment for range';
+        const ContractFrozen: felt252 = 'Contract is frozen';
     }
 
     #[constructor]
@@ -121,6 +123,7 @@ mod blobstreamx {
         self.block_height_to_header_hash.write(height, header);
         self.header_range_function_id.write(header_range_function_id);
         self.next_header_function_id.write(next_header_function_id);
+        self.frozen.write(false);
     }
 
     #[abi(embed_v0)]
@@ -136,6 +139,8 @@ mod blobstreamx {
         fn verify_attestation(
             self: @ContractState, proof_nonce: u64, root: DataRoot, proof: BinaryMerkleProof
         ) -> bool {
+            assert(!self.frozen.read(), Errors::ContractFrozen);
+            
             if (proof_nonce >= self.state_proof_nonce.read()) {
                 return false;
             }
@@ -198,6 +203,13 @@ mod blobstreamx {
             self.ownable.assert_only_owner();
             self.next_header_function_id.write(_function_id);
         }
+        fn get_frozen(self: @ContractState) -> bool {
+            self.frozen.read()
+        }
+        fn set_frozen(ref self: ContractState, _frozen: bool) {
+            self.ownable.assert_only_owner();
+            self.frozen.write(_frozen);
+        }
 
         /// Prove the validity of the header at the target block and a data commitment for the block range [latestBlock, _targetBlock).
         /// Used to skip from the latest block to the target block.
@@ -250,6 +262,8 @@ mod blobstreamx {
         ///
         /// * `_target_block` -  The end block of the header range request
         fn commit_header_range(ref self: ContractState, _target_block: u64) {
+            assert(!self.frozen.read(), Errors::ContractFrozen);
+
             let latest_block = self.get_latest_block();
             let trusted_header = self.block_height_to_header_hash.read(latest_block);
             assert(trusted_header != 0, TendermintXErrors::TrustedHeaderNotFound);
@@ -326,6 +340,8 @@ mod blobstreamx {
         ///
         /// * `_trusted_block` - The latest block when the request was made.
         fn commit_next_header(ref self: ContractState, _trusted_block: u64) {
+            assert(!self.frozen.read(), Errors::ContractFrozen);
+            
             let trusted_header = self.block_height_to_header_hash.read(_trusted_block);
             assert(trusted_header != 0, TendermintXErrors::TrustedHeaderNotFound);
 

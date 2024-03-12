@@ -47,18 +47,21 @@ trait IBlobstreamX<TContractState> {
     /// Max num of blocks that can be skipped in a single request
     /// ref: https://github.com/celestiaorg/celestia-core/blob/main/pkg/consts/consts.go#L43-L44
     fn data_commitment_max(self: @TContractState) -> u64;
-    // Address of the gateway contract
+    // Address of the gateway contract.
     fn set_gateway(ref self: TContractState, new_gateway: ContractAddress);
     fn get_gateway(self: @TContractState) -> ContractAddress;
     // Nonce for proof events. Must be incremented sequentially
     fn get_state_proof_nonce(self: @TContractState) -> u64;
-    // Header range function id
+    // Header range function id.
     fn get_header_range_id(self: @TContractState) -> u256;
     fn set_header_range_id(ref self: TContractState, _function_id: u256);
     // Next header function id.
     fn get_next_header_id(self: @TContractState) -> u256;
     fn set_next_header_id(ref self: TContractState, _function_id: u256);
-    // Prove the validity of the header at the target block and a data commitment for the block range [latestBlock, _targetBlock)
+    // Contract freezing state.
+    fn get_frozen(self: @TContractState) -> bool;
+    fn set_frozen(ref self: TContractState, _frozen: bool);
+    // Prove the validity of the header at the target block and a data commitment for the block range [latestBlock, _targetBlock).
     fn request_header_range(ref self: TContractState, _target_block: u64);
     // Commits the new header at targetBlock and the data commitment for the block range [trustedBlock, targetBlock).
     fn commit_header_range(ref self: TContractState, _target_block: u64);
