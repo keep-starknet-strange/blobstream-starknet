@@ -211,7 +211,7 @@ mod blobstreamx {
             self.frozen.write(_frozen);
         }
 
-        /// Prove the validity of the header at the target block and a data commitment for the block range [latestBlock, _targetBlock).
+        /// Request a header_range proof for the next header hash and a data commitment for the block range [latest_block, _target_block).
         /// Used to skip from the latest block to the target block.
         ///
         /// # Arguments
@@ -257,6 +257,7 @@ mod blobstreamx {
         }
 
         /// Commits the new header at targetBlock and the data commitment for the block range [trustedBlock, targetBlock).
+        /// This is called as a callback from the gateway after a request_header_range.
         ///
         /// # Arguments 
         ///
@@ -279,6 +280,7 @@ mod blobstreamx {
             input.append_u256(trusted_header);
             input.append_u64(_target_block);
 
+            // Get the output of the header_range proof from the gateway.
             let (target_header, data_commitment) = ISuccinctGatewayDispatcher {
                 contract_address: self.get_gateway()
             }
@@ -296,13 +298,14 @@ mod blobstreamx {
                         end_block: _target_block,
                     }
                 );
-            self.emit(HeadUpdate { target_block: latest_block, target_header: target_header });
+            self.emit(HeadUpdate { target_block: _target_block, target_header: target_header });
             self.state_proof_nonce.write(proof_nonce + 1);
             self.latest_block.write(_target_block);
         }
 
 
-        /// Prove the validity of the next header and a data commitment for the block range [latestBlock, latestBlock + 1).
+        /// Request a next_header proof for the next header hash and a data commitment for the block range [latest_block, latest_block + 1).
+        /// Rarely used, only if the validator set changes by more than 2/3 in a single block.
         fn request_next_header(ref self: ContractState) {
             let latest_block = self.get_latest_block();
             let latest_header = self.block_height_to_header_hash.read(latest_block);
@@ -335,6 +338,7 @@ mod blobstreamx {
 
 
         /// Stores the new header for _trustedBlock + 1 and the data commitment for the block range [_trustedBlock, _trustedBlock + 1).
+        /// This is called as a callback from the gateway after a request_next_header.
         ///
         /// # Arguments
         ///
@@ -352,6 +356,7 @@ mod blobstreamx {
             input.append_u64(_trusted_block);
             input.append_u256(trusted_header);
 
+            // Get the output of the next_header proof from the gateway.
             let (next_header, data_commitment) = ISuccinctGatewayDispatcher {
                 contract_address: self.gateway.read()
             }

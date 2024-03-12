@@ -62,12 +62,12 @@ fn fee_vault_deductor_operations() {
     snf::start_prank(CheatTarget::One(fee_vault.contract_address), OWNER());
     // Adding a new deductor
     fee_vault.add_deductor(SPENDER());
-    assert(fee_vault.get_deductor_status(SPENDER()), 'deductor status not updated');
+    assert(fee_vault.is_deductor(SPENDER()), 'deductors not updated');
 
     // Removing the same deductor
     fee_vault.remove_deductor(SPENDER());
-    assert(!fee_vault.get_deductor_status(SPENDER()), 'deductor status not updated');
-    snf::stop_prank(CheatTarget::One(fee_vault.contract_address));
+    assert(!fee_vault.is_deductor(SPENDER()), 'deductors not updated');
+    stop_prank(CheatTarget::One(fee_vault.contract_address));
 }
 
 
@@ -77,7 +77,7 @@ fn fee_vault_add_deductor_fails_if_not_owner() {
     let (_, fee_vault) = setup_contracts();
     // Adding a new deductor
     fee_vault.add_deductor(SPENDER());
-    assert(fee_vault.get_deductor_status(SPENDER()), 'deductor status not updated');
+    assert(fee_vault.is_deductor(SPENDER()), 'deductors not updated');
 }
 
 
@@ -87,7 +87,7 @@ fn fee_vault_remove_deductor_fails_if_not_owner() {
     let (_, fee_vault) = setup_contracts();
     // Adding a new deductor
     fee_vault.remove_deductor(SPENDER());
-    assert(!fee_vault.get_deductor_status(SPENDER()), 'deductor status not updated');
+    assert(!fee_vault.is_deductor(SPENDER()), 'deductors not updated');
 }
 
 #[test]
@@ -101,7 +101,7 @@ fn fee_vault_deposit_native() {
     snf::start_prank(CheatTarget::One(fee_vault.contract_address), SPENDER());
     fee_vault.deposit_native(SPENDER());
     assert(
-        fee_vault.get_balances_infos(SPENDER(), erc20.contract_address) == fee,
+        fee_vault.get_account_balance(SPENDER(), erc20.contract_address) == fee,
         'balances not updated'
     );
     snf::stop_prank(CheatTarget::One(fee_vault.contract_address));
@@ -117,7 +117,7 @@ fn fee_vault_deposit() {
     snf::start_prank(CheatTarget::One(fee_vault.contract_address), SPENDER());
     fee_vault.deposit(SPENDER(), erc20.contract_address, 0x10000);
     assert(
-        fee_vault.get_balances_infos(SPENDER(), erc20.contract_address) == 0x10000,
+        fee_vault.get_account_balance(SPENDER(), erc20.contract_address) == 0x10000,
         'balances deposit not updated'
     );
     snf::stop_prank(CheatTarget::One(fee_vault.contract_address));
@@ -145,7 +145,7 @@ fn fee_vault_deposit_fails_if_insufficent_allowance() {
     snf::start_prank(CheatTarget::One(fee_vault.contract_address), SPENDER());
     fee_vault.deposit(SPENDER(), erc20.contract_address, 0x10000);
     assert(
-        fee_vault.get_balances_infos(SPENDER(), erc20.contract_address) == 0x10000,
+        fee_vault.get_account_balance(SPENDER(), erc20.contract_address) == 0x10000,
         'balances deposit not updated'
     );
     snf::stop_prank(CheatTarget::One(fee_vault.contract_address));
@@ -165,12 +165,12 @@ fn fee_vault_deduct_native() {
     snf::start_prank(CheatTarget::One(fee_vault.contract_address), SPENDER());
     fee_vault.deposit_native(SPENDER());
     assert(
-        fee_vault.get_balances_infos(SPENDER(), erc20.contract_address) == fee,
+        fee_vault.get_account_balance(SPENDER(), erc20.contract_address) == fee,
         'balances deposit not updated'
     );
     fee_vault.deduct_native(SPENDER());
     assert(
-        fee_vault.get_balances_infos(SPENDER(), erc20.contract_address) == 0,
+        fee_vault.get_account_balance(SPENDER(), erc20.contract_address) == 0,
         'balances deduct not updated'
     );
     snf::stop_prank(CheatTarget::One(fee_vault.contract_address));
@@ -190,7 +190,7 @@ fn fee_vault_deduct() {
     fee_vault.deposit(SPENDER(), erc20.contract_address, 0x10000);
     fee_vault.deduct(SPENDER(), erc20.contract_address, 0x8000);
     assert(
-        fee_vault.get_balances_infos(SPENDER(), erc20.contract_address) == 0x10000 - 0x8000,
+        fee_vault.get_account_balance(SPENDER(), erc20.contract_address) == 0x10000 - 0x8000,
         'balances deduct not updated'
     );
     snf::stop_prank(CheatTarget::One(fee_vault.contract_address));
