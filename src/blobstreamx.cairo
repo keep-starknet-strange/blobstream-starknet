@@ -4,9 +4,6 @@ mod blobstreamx {
     use blobstream_sn::interfaces::{
         DataRoot, TendermintXErrors, IBlobstreamX, IDAOracle, ITendermintX
     };
-    use succinct_sn::interfaces::{
-        ISuccinctGatewayDispatcher, ISuccinctGatewayDispatcherTrait
-    };
     use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
     use core::starknet::event::EventEmitter;
     use core::traits::Into;
@@ -14,6 +11,7 @@ mod blobstreamx {
     use openzeppelin::upgrades::{interface::IUpgradeable, upgradeable::UpgradeableComponent};
     use starknet::info::get_block_number;
     use starknet::{ClassHash, ContractAddress, get_contract_address};
+    use succinct_sn::interfaces::{ISuccinctGatewayDispatcher, ISuccinctGatewayDispatcherTrait};
 
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
     component!(path: UpgradeableComponent, storage: upgradeable, event: UpgradeableEvent);

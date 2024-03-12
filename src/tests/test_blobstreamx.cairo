@@ -4,9 +4,6 @@ use blobstream_sn::interfaces::{
     IBlobstreamXDispatcher, IBlobstreamXDispatcherTrait, Validator, ITendermintXDispatcher,
     ITendermintXDispatcherTrait
 };
-use succinct_sn::interfaces::{
-    ISuccinctGatewayDispatcher, ISuccinctGatewayDispatcherTrait
-};
 use blobstream_sn::tests::common::{
     setup_base, setup_spied, setup_succinct_gateway, TEST_START_BLOCK, TEST_END_BLOCK, TEST_HEADER,
 };
@@ -15,6 +12,7 @@ use snforge_std as snf;
 use snforge_std::{CheatTarget, EventSpy, EventAssertions};
 use starknet::secp256_trait::Signature;
 use starknet::{ContractAddress, EthAddress, info::get_block_number};
+use succinct_sn::interfaces::{ISuccinctGatewayDispatcher, ISuccinctGatewayDispatcherTrait};
 
 fn setup_blobstreamx() -> IBlobstreamXDispatcher {
     IBlobstreamXDispatcher { contract_address: setup_base() }
