@@ -1,11 +1,11 @@
-use blobstream_sn::succinctx::fee_vault::succinct_fee_vault;
-use blobstream_sn::succinctx::function_registry::erc20_mock::{
+use succinct_sn::fee_vault::succinct_fee_vault;
+use succinct_sn::function_registry::erc20_mock::{
     IMockERC20Dispatcher, IMockERC20DispatcherTrait, MockERC20
 };
-use blobstream_sn::succinctx::function_registry::interfaces::{
+use succinct_sn::function_registry::interfaces::{
     IFunctionRegistryDispatcher, IFunctionRegistryDispatcherTrait
 };
-use blobstream_sn::succinctx::interfaces::{IFeeVaultDispatcher, IFeeVaultDispatcherTrait};
+use succinct_sn::interfaces::{IFeeVaultDispatcher, IFeeVaultDispatcherTrait};
 use openzeppelin::tests::utils::constants::OWNER;
 use snforge_std as snf;
 use snforge_std::{ContractClassTrait, CheatTarget, SpyOn, EventSpy};

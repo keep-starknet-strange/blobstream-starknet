@@ -4,7 +4,7 @@ use blobstream_sn::interfaces::{
     IBlobstreamXDispatcher, IBlobstreamXDispatcherTrait, Validator, ITendermintXDispatcher,
     ITendermintXDispatcherTrait
 };
-use blobstream_sn::succinctx::interfaces::{
+use succinct_sn::interfaces::{
     ISuccinctGatewayDispatcher, ISuccinctGatewayDispatcherTrait
 };
 use blobstream_sn::tests::common::{

@@ -4,7 +4,7 @@ mod blobstreamx {
     use blobstream_sn::interfaces::{
         DataRoot, TendermintXErrors, IBlobstreamX, IDAOracle, ITendermintX
     };
-    use blobstream_sn::succinctx::interfaces::{
+    use succinct_sn::interfaces::{
         ISuccinctGatewayDispatcher, ISuccinctGatewayDispatcherTrait
     };
     use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;

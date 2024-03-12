@@ -1,7 +1,7 @@
 #[starknet::contract]
 mod function_verifier_mock {
     use alexandria_bytes::Bytes;
-    use blobstream_sn::succinctx::interfaces::IFunctionVerifier;
+    use succinct_sn::interfaces::IFunctionVerifier;
 
     #[storage]
     struct Storage {
