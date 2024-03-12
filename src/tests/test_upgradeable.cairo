@@ -7,8 +7,9 @@ use openzeppelin::upgrades::interface::{
     IUpgradeable, IUpgradeableDispatcher, IUpgradeableDispatcherTrait
 };
 use openzeppelin::upgrades::upgradeable::UpgradeableComponent;
+use snforge_std as snf;
 use snforge_std::cheatcodes::events::EventAssertions;
-use snforge_std::{declare, start_prank, stop_prank, CheatTarget, EventSpy};
+use snforge_std::{CheatTarget, EventSpy};
 
 const TEST_VAL: felt252 = 420;
 
@@ -24,11 +25,11 @@ fn setup_upgradeable_spied() -> (IUpgradeableDispatcher, EventSpy) {
 #[test]
 fn blobstreamx_upgrade() {
     let (upgradeable, mut spy) = setup_upgradeable_spied();
-    let v2_class = declare('mock_upgradeable');
+    let v2_class = snf::declare('mock_upgradeable');
 
-    start_prank(CheatTarget::One(upgradeable.contract_address), OWNER());
+    snf::start_prank(CheatTarget::One(upgradeable.contract_address), OWNER());
     upgradeable.upgrade(v2_class.class_hash);
-    stop_prank(CheatTarget::One(upgradeable.contract_address));
+    snf::stop_prank(CheatTarget::One(upgradeable.contract_address));
 
     let expected_event = UpgradeableComponent::Upgraded { class_hash: v2_class.class_hash };
     spy
@@ -51,6 +52,6 @@ fn blobstreamx_upgrade() {
 fn blobstreamx_upgrade_not_owner() {
     let upgradeable = setup_upgradeable();
 
-    let v2_class = declare('mock_upgradeable');
+    let v2_class = snf::declare('mock_upgradeable');
     upgradeable.upgrade(v2_class.class_hash);
 }

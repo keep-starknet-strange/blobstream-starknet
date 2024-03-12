@@ -140,7 +140,7 @@ mod blobstreamx {
             self: @ContractState, proof_nonce: u64, root: DataRoot, proof: BinaryMerkleProof
         ) -> bool {
             assert(!self.frozen.read(), Errors::ContractFrozen);
-            
+
             if (proof_nonce >= self.state_proof_nonce.read()) {
                 return false;
             }
@@ -341,7 +341,7 @@ mod blobstreamx {
         /// * `_trusted_block` - The latest block when the request was made.
         fn commit_next_header(ref self: ContractState, _trusted_block: u64) {
             assert(!self.frozen.read(), Errors::ContractFrozen);
-            
+
             let trusted_header = self.block_height_to_header_hash.read(_trusted_block);
             assert(trusted_header != 0, TendermintXErrors::TrustedHeaderNotFound);
 

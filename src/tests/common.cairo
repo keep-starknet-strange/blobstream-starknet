@@ -7,9 +7,8 @@ use blobstream_sn::succinctx::function_registry::interfaces::{
 };
 use blobstream_sn::succinctx::interfaces::{IFeeVaultDispatcher, IFeeVaultDispatcherTrait};
 use openzeppelin::tests::utils::constants::OWNER;
-use snforge_std::{
-    declare, ContractClassTrait, start_prank, stop_prank, CheatTarget, spy_events, SpyOn, EventSpy
-};
+use snforge_std as snf;
+use snforge_std::{ContractClassTrait, CheatTarget, SpyOn, EventSpy};
 use starknet::ContractAddress;
 
 // https://sepolia.etherscan.io/tx/0xadced8dc7f4bb01d730ed78daecbf9640417c5bd60b0ada23c9045cc953481a5#eventlog
@@ -21,24 +20,24 @@ const NEXT_HEADER_DIGEST: u256 = 0xfd6c88812a160ff288fe557111815b3433c539c77a356
 
 fn setup_base() -> ContractAddress {
     // deploy the token associated with the fee vault
-    let token_class = declare('MockERC20');
+    let token_class = snf::declare('MockERC20');
     let token_calldata = array!['FeeToken', 'FT'];
     let token_address = token_class.deploy(@token_calldata).unwrap();
 
     // deploy the fee vault 
-    let fee_vault_class = declare('succinct_fee_vault');
+    let fee_vault_class = snf::declare('succinct_fee_vault');
     let fee_calldata = array![token_address.into(), OWNER().into()];
     let fee_vault_address = fee_vault_class.deploy(@fee_calldata).unwrap();
 
     // deploy the succinct gateway
-    let succinct_gateway_class = declare('succinct_gateway');
+    let succinct_gateway_class = snf::declare('succinct_gateway');
     let gateway_addr = succinct_gateway_class
         .deploy(@array![OWNER().into(), fee_vault_address.into()])
         .unwrap();
     let gateway = IFunctionRegistryDispatcher { contract_address: gateway_addr };
 
     // deploy the mock function verifier
-    let func_verifier_class = declare('function_verifier_mock');
+    let func_verifier_class = snf::declare('function_verifier_mock');
     let header_range_verifier = func_verifier_class
         .deploy(@array![HEADER_RANGE_DIGEST.low.into(), HEADER_RANGE_DIGEST.high.into()])
         .unwrap();
@@ -53,7 +52,7 @@ fn setup_base() -> ContractAddress {
         .register_function(OWNER(), next_header_verifier, 'NEXT_HEADER');
 
     // deploy blobstreamx
-    let blobstreamx_class = declare('blobstreamx');
+    let blobstreamx_class = snf::declare('blobstreamx');
     let calldata = array![
         gateway_addr.into(),
         OWNER().into(),
@@ -70,23 +69,23 @@ fn setup_base() -> ContractAddress {
 
 fn setup_spied() -> (ContractAddress, EventSpy) {
     let blobstreamx = setup_base();
-    let mut spy = spy_events(SpyOn::One(blobstreamx));
+    let mut spy = snf::spy_events(SpyOn::One(blobstreamx));
     (blobstreamx, spy)
 }
 
 
 fn setup_succinct_gateway() -> ContractAddress {
     // deploy the token associated with the fee vault
-    let token_class = declare('MockERC20');
+    let token_class = snf::declare('MockERC20');
     let token_calldata = array!['FeeToken', 'FT'];
     let token_address = token_class.deploy(@token_calldata).unwrap();
 
     // deploy the fee vault 
-    let fee_vault_class = declare('succinct_fee_vault');
+    let fee_vault_class = snf::declare('succinct_fee_vault');
     let fee_calldata = array![token_address.into(), OWNER().into()];
     let fee_vault_address = fee_vault_class.deploy(@fee_calldata).unwrap();
 
-    let succinct_gateway_class = declare('succinct_gateway');
+    let succinct_gateway_class = snf::declare('succinct_gateway');
     let calldata = array![OWNER().into(), fee_vault_address.into()];
     succinct_gateway_class.deploy(@calldata).unwrap()
 }
