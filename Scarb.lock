@@ -4,7 +4,7 @@ version = 1
 [[package]]
 name = "alexandria_bytes"
 version = "0.1.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=8ddf0243#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
 dependencies = [
  "alexandria_data_structures",
  "alexandria_math",
@@ -13,7 +13,7 @@ dependencies = [
 [[package]]
 name = "alexandria_data_structures"
 version = "0.2.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=8ddf0243#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
 dependencies = [
  "alexandria_encoding",
 ]
@@ -21,7 +21,7 @@ dependencies = [
 [[package]]
 name = "alexandria_encoding"
 version = "0.1.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=8ddf0243#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
 dependencies = [
  "alexandria_math",
  "alexandria_numeric",
@@ -30,7 +30,7 @@ dependencies = [
 [[package]]
 name = "alexandria_math"
 version = "0.2.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=8ddf0243#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
 dependencies = [
  "alexandria_data_structures",
 ]
@@ -38,7 +38,7 @@ dependencies = [
 [[package]]
 name = "alexandria_numeric"
 version = "0.1.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=8ddf0243#8ddf02430dfe04656ed5bf1b99de7024da1aef41"
 dependencies = [
  "alexandria_math",
 ]
@@ -51,6 +51,7 @@ dependencies = [
  "alexandria_math",
  "openzeppelin",
  "snforge_std",
+ "succinct_sn",
 ]
 
 [[package]]
@@ -62,3 +63,13 @@ source = "git+https://github.com/OpenZeppelin/cairo-contracts.git?rev=2815498#28
 name = "snforge_std"
 version = "0.17.0"
 source = "git+https://github.com/foundry-rs/starknet-foundry?tag=v0.17.0#63f7f0b533a3d852e2b60214e0f40b99c9dcbb26"
+
+[[package]]
+name = "succinct_sn"
+version = "0.1.0"
+source = "git+https://github.com/keep-starknet-strange/succinct-starknet.git#33bfd3d3d31a136a36fa9432439de31808b9424c"
+dependencies = [
+ "alexandria_bytes",
+ "openzeppelin",
+ "snforge_std",
+]

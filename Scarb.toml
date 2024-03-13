@@ -9,12 +9,18 @@ test = "snforge test"
 snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.17.0" }
 starknet = ">=2.5.3"
 openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", rev = "2815498" }
-alexandria_bytes = { git = "https://github.com/keep-starknet-strange/alexandria.git" }
-alexandria_math = { git = "https://github.com/keep-starknet-strange/alexandria.git" }
+alexandria_bytes = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "8ddf0243" }
+alexandria_math = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "8ddf0243" }
+succinct_sn = { git = "https://github.com/keep-starknet-strange/succinct-starknet.git" }
 
 [[target.starknet-contract]]
 casm = true
 sierra = true
+build-external-contracts = [
+    "succinct_sn::fee_vault::succinct_fee_vault",
+    "succinct_sn::gateway::succinct_gateway",
+    "succinct_sn::mocks::erc20_mock::SnakeERC20Mock",
+]
 
 [cairo]
 sierra-replace-ids = true
