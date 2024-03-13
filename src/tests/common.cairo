@@ -1,18 +1,13 @@
 use openzeppelin::tests::utils::constants::OWNER;
 use openzeppelin::utils::serde::SerializedAppend;
-use snforge_std::{
-    declare, ContractClassTrait, start_prank, stop_prank, CheatTarget, spy_events, SpyOn, EventSpy
-};
+use snforge_std as snf;
+use snforge_std::{ContractClassTrait, CheatTarget, SpyOn, EventSpy};
 use starknet::ContractAddress;
 use succinct_sn::fee_vault::succinct_fee_vault;
 use succinct_sn::function_registry::interfaces::{
     IFunctionRegistryDispatcher, IFunctionRegistryDispatcherTrait
 };
 use succinct_sn::interfaces::{IFeeVaultDispatcher, IFeeVaultDispatcherTrait};
-use openzeppelin::tests::utils::constants::OWNER;
-use snforge_std as snf;
-use snforge_std::{ContractClassTrait, CheatTarget, SpyOn, EventSpy};
-use starknet::ContractAddress;
 
 // https://sepolia.etherscan.io/tx/0xadced8dc7f4bb01d730ed78daecbf9640417c5bd60b0ada23c9045cc953481a5#eventlog
 const TEST_START_BLOCK: u64 = 846054;
@@ -29,7 +24,7 @@ fn setup_base() -> ContractAddress {
     calldata.append_serde('FT');
     calldata.append_serde(TOTAL_SUPPLY);
     calldata.append_serde(OWNER());
-    let token_class = declare('SnakeERC20Mock');
+    let token_class = snf::declare('SnakeERC20Mock');
     let token_address = token_class.deploy(@calldata).unwrap();
 
     // deploy the fee vault 
@@ -84,14 +79,13 @@ fn setup_spied() -> (ContractAddress, EventSpy) {
 
 fn setup_succinct_gateway() -> ContractAddress {
     // deploy the token associated with the fee vault
-<<<<<<< HEAD
-    let token_class = snf::declare('MockERC20');
-    let token_calldata = array!['FeeToken', 'FT'];
-=======
-    let token_class = declare('SnakeERC20Mock');
-    let token_calldata = array!['FeeToken', 'FT', 2000, OWNER().into()];
->>>>>>> b4311f4 (update imports for succinct)
-    let token_address = token_class.deploy(@token_calldata).unwrap();
+    let mut calldata = array![];
+    calldata.append_serde('FeeToken');
+    calldata.append_serde('FT');
+    calldata.append_serde(TOTAL_SUPPLY);
+    calldata.append_serde(OWNER());
+    let token_class = snf::declare('SnakeERC20Mock');
+    let token_address = token_class.deploy(@calldata).unwrap();
 
     // deploy the fee vault 
     let fee_vault_class = snf::declare('succinct_fee_vault');
