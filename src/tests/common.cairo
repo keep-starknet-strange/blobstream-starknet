@@ -1,12 +1,10 @@
 use openzeppelin::tests::utils::constants::OWNER;
+use openzeppelin::utils::serde::SerializedAppend;
 use snforge_std::{
     declare, ContractClassTrait, start_prank, stop_prank, CheatTarget, spy_events, SpyOn, EventSpy
 };
 use starknet::ContractAddress;
 use succinct_sn::fee_vault::succinct_fee_vault;
-use succinct_sn::function_registry::erc20_mock::{
-    IMockERC20Dispatcher, IMockERC20DispatcherTrait, MockERC20
-};
 use succinct_sn::function_registry::interfaces::{
     IFunctionRegistryDispatcher, IFunctionRegistryDispatcherTrait
 };
@@ -22,12 +20,17 @@ const TEST_END_BLOCK: u64 = 846360;
 const TEST_HEADER: u256 = 0x47D040565942B111F7CD569BE78CE310644596F3929DF25584F3E5ADFD9F5001;
 const HEADER_RANGE_DIGEST: u256 = 0xb646edd6dbb2e5482b2449404cf1888b8f4cd6958c790aa075e99226c2c1d62;
 const NEXT_HEADER_DIGEST: u256 = 0xfd6c88812a160ff288fe557111815b3433c539c77a3561086cfcdd9482bceb8;
+const TOTAL_SUPPLY: u256 = 0x100000000000000000000000000000001;
 
 fn setup_base() -> ContractAddress {
     // deploy the token associated with the fee vault
-    let token_class = snf::declare('MockERC20');
-    let token_calldata = array!['FeeToken', 'FT'];
-    let token_address = token_class.deploy(@token_calldata).unwrap();
+    let mut calldata = array![];
+    calldata.append_serde('FeeToken');
+    calldata.append_serde('FT');
+    calldata.append_serde(TOTAL_SUPPLY);
+    calldata.append_serde(OWNER());
+    let token_class = declare('SnakeERC20Mock');
+    let token_address = token_class.deploy(@calldata).unwrap();
 
     // deploy the fee vault 
     let fee_vault_class = snf::declare('succinct_fee_vault');
@@ -81,8 +84,13 @@ fn setup_spied() -> (ContractAddress, EventSpy) {
 
 fn setup_succinct_gateway() -> ContractAddress {
     // deploy the token associated with the fee vault
+<<<<<<< HEAD
     let token_class = snf::declare('MockERC20');
     let token_calldata = array!['FeeToken', 'FT'];
+=======
+    let token_class = declare('SnakeERC20Mock');
+    let token_calldata = array!['FeeToken', 'FT', 2000, OWNER().into()];
+>>>>>>> b4311f4 (update imports for succinct)
     let token_address = token_class.deploy(@token_calldata).unwrap();
 
     // deploy the fee vault 
