@@ -67,7 +67,7 @@ fn fee_vault_deductor_operations() {
     // Removing the same deductor
     fee_vault.remove_deductor(SPENDER());
     assert(!fee_vault.is_deductor(SPENDER()), 'deductors not updated');
-    stop_prank(CheatTarget::One(fee_vault.contract_address));
+    snf::stop_prank(CheatTarget::One(fee_vault.contract_address));
 }
 
 
