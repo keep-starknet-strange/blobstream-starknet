@@ -35,10 +35,10 @@ trait ITendermintX<TContractState> {
 trait IDAOracle<TContractState> {
     /// Verify a Data Availability attestation.
     /// * `proof_nonce` - Nonce of the tuple root to prove against.
-    /// * `root` -  Data root tuple to prove inclusion of.
+    /// * `data_root` -  Data root tuple to prove inclusion of.
     /// * `proof` - Binary Merkle tree proof that `tuple` is in the root at `_tupleRootNonce`.
     fn verify_attestation(
-        self: @TContractState, proof_nonce: u64, root: DataRoot, proof: BinaryMerkleProof
+        self: @TContractState, proof_nonce: u64, data_root: DataRoot, proof: BinaryMerkleProof
     ) -> bool;
 }
 
