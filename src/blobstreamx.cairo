@@ -4,7 +4,9 @@ mod blobstreamx {
     use blobstream_sn::interfaces::{
         DataRoot, TendermintXErrors, IBlobstreamX, IDAOracle, ITendermintX
     };
-    use blobstream_sn::mocks::evm_facts_registry::{IEVMFactsRegistryMockDispatcher, IEVMFactsRegistryMockDispatcherImpl};
+    use blobstream_sn::mocks::evm_facts_registry::{
+        IEVMFactsRegistryMockDispatcher, IEVMFactsRegistryMockDispatcherImpl
+    };
     use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
     use core::starknet::event::EventEmitter;
     use core::traits::Into;
@@ -408,11 +410,16 @@ mod blobstreamx {
 
             // Get the proof nonce for the new state data commitments
             let blobstreamx_l1_proof_nonce_slot: u256 = 0xfc;
-            let new_state_proof_nonce = herodotus_facts_registry.get_slot_value(blobstreamx_l1_contract, l1_block, blobstreamx_l1_proof_nonce_slot);
+            let new_state_proof_nonce = herodotus_facts_registry
+                .get_slot_value(blobstreamx_l1_contract, l1_block, blobstreamx_l1_proof_nonce_slot);
             assert!(new_state_proof_nonce.is_some(), "No proof nonce found for block {}", l1_block);
             // TODO: error handling on try_into
             let new_state_proof_nonce: u64 = new_state_proof_nonce.unwrap().try_into().unwrap();
-            assert!(new_state_proof_nonce > self.get_state_proof_nonce(), "State proof nonce does not increase on block {}", l1_block);
+            assert!(
+                new_state_proof_nonce > self.get_state_proof_nonce(),
+                "State proof nonce does not increase on block {}",
+                l1_block
+            );
 
             //// Loop though all the new state data commitments
             let blobstreamx_l1_data_commitment_map_slot: u256 = 0xfe;
@@ -422,8 +429,14 @@ mod blobstreamx {
                 dc_slot_encoded.append_u256(current_dc_id.into());
                 dc_slot_encoded.append_u256(blobstreamx_l1_data_commitment_map_slot);
                 let dc_slot: u256 = dc_slot_encoded.keccak();
-                let data_commitment = herodotus_facts_registry.get_slot_value(blobstreamx_l1_contract, l1_block, dc_slot);
-                assert!(data_commitment.is_some(), "No data commitment found for block {} and proof nonce {}", l1_block, current_dc_id);
+                let data_commitment = herodotus_facts_registry
+                    .get_slot_value(blobstreamx_l1_contract, l1_block, dc_slot);
+                assert!(
+                    data_commitment.is_some(),
+                    "No data commitment found for block {} and proof nonce {}",
+                    l1_block,
+                    current_dc_id
+                );
                 self.state_data_commitments.write(current_dc_id, data_commitment.unwrap());
                 current_dc_id += 1;
             };
