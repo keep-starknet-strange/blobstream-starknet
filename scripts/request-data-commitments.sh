@@ -93,6 +93,7 @@ echo "Latest L1 block number: $L1_BLOCK_NUM"
 #     -H "Content-Type: application/json" \
 #     -d '{"jsonrpc":"2.0","method":"starknet_blockNumber","params":[],"id":1}'
 
+#TODO: latest -> block number
 LATEST_PROOF_NONCE_RES=$(curl $L1_RPC_URL \
     -X POST \
     -H "Content-Type: application/json" \
@@ -185,4 +186,4 @@ for slot in $(echo $DATA_COMMITMENT_SLOTS | tr ',' '\n' | tr -d '"'); do
   $SCRIPT_DIR/wait-for-herodotus-fulfill.sh -b $L1_BLOCK_NUM_DEC -a $BLOBSTREAMX_L1_ADDRESS -S $slot
 done
 
-#TODO: Herodotus Fact registry mock, cheat code set values, do call to herodotus reg to update state_proofNonce & data commitments and latest l1 block?, PR for verifying attestations, use herodotus to get data commitment and verify attestation from DC
+#TODO: do call to herodotus reg to update latest l1 block?, PR for verifying attestations, use herodotus to get data commitment and verify attestation from DC

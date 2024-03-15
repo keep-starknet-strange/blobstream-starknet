@@ -48,6 +48,10 @@ fn setup_base() -> ContractAddress {
         .deploy(@array![NEXT_HEADER_DIGEST.low.into(), NEXT_HEADER_DIGEST.high.into()])
         .unwrap();
 
+    // deploy the mock herodotus fact registry
+    let herodotus_registry_class = snf::declare('EVMFactsRegistryMock');
+    let herodotus_facts_registry = herodotus_registry_class.deploy(@array![]).unwrap();
+
     // register verifier functions w/ gateway
     let header_range_func_id = gateway
         .register_function(OWNER(), header_range_verifier, 'HEADER_RANGE');
@@ -66,6 +70,7 @@ fn setup_base() -> ContractAddress {
         header_range_func_id.high.into(),
         next_header_func_id.low.into(),
         next_header_func_id.high.into(),
+        herodotus_facts_registry.into(),
     ];
     blobstreamx_class.deploy(@calldata).unwrap()
 }
