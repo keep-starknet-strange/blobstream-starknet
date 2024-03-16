@@ -1,6 +1,6 @@
 use alexandria_bytes::BytesTrait;
 use blobstream_sn::tree::consts::{parity_share_namespace};
-use blobstream_sn::tree::namespace::hasher::{leaf_digest, node_digest};
+use blobstream_sn::tree::namespace::hasher;
 use blobstream_sn::tree::namespace::merkle_tree::{Namespace, NamespaceNode, namespace_node_eq};
 use core::option::OptionTrait;
 use core::traits::Into;
@@ -21,7 +21,7 @@ fn leaf_digest_empty_test() {
 
     let data = BytesTrait::new_empty();
 
-    let node: NamespaceNode = leaf_digest(nid, @data);
+    let node: NamespaceNode = hasher::leaf_digest(nid, @data);
 
     let res = namespace_node_eq(node, expected);
     assert!(res, "Not equal to expected digest");
@@ -43,7 +43,7 @@ fn test_leaf_digest_some() {
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x69);
 
-    let node = leaf_digest(nid, @data);
+    let node = hasher::leaf_digest(nid, @data);
     assert!(node.digest == expected.digest, "Not equal to expected digest");
 }
 
@@ -73,7 +73,7 @@ fn test_node_digest() {
         max: nid_right,
         digest: 0xc75cb66ae28d8ebc6eded002c28a8ba0d06d3a78c6b5cbf9b2ade051f0775ac4
     };
-    let node = node_digest(left, right);
+    let node = hasher::node_digest(left, right);
     let res = namespace_node_eq(node, expected);
     assert!(res, "Not equal to expected digest");
 }
@@ -106,7 +106,7 @@ fn test_node_parity() {
         digest: 0xc75cb66ae28d8ebc6eded002c28a8ba0d06d3a78c6b5cbf9b2ade051f0775ac4
     };
 
-    let node = node_digest(left, right);
+    let node = hasher::node_digest(left, right);
     let res = namespace_node_eq(node, expected);
     assert!(res, "Not equal to expected digest");
 }

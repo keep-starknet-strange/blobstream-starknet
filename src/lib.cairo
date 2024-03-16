@@ -28,9 +28,13 @@ mod tree {
         }
     }
     mod namespace {
+        mod hasher;
         mod merkle_tree;
+        mod namespace;
         #[cfg(test)]
         mod tests {
+            mod test_hasher;
+            mod test_merkle_multi_proof;
             mod test_merkle_tree;
         }
     }

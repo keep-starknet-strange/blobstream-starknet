@@ -1,10 +1,10 @@
-use alexandria_bytes::Bytes;
-use alexandria_bytes::BytesTrait;
+use alexandria_bytes::{Bytes, BytesTrait};
 use alexandria_math::U256BitShift;
 use blobstream_sn::tree::consts::{LEAF_PREFIX, NODE_PREFIX, parity_share_namespace};
 use blobstream_sn::tree::namespace::merkle_tree::{
-    Namespace, NamespaceNode, NamespaceMerkleMultiproof, NamespaceMerkleProof
+    NamespaceNode, NamespaceMerkleMultiproof, NamespaceMerkleProof
 };
+use blobstream_sn::tree::namespace::namespace::Namespace;
 
 fn leaf_digest(namespace: Namespace, data: @Bytes) -> NamespaceNode {
     let mut bytes = BytesTrait::new_empty();
@@ -60,4 +60,3 @@ fn append_bytes28(ref self: Bytes, value: bytes31) {
     let mut bytes28Bytes: Bytes = BytesTrait::new(28, array![value_u256.high, value_u256.low]);
     self.concat(@bytes28Bytes);
 }
-
