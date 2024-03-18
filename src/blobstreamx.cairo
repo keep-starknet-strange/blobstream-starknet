@@ -36,6 +36,7 @@ mod blobstreamx {
         next_header_function_id: u256,
         frozen: bool,
         herodotus_facts_registry: ContractAddress,
+        blobstreamx_l1_contract: felt252,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
         #[substorage(v0)]
@@ -116,7 +117,8 @@ mod blobstreamx {
         header: u256,
         header_range_function_id: u256,
         next_header_function_id: u256,
-        herodotus_facts_registry: ContractAddress
+        herodotus_facts_registry: ContractAddress,
+        blobstreamx_l1_contract: felt252
     ) {
         self.data_commitment_max.write(1000);
         self.gateway.write(gateway);
@@ -128,6 +130,7 @@ mod blobstreamx {
         self.next_header_function_id.write(next_header_function_id);
         self.frozen.write(false);
         self.herodotus_facts_registry.write(herodotus_facts_registry);
+        self.blobstreamx_l1_contract.write(blobstreamx_l1_contract);
     }
 
     #[abi(embed_v0)]
@@ -225,6 +228,13 @@ mod blobstreamx {
         fn set_herodotus_facts_registry(ref self: ContractState, facts_registry: ContractAddress) {
             self.ownable.assert_only_owner();
             self.herodotus_facts_registry.write(facts_registry);
+        }
+        fn get_blobstreamx_l1_contract(self: @ContractState) -> felt252 {
+            self.blobstreamx_l1_contract.read()
+        }
+        fn set_blobstreamx_l1_contract(ref self: ContractState, l1_contract: felt252) {
+            self.ownable.assert_only_owner();
+            self.blobstreamx_l1_contract.write(l1_contract);
         }
 
         /// Request a header_range proof for the next header hash and a data commitment for the block range [latest_block, _target_block).
@@ -395,25 +405,21 @@ mod blobstreamx {
             self.latest_block.write(next_block);
         }
 
+        /// This assumes all existing data_commitments mappings match L1 Blobstream
         fn update_data_commitments_from_facts(ref self: ContractState, l1_block: u256) {
-            // TODO: block_height_to_header_hash, latest_block, events 
-            // TODO: Issue where this will only work if we are using the same data commitments from l1 from genesis
-            //       Could be resolved if we only use the latest data commitments from l1 and check latest block
             assert(!self.frozen.read(), Errors::ContractFrozen);
 
             let herodotus_facts_registry = IEVMFactsRegistryMockDispatcher {
                 contract_address: self.get_herodotus_facts_registry()
             };
 
-            // TODO: use non-mock, and non-hardcoded values
-            let blobstreamx_l1_contract: felt252 = 0x48B257EC1610d04191cC2c528d0c940AdbE1E439;
-
             // Get the proof nonce for the new state data commitments
             let blobstreamx_l1_proof_nonce_slot: u256 = 0xfc;
             let new_state_proof_nonce = herodotus_facts_registry
-                .get_slot_value(blobstreamx_l1_contract, l1_block, blobstreamx_l1_proof_nonce_slot);
+                .get_slot_value(
+                    self.blobstreamx_l1_contract.read(), l1_block, blobstreamx_l1_proof_nonce_slot
+                );
             assert!(new_state_proof_nonce.is_some(), "No proof nonce found for block {}", l1_block);
-            // TODO: error handling on try_into
             let new_state_proof_nonce: u64 = new_state_proof_nonce.unwrap().try_into().unwrap();
             assert!(
                 new_state_proof_nonce > self.get_state_proof_nonce(),
@@ -421,24 +427,24 @@ mod blobstreamx {
                 l1_block
             );
 
-            //// Loop though all the new state data commitments
+            // Loop though all the new state data commitments
             let blobstreamx_l1_data_commitment_map_slot: u256 = 0xfe;
-            let mut current_dc_id = self.get_state_proof_nonce();
-            while current_dc_id < new_state_proof_nonce {
+            let mut current_proof_nonce = self.get_state_proof_nonce();
+            while current_proof_nonce < new_state_proof_nonce {
                 let mut dc_slot_encoded: Bytes = BytesTrait::new_empty();
-                dc_slot_encoded.append_u256(current_dc_id.into());
+                dc_slot_encoded.append_u256(current_proof_nonce.into());
                 dc_slot_encoded.append_u256(blobstreamx_l1_data_commitment_map_slot);
                 let dc_slot: u256 = dc_slot_encoded.keccak();
                 let data_commitment = herodotus_facts_registry
-                    .get_slot_value(blobstreamx_l1_contract, l1_block, dc_slot);
+                    .get_slot_value(self.blobstreamx_l1_contract.read(), l1_block, dc_slot);
                 assert!(
                     data_commitment.is_some(),
                     "No data commitment found for block {} and proof nonce {}",
                     l1_block,
-                    current_dc_id
+                    current_proof_nonce
                 );
-                self.state_data_commitments.write(current_dc_id, data_commitment.unwrap());
-                current_dc_id += 1;
+                self.state_data_commitments.write(current_proof_nonce, data_commitment.unwrap());
+                current_proof_nonce += 1;
             };
             self.state_proof_nonce.write(new_state_proof_nonce);
         }

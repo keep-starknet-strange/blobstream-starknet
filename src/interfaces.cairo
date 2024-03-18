@@ -66,6 +66,9 @@ trait IBlobstreamX<TContractState> {
     // Address to the Herodotus Fact Registry contract.
     fn get_herodotus_facts_registry(self: @TContractState) -> ContractAddress;
     fn set_herodotus_facts_registry(ref self: TContractState, facts_registry: ContractAddress);
+    // L1 Address to the BlobstreamX proxy contract.
+    fn get_blobstreamx_l1_contract(self: @TContractState) -> felt252;
+    fn set_blobstreamx_l1_contract(ref self: TContractState, l1_contract: felt252);
     // Prove the validity of the header at the target block and a data commitment for the block range [latestBlock, _targetBlock).
     fn request_header_range(ref self: TContractState, _target_block: u64);
     // Commits the new header at targetBlock and the data commitment for the block range [trustedBlock, targetBlock).

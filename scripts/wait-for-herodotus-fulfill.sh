@@ -4,71 +4,65 @@
 # Monitors the Herodotus Fact registry on Starknet for the requested slot values.
 
 # Constants
+HERODOTUS_GET_SLOT_VALUE_SELECTOR="0x01d02b5043fe08831f4d75f1582080c274c6b4d5245fae933747a6990009adff"
 
 # Optional arguments
 STARKNET_RPC_URL="https://starknet-sepolia.infura.io/v3/bed8a8401c894421bd7cd31050e7ced6"
 HERODOTUS_FACT_REGISTRY="0x07d3550237ecf2d6ddef9b78e59b38647ee511467fe000ce276f245a006b40bc"
 
+VERBOSE=false
+
 display_help() {
   echo "Usage: $0 [option...] {arguments...}"
   echo
 
-  echo "   -h, --help                             display help"
-  echo "   -s, --starknet-rpc=URL                 URL of the Starknet RPC server (default: $STARKNET_RPC_URL)"
-  echo "   -F, --herodotus-fact-registry=ADDRESS  Address of the Herodotus Fact registry on Starknet (default: $HERODOTUS_FACT_REGISTRY)"
+  echo "   -s, --starknet-rpc URL                 URL of the Starknet RPC server"
+  echo "                                          (default: $STARKNET_RPC_URL)"
+  echo "   -F, --herodotus-fact-registry ADDRESS  Address of the Herodotus Fact registry on Starknet"
+  echo "                                          (default: $HERODOTUS_FACT_REGISTRY (SN_SEPOLIA))"
   echo
-  echo "   -b, --block-number=NUMBER              Block number for the slot fact (required)"
-  echo "   -a, --address=ADDRESS                  Address of the contract for the slot fact (required)"
-  echo "   -S, --slot=NUMBER                      Slot number for the slot fact (required)"
+  echo "   -b, --block-number NUMBER              Block number for the slot fact (required)"
+  echo "   -a, --address ADDRESS                  Address of the contract for the slot fact (required)"
+  echo "   -S, --slot NUMBER                      Slot number for the slot fact - Hex (required)"
+
+  echo
+  echo "   -h, --help                             display help"
+  echo "   -v, --verbose                          display verbose output"
 
   echo
   echo "Example: $0"
 }
 
-#TODO: Add support for optional arguments
-#TODO: Add support for required arguments
-#TODO: parse arg formats
+# Transform long options to short ones
+for arg in "$@"; do
+  shift
+  case "$arg" in
+    "--starknet-rpc") set -- "$@" "-s" ;;
+    "--herodotus-fact-registry") set -- "$@" "-F" ;;
+    "--block-number") set -- "$@" "-b" ;;
+    "--address") set -- "$@" "-a" ;;
+    "--slot") set -- "$@" "-S" ;;
+    "--help") set -- "$@" "-h" ;;
+    "--verbose") set -- "$@" "-v" ;;
+    *) set -- "$@" "$arg"
+  esac
+done
 
 # Parse command line arguments
-while getopts ":hb:a:S:-:" opt; do
+while getopts ":hvs:F:b:a:S:" opt; do
   case ${opt} in
-    - )
-      case "${OPTARG}" in
-        help )
-          display_help
-          exit 0
-          ;;
-        block-number )
-          BLOCK_NUMBER="${!OPTIND}"
-          OPTIND=$((OPTIND + 1))
-          ;;
-        block-number=* )
-          BLOCK_NUMBER="${OPTARG#*=}"
-          ;;
-        address )
-          ADDRESS="${!OPTIND}"
-          OPTIND=$((OPTIND + 1))
-          ;;
-        address=* )
-          ADDRESS="${OPTARG#*=}"
-          ;;
-        slot )
-          SLOT="${!OPTIND}"
-          OPTIND=$((OPTIND + 1))
-          ;;
-        slot=* )
-          SLOT="${OPTARG#*=}"
-          ;;
-        * )
-          echo "Invalid option: --$OPTARG" 1>&2
-          display_help
-          exit 1
-          ;;
-      esac
-      ;;
     h )
       display_help
       exit 0
+      ;;
+    v )
+      VERBOSE=true
+      ;;
+    s )
+      STARKNET_RPC_URL="${OPTARG}"
+      ;;
+    F )
+      HERODOTUS_FACT_REGISTRY="${OPTARG}"
       ;;
     b )
       BLOCK_NUMBER="${OPTARG}"
@@ -92,13 +86,18 @@ while getopts ":hb:a:S:-:" opt; do
   esac
 done
 
+if [ -z $BLOCK_NUMBER ] || [ -z $ADDRESS ] || [ -z $SLOT ]; then
+  echo "Missing required arguments: block-number, address, slot" 1>&2
+  display_help
+  exit 1
+fi
+
 # Convert block number to 32-byte hex
 BLOCK_NUMBER=$(printf "%064x" $BLOCK_NUMBER)
 # Get the low and high 16 bytes
 BLOCK_NUMBER_HIGH=0x${BLOCK_NUMBER:0:32}
 BLOCK_NUMBER_LOW=0x${BLOCK_NUMBER:32:32}
 
-# TODO: allow slots of non hex values
 # Left pad the slot value to 32 bytes
 if [[ $SLOT == 0x* ]]; then
   SLOT=${SLOT:2}
@@ -110,7 +109,6 @@ done
 SLOT_HIGH=0x${SLOT:0:32}
 SLOT_LOW=0x${SLOT:32:32}
 
-#TODO: Compute entry point selector from get_slot_value
 HERODOTUS_FACT_QUERY='{ 
   "id": 1,
   "jsonrpc": "2.0",
@@ -124,16 +122,20 @@ HERODOTUS_FACT_QUERY='{
           "'$SLOT_LOW'",
           "'$SLOT_HIGH'"
       ],
-      "entry_point_selector": "0x01d02b5043fe08831f4d75f1582080c274c6b4d5245fae933747a6990009adff",
+      "entry_point_selector": "'$HERODOTUS_GET_SLOT_VALUE_SELECTOR'",
       "contract_address": "'$HERODOTUS_FACT_REGISTRY'"
     },
     "pending"
   ]
 }'
-echo "Query: $HERODOTUS_FACT_QUERY"
 
-echo
-echo "Waiting for Herodotus to fulfill the slot fact..."
+if [ $VERBOSE == true ]; then
+  echo "Query: $HERODOTUS_FACT_QUERY"
+
+  echo
+  echo "Waiting for Herodotus to fulfill the slot fact..."
+fi
+
 RES='{"jsonrpc":"2.0","id":1,"result":["0x1"]}'
 while [ $(echo $RES | jq -r '.result[0]') == "0x1" ]; do
   RES=$(curl $STARKNET_RPC_URL \
@@ -158,5 +160,3 @@ while [ $(echo $RES | jq -r '.result[0]') == "0x1" ]; do
   fi
   sleep 5
 done
-
-#TODO: verbose, ...

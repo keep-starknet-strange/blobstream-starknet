@@ -17,6 +17,9 @@ const HEADER_RANGE_DIGEST: u256 = 0xb646edd6dbb2e5482b2449404cf1888b8f4cd6958c79
 const NEXT_HEADER_DIGEST: u256 = 0xfd6c88812a160ff288fe557111815b3433c539c77a3561086cfcdd9482bceb8;
 const TOTAL_SUPPLY: u256 = 0x100000000000000000000000000000001;
 
+// Current Sepolia proxy contract address
+const BLOBSTREAMX_L1_ADDRESS: felt252 = 0x48B257EC1610d04191cC2c528d0c940AdbE1E439;
+
 fn setup_base() -> ContractAddress {
     // deploy the token associated with the fee vault
     let mut calldata = array![];
@@ -71,6 +74,7 @@ fn setup_base() -> ContractAddress {
         next_header_func_id.low.into(),
         next_header_func_id.high.into(),
         herodotus_facts_registry.into(),
+        BLOBSTREAMX_L1_ADDRESS.into()
     ];
     blobstreamx_class.deploy(@calldata).unwrap()
 }

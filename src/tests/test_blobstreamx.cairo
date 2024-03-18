@@ -9,6 +9,7 @@ use blobstream_sn::mocks::evm_facts_registry::{
 };
 use blobstream_sn::tests::common::{
     setup_base, setup_spied, setup_succinct_gateway, TEST_START_BLOCK, TEST_END_BLOCK, TEST_HEADER,
+    BLOBSTREAMX_L1_ADDRESS
 };
 use openzeppelin::tests::utils::constants::OWNER;
 use snforge_std as snf;
@@ -203,7 +204,6 @@ fn blobstreamx_data_commitments_from_herodotus_facts() {
     let bsx = setup_blobstreamx();
 
     let hfr_addr = bsx.get_herodotus_facts_registry();
-    let l1_addr: felt252 = 0x48B257EC1610d04191cC2c528d0c940AdbE1E439;
     let l1_block_num: u256 = 0x100;
 
     let hfr_dispatcher = IEVMFactsRegistryMockDispatcher { contract_address: hfr_addr };
@@ -211,26 +211,28 @@ fn blobstreamx_data_commitments_from_herodotus_facts() {
     // Set the state_proofNonce slot to 3
 
     hfr_dispatcher
-        .set_slot_value(l1_addr, l1_block_num, 0xfc, 3.into()); // state_proofNonce at slot 0xfc
+        .set_slot_value(
+            BLOBSTREAMX_L1_ADDRESS, l1_block_num, 0xfc, 3.into()
+        ); // state_proofNonce at slot 0xfc
 
     // Add the 2 data commitments
 
-    // Slot pos = keccak256(abi.encode(map_key, state_dataCommitment_slot)) ie keccak256(abi.encode(map_key, 0xfe))
+    // Slot pos = keccak256(abi.encode(map_key, state_dataCommitments_slot)) ie keccak256(abi.encode(map_key, 0xfe))
     let data_commitment1_slot: u256 =
         0x457c8a48b4735f56b938837eb0a8a5f9c55f23c1a85767ce3b65c3e59d3d32b7;
     let data_commitment1: u256 = 0xe1078369756a0b28e3b8cc1fa6e0133630ccdf9d2bd5bde1d40d197793c3c8b4;
     hfr_dispatcher
         .set_slot_value(
-            l1_addr, l1_block_num, data_commitment1_slot, data_commitment1
-        ); // state_dataCommitment[1]
+            BLOBSTREAMX_L1_ADDRESS, l1_block_num, data_commitment1_slot, data_commitment1
+        ); // state_dataCommitments[1]
 
     let data_commitment2_slot: u256 =
         0xeeac6037a1009734a3fd8a7d8347d53da92d0725658242afb43dd0d755dbe634;
     let data_commitment2: u256 = 0xc2b2d9e303ad14a5aeeda362d3d4177eedb43e1e0e4e6d42f6922f2ebfb23cc6;
     hfr_dispatcher
         .set_slot_value(
-            l1_addr, l1_block_num, data_commitment2_slot, data_commitment2
-        ); // state_dataCommitment[2]
+            BLOBSTREAMX_L1_ADDRESS, l1_block_num, data_commitment2_slot, data_commitment2
+        ); // state_dataCommitments[2]
 
     bsx.update_data_commitments_from_facts(l1_block_num);
     assert!(bsx.get_state_proof_nonce() == 3, "state proof nonce invalid");
@@ -238,5 +240,71 @@ fn blobstreamx_data_commitments_from_herodotus_facts() {
     assert!(bsx.get_state_data_commitment(1) == data_commitment1, "data commitment 1 invalid");
     assert!(bsx.get_state_data_commitment(2) == data_commitment2, "data commitment 2 invalid");
     assert!(bsx.get_state_data_commitment(3) == 0, "data commitment 3 invalid");
-// TODO: test invalid inputs and things
+}
+
+#[test]
+#[should_panic(expected: ("No proof nonce found for block 256",))]
+fn blobstreamx_invalid_request_for_herodotus_facts() {
+    let bsx = setup_blobstreamx();
+    let l1_block_num: u256 = 0x100;
+
+    bsx.update_data_commitments_from_facts(l1_block_num);
+}
+
+#[test]
+#[should_panic(expected: ("No data commitment found for block 256 and proof nonce 2",))]
+fn blobstreamx_incomplete_data_commitments_relayed() {
+    let bsx = setup_blobstreamx();
+
+    let hfr_addr = bsx.get_herodotus_facts_registry();
+    let l1_block_num: u256 = 0x100;
+
+    let hfr_dispatcher = IEVMFactsRegistryMockDispatcher { contract_address: hfr_addr };
+
+    // Set the state_proofNonce slot to 3
+
+    hfr_dispatcher
+        .set_slot_value(
+            BLOBSTREAMX_L1_ADDRESS, l1_block_num, 0xfc, 3.into()
+        ); // state_proofNonce at slot 0xfc
+
+    // Add only 1 of 2 data commitments
+
+    // Slot pos = keccak256(abi.encode(map_key, state_dataCommitments_slot)) ie keccak256(abi.encode(map_key, 0xfe))
+    let data_commitment1_slot: u256 =
+        0x457c8a48b4735f56b938837eb0a8a5f9c55f23c1a85767ce3b65c3e59d3d32b7;
+    let data_commitment1: u256 = 0xe1078369756a0b28e3b8cc1fa6e0133630ccdf9d2bd5bde1d40d197793c3c8b4;
+    hfr_dispatcher
+        .set_slot_value(
+            BLOBSTREAMX_L1_ADDRESS, l1_block_num, data_commitment1_slot, data_commitment1
+        ); // state_dataCommitments[1]
+
+    bsx.update_data_commitments_from_facts(l1_block_num);
+}
+
+#[test]
+#[should_panic(expected: ("State proof nonce does not increase on block 256",))]
+fn blobstreamx_invalid_proof_nonce_from_facts() {
+    let bsx = setup_blobstreamx();
+
+    let hfr_addr = bsx.get_herodotus_facts_registry();
+    let l1_block_num: u256 = 0x100;
+
+    let hfr_dispatcher = IEVMFactsRegistryMockDispatcher { contract_address: hfr_addr };
+
+    // Set the state_proofNonce slot to 2
+
+    hfr_dispatcher
+        .set_slot_value(
+            BLOBSTREAMX_L1_ADDRESS, l1_block_num, 0xfc, 2.into()
+        ); // state_proofNonce at slot 0xfc
+
+    // Set state_proof_nonce to 3 in BlobstreamX
+    snf::store(
+        bsx.contract_address,
+        selector!("state_proof_nonce"),
+        array![3.into()].span()
+    );
+    
+    bsx.update_data_commitments_from_facts(l1_block_num)
 }
