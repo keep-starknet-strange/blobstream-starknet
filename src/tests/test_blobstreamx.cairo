@@ -2,11 +2,12 @@ use alexandria_bytes::{Bytes, BytesTrait};
 use blobstream_sn::blobstreamx::blobstreamx;
 use blobstream_sn::interfaces::{
     IBlobstreamXDispatcher, IBlobstreamXDispatcherTrait, Validator, ITendermintXDispatcher,
-    ITendermintXDispatcherTrait
+    ITendermintXDispatcherTrait, DataRoot, IDAOracleDispatcher, IDAOracleDispatcherTrait
 };
 use blobstream_sn::tests::common::{
     setup_base, setup_spied, setup_succinct_gateway, TEST_START_BLOCK, TEST_END_BLOCK, TEST_HEADER,
 };
+use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
 use openzeppelin::tests::utils::constants::OWNER;
 use snforge_std as snf;
 use snforge_std::{CheatTarget, EventSpy, EventAssertions};
@@ -43,6 +44,42 @@ fn blobstreamx_constructor_vals() {
     assert!(bsx.data_commitment_max() == 1000, "max skip constant invalid");
     assert!(bsx.get_state_proof_nonce() == 1, "state proof nonce invalid");
 }
+
+#[test]
+fn test_verify_attestation() {
+    let bsx_address = setup_base();
+    let bsx = IDAOracleDispatcher { contract_address: bsx_address };
+
+    // Test data: https://github.com/celestiaorg/blobstream-contracts/blob/3a552d8f7bfbed1f3175933260e6e440915d2da4/src/lib/verifier/test/DAVerifier.t.sol#L295
+
+    // Store the commitment we verify against.
+    let proof_nonce: u64 = 2;
+    let data_commitment: u256 = 0xf89859a09c0f2b1bbb039618d0fe60432b8c247f7ccde97814655f2acffb3434;
+    snf::store(
+        bsx_address,
+        snf::map_entry_address(
+            selector!("state_data_commitments"), array![proof_nonce.into()].span()
+        ),
+        array![data_commitment.low.into(), data_commitment.high.into()].span(),
+    );
+    snf::store(bsx_address, selector!("state_proof_nonce"), array![3].span(),);
+
+    // Construct a valid proof.
+    let data = DataRoot {
+        height: 3, data_root: 0x55cfc29fc0cd263906122d5cb859091224495b141fc0c51529612d7ab8962950,
+    };
+    let side_nodes: Array<u256> = array![
+        0xb5d4d27ec6b206a205bf09dde3371ffba62e5b53d27bbec4255b7f4f27ef5d90,
+        0x406e22ba94989ca721453057a1391fc531edb342c86a0ab4cc722276b54036ec,
+    ];
+    let key: u256 = 2;
+    let num_leaves: u256 = 4;
+    let proof = BinaryMerkleProof { side_nodes, key, num_leaves, };
+
+    let is_proof_valid: bool = bsx.verify_attestation(proof_nonce, data, proof);
+    assert!(is_proof_valid, "valid proof should be accepted");
+}
+
 
 #[test]
 fn blobstreamx_fulfill_commit_header_range() {

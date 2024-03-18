@@ -5,6 +5,7 @@ mod blobstreamx {
         DataRoot, TendermintXErrors, IBlobstreamX, IDAOracle, ITendermintX
     };
     use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
+    use blobstream_sn::tree::binary::merkle_tree;
     use core::starknet::event::EventEmitter;
     use core::traits::Into;
     use openzeppelin::access::ownable::OwnableComponent;
@@ -135,7 +136,7 @@ mod blobstreamx {
     #[abi(embed_v0)]
     impl IDAOracleImpl of IDAOracle<ContractState> {
         fn verify_attestation(
-            self: @ContractState, proof_nonce: u64, root: DataRoot, proof: BinaryMerkleProof
+            self: @ContractState, proof_nonce: u64, data_root: DataRoot, proof: BinaryMerkleProof
         ) -> bool {
             assert(!self.frozen.read(), Errors::ContractFrozen);
 
@@ -144,11 +145,15 @@ mod blobstreamx {
             }
 
             // load the tuple root at the given index from storage.
-            let _data_root = self.state_data_commitments.read(proof_nonce);
+            let root: u256 = self.state_data_commitments.read(proof_nonce);
 
-            // return isProofValid;
-            // TODO(#69 + #24): BinaryMerkleTree.verify(root, _proof, abi.encode(_tuple));
-            false
+            let mut data_root_bytes = BytesTrait::new_empty();
+            data_root_bytes.append_felt252(data_root.height);
+            data_root_bytes.append_u256(data_root.data_root);
+
+            let (is_proof_valid, _) = merkle_tree::verify(root, @proof, @data_root_bytes);
+
+            is_proof_valid
         }
     }
 
