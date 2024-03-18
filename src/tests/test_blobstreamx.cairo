@@ -300,11 +300,7 @@ fn blobstreamx_invalid_proof_nonce_from_facts() {
         ); // state_proofNonce at slot 0xfc
 
     // Set state_proof_nonce to 3 in BlobstreamX
-    snf::store(
-        bsx.contract_address,
-        selector!("state_proof_nonce"),
-        array![3.into()].span()
-    );
-    
+    snf::store(bsx.contract_address, selector!("state_proof_nonce"), array![3.into()].span());
+
     bsx.update_data_commitments_from_facts(l1_block_num)
 }
