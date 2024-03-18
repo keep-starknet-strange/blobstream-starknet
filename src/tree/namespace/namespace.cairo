@@ -20,7 +20,6 @@ impl NamespaceValueTrait of NamespaceValue {
     }
 }
 
-// TODO: into u256 or ?
 impl NamespacePartialOrd of PartialOrd<Namespace> {
     #[inline(always)]
     fn le(lhs: Namespace, rhs: Namespace) -> bool {

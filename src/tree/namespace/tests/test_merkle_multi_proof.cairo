@@ -7,8 +7,6 @@ use blobstream_sn::tree::namespace::merkle_tree::{
 };
 use blobstream_sn::tree::namespace::namespace::Namespace;
 
-// TODO: Test all namespace ordering ops w/ ver and id
-
 #[test]
 fn verify_multi_01() {
     let nid = Namespace {
