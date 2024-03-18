@@ -6,8 +6,8 @@ use blobstream_sn::interfaces::{
 };
 use blobstream_sn::tests::common::{
     setup_base, setup_spied, setup_succinct_gateway, TEST_START_BLOCK, TEST_END_BLOCK, TEST_HEADER,
+    OWNER
 };
-use openzeppelin::tests::utils::constants::OWNER;
 use snforge_std as snf;
 use snforge_std::{CheatTarget, EventSpy, EventAssertions};
 use starknet::secp256_trait::Signature;
