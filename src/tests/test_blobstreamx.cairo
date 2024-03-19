@@ -8,6 +8,7 @@ use blobstream_sn::tests::common::{
     setup_base, setup_spied, setup_succinct_gateway, TEST_START_BLOCK, TEST_END_BLOCK, TEST_HEADER,
     OWNER
 };
+use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
 use snforge_std as snf;
 use snforge_std::{CheatTarget, EventSpy, EventAssertions};
 use starknet::secp256_trait::Signature;
