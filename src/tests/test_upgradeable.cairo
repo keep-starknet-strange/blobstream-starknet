@@ -1,8 +1,7 @@
 use blobstream_sn::mocks::upgradeable::{
     IMockUpgradeableDispatcher, IMockUpgradeableDispatcherTrait
 };
-use blobstream_sn::tests::common::{setup_base, setup_spied};
-use openzeppelin::tests::utils::constants::OWNER;
+use blobstream_sn::tests::common::{setup_base, setup_spied, OWNER};
 use openzeppelin::upgrades::interface::{
     IUpgradeable, IUpgradeableDispatcher, IUpgradeableDispatcherTrait
 };
@@ -25,7 +24,7 @@ fn setup_upgradeable_spied() -> (IUpgradeableDispatcher, EventSpy) {
 #[test]
 fn blobstreamx_upgrade() {
     let (upgradeable, mut spy) = setup_upgradeable_spied();
-    let v2_class = snf::declare('mock_upgradeable');
+    let v2_class = snf::declare("mock_upgradeable");
 
     snf::start_prank(CheatTarget::One(upgradeable.contract_address), OWNER());
     upgradeable.upgrade(v2_class.class_hash);
@@ -52,6 +51,6 @@ fn blobstreamx_upgrade() {
 fn blobstreamx_upgrade_not_owner() {
     let upgradeable = setup_upgradeable();
 
-    let v2_class = snf::declare('mock_upgradeable');
+    let v2_class = snf::declare("mock_upgradeable");
     upgradeable.upgrade(v2_class.class_hash);
 }

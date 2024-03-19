@@ -1,7 +1,6 @@
-use blobstream_sn::tests::common::{setup_base, setup_spied};
+use blobstream_sn::tests::common::{setup_base, setup_spied, OWNER, NEW_OWNER};
 use openzeppelin::access::ownable::OwnableComponent;
 use openzeppelin::access::ownable::interface::{IOwnableDispatcher, IOwnableDispatcherTrait};
-use openzeppelin::tests::utils::constants::{OWNER, NEW_OWNER};
 use snforge_std as snf;
 use snforge_std::cheatcodes::events::EventAssertions;
 use snforge_std::{CheatTarget, EventSpy};

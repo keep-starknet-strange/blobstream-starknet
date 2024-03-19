@@ -6,12 +6,12 @@ version = "0.1.0"
 test = "snforge test"
 
 [dependencies]
-snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.17.0" }
-starknet = ">=2.5.3"
-openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", rev = "2815498" }
-alexandria_bytes = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "8ddf0243" }
-alexandria_math = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "8ddf0243" }
-succinct_sn = { git = "https://github.com/keep-starknet-strange/succinct-starknet.git" }
+snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.19.0" }
+starknet = ">=2.6.3"
+openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", rev = "f22438c" }
+alexandria_bytes = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "c1a604e" }
+alexandria_math = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "c1a604e" }
+succinct_sn = { git = "https://github.com/keep-starknet-strange/succinct-starknet.git", rev = "7890c7b" }
 
 [[target.starknet-contract]]
 casm = true
