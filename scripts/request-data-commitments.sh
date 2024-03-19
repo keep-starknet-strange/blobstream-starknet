@@ -129,8 +129,10 @@ LATEST_PROOF_NONCE=$(echo $LATEST_PROOF_NONCE_RES | jq -r '.result')
 #    -X POST \
 #    -H "Content-Type: application/json" \
 #    -d '{"jsonrpc":"2.0","method":"starknet_getState","params":["'"$BLOBSTREAMX_STARKNET_ADDRESS"'",'"$LATEST_PROOF_NONCE"'],"id":1}' 2>/dev/null)
-STARKNET_PROOF_NONCE_RES=$(echo '{"jsonrpc":"2.0","id":1,"result":"0x00000000000000000000000000000000000000000000000000000000000006cb"}')
-STARKNET_PROOF_NONCE=$(echo $STARKNET_PROOF_NONCE_RES | jq -r '.result')
+#TODO: Remove the hardcoded value once the blobstreamx contract is deployed on Starknet
+#STARKNET_PROOF_NONCE_RES=$(echo '{"jsonrpc":"2.0","id":1,"result":"0x00000000000000000000000000000000000000000000000000000000000006cb"}')
+#STARKNET_PROOF_NONCE=$(echo $STARKNET_PROOF_NONCE_RES | jq -r '.result')
+STARKNET_PROOF_NONCE=$((LATEST_PROOF_NONCE - 4))
 
 if [ "$VERBOSE" = true ]; then
   echo "Latest L1 block number: $L1_BLOCK_NUM"
