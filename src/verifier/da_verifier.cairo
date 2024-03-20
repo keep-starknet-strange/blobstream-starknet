@@ -142,7 +142,6 @@ mod DAVerifier {
         return verify_row_root_to_data_root_tuple_root_proof(row_root, row_proof, root);
     }
 
-    // TODO: all comments
     fn verify_row_root_to_data_root_tuple_root_proof(
         row_root: NamespaceNode, row_proof: BinaryMerkleProof, root: u256
     ) -> (bool, felt252) {
@@ -178,7 +177,6 @@ mod DAVerifier {
         return verify_multi_row_roots_to_data_root_tuple_root_proof(row_roots, row_proofs, root);
     }
 
-    // TODO: To span?
     fn verify_multi_row_roots_to_data_root_tuple_root_proof(
         row_roots: Span<NamespaceNode>, row_proofs: Span<BinaryMerkleProof>, root: u256
     ) -> (bool, felt252) {

@@ -26,7 +26,6 @@ struct RollupHeader {
     sequence: SpanSequence
 }
 
-// TODO: comments
 #[test]
 fn test_unavailable_data() {
     let height: u256 = 21;
