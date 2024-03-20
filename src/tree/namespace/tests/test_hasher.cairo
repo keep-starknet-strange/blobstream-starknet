@@ -1,17 +1,14 @@
 use alexandria_bytes::BytesTrait;
 use blobstream_sn::tree::consts::{parity_share_namespace};
 use blobstream_sn::tree::namespace::hasher;
-use blobstream_sn::tree::namespace::merkle_tree::{Namespace, NamespaceNode, namespace_node_eq};
+use blobstream_sn::tree::namespace::Namespace;
+use blobstream_sn::tree::namespace::merkle_tree::{NamespaceNode, namespace_node_eq};
 use core::option::OptionTrait;
 use core::traits::Into;
 
 #[test]
 fn leaf_digest_empty_test() {
-    let bytesval: bytes31 = bytes31_const::<
-        0x00000000000000000000000000000000000000000000000000000000
-    >();
-
-    let nid: Namespace = Namespace { version: 0x00, id: bytesval };
+    let nid: Namespace = Default::default();
 
     let expected: NamespaceNode = NamespaceNode {
         min: nid,
@@ -49,10 +46,7 @@ fn test_leaf_digest_some() {
 
 #[test]
 fn test_node_digest() {
-    let nid_left = Namespace {
-        version: 0x00,
-        id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000000>()
-    };
+    let nid_left: Namespace = Default::default();
     let nid_right = Namespace {
         version: 0xde,
         id: bytes31_const::<0xadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefde>()
@@ -80,10 +74,7 @@ fn test_node_digest() {
 
 #[test]
 fn test_node_parity() {
-    let nid_min = Namespace {
-        version: 0x00,
-        id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000000>()
-    };
+    let nid_min: Namespace = Default::default();
     let nid_max = Namespace {
         version: 0xde,
         id: bytes31_const::<0xadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefde>()

@@ -6,14 +6,11 @@ use blobstream_sn::tree::namespace::hasher;
 use blobstream_sn::tree::namespace::merkle_tree::{
     NamespaceNode, NamespaceMerkleProof, NamespaceMerkleTree
 };
-use blobstream_sn::tree::namespace::namespace::Namespace;
+use blobstream_sn::tree::namespace::Namespace;
 
 #[test]
 fn verify_none_test() {
-    let nid = Namespace {
-        version: 0x00,
-        id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000000>()
-    };
+    let nid: Namespace = Default::default();
     let empty = BytesTrait::new_empty();
     let root = NamespaceNode { min: nid, max: nid, digest: empty.sha256() };
     let side_nodes: Array<NamespaceNode> = array![];
@@ -27,10 +24,7 @@ fn verify_none_test() {
 
 #[test]
 fn verify_one_leaf_empty_test() {
-    let nid = Namespace {
-        version: 0x00,
-        id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000000>()
-    };
+    let nid: Namespace = Default::default();
     let root = NamespaceNode {
         min: nid,
         max: nid,
@@ -47,10 +41,7 @@ fn verify_one_leaf_empty_test() {
 
 #[test]
 fn verify_one_leaf_some_test() {
-    let nid = Namespace {
-        version: 0x00,
-        id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000000>()
-    };
+    let nid: Namespace = Default::default();
     let root = NamespaceNode {
         min: nid,
         max: nid,
@@ -68,10 +59,7 @@ fn verify_one_leaf_some_test() {
 
 #[test]
 fn verify_one_leaf_01_test() {
-    let nid = Namespace {
-        version: 0x00,
-        id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000000>()
-    };
+    let nid: Namespace = Default::default();
     let root = NamespaceNode {
         min: nid,
         max: nid,
@@ -667,10 +655,7 @@ fn verify_internal_node_one_and_two_of_three_test() {
 
 #[test]
 fn verify_inner_leaf_is_root_test() {
-    let nid = Namespace {
-        version: 0x00,
-        id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000000>()
-    };
+    let nid: Namespace = Default::default();
     let root = NamespaceNode {
         min: nid,
         max: nid,
@@ -691,21 +676,21 @@ fn verify_inner_leaf_is_root_test() {
 
 #[test]
 fn verify_inner_false_for_starting_height_zero_test() {
-    let nid = Namespace {
+    let node20 = Namespace {
         version: 0x00,
         id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000020>()
     };
     let root = NamespaceNode {
-        min: nid,
-        max: nid,
+        min: node20,
+        max: node20,
         digest: 0xc59fa9c4ec515726c2b342544433f844c7b930cf7a5e7abab593332453ceaf70
     };
     let key: u256 = 0;
     let num_leaves: u256 = 1;
     let proof = NamespaceMerkleProof { side_nodes: array![], key, num_leaves };
     let node = NamespaceNode {
-        min: nid,
-        max: nid,
+        min: node20,
+        max: node20,
         digest: 0xc59fa9c4ec515726c2b342544433f844c7b930cf7a5e7abab593332453ceaf70
     };
     let starting_height: u256 = 0;
@@ -715,21 +700,21 @@ fn verify_inner_false_for_starting_height_zero_test() {
 
 #[test]
 fn verify_inner_false_for_too_large_key_test() {
-    let nid = Namespace {
+    let node20 = Namespace {
         version: 0x00,
         id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000020>()
     };
     let root = NamespaceNode {
-        min: nid,
-        max: nid,
+        min: node20,
+        max: node20,
         digest: 0xc59fa9c4ec515726c2b342544433f844c7b930cf7a5e7abab593332453ceaf70
     };
     let key: u256 = 3; // key is larger than num_leaves
     let num_leaves: u256 = 1;
     let proof = NamespaceMerkleProof { side_nodes: array![], key, num_leaves };
     let node = NamespaceNode {
-        min: nid,
-        max: nid,
+        min: node20,
+        max: node20,
         digest: 0xc59fa9c4ec515726c2b342544433f844c7b930cf7a5e7abab593332453ceaf70
     };
     let starting_height: u256 = 1;
@@ -739,13 +724,13 @@ fn verify_inner_false_for_too_large_key_test() {
 
 #[test]
 fn verify_inner_false_for_incorrect_proof_length() {
-    let nid = Namespace {
+    let node20 = Namespace {
         version: 0x00,
         id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000020>()
     };
     let root = NamespaceNode {
-        min: nid,
-        max: nid,
+        min: node20,
+        max: node20,
         digest: 0xc59fa9c4ec515726c2b342544433f844c7b930cf7a5e7abab593332453ceaf70
     };
     let side_nodes: Array<NamespaceNode> = array![
@@ -759,8 +744,8 @@ fn verify_inner_false_for_incorrect_proof_length() {
     let num_leaves: u256 = 1;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let node = NamespaceNode {
-        min: nid,
-        max: nid,
+        min: node20,
+        max: node20,
         digest: 0xc59fa9c4ec515726c2b342544433f844c7b930cf7a5e7abab593332453ceaf70
     };
     let starting_height: u256 = 1;

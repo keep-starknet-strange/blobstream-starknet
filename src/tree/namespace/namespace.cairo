@@ -6,6 +6,16 @@ struct Namespace {
     id: bytes31, // only 28 bytes are used
 }
 
+impl NamespaceDefault of Default<Namespace> {
+    #[inline(always)]
+    fn default() -> Namespace {
+        return Namespace {
+            version: 0,
+            id: bytes31_const::<0>()
+        };
+    }
+}
+
 trait NamespaceValue {
     /// Equivalent of toBytes used in Solidity for comparing namespaces
     fn to_value(self: Namespace) -> u256;

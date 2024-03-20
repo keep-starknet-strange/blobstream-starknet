@@ -1,4 +1,4 @@
-use blobstream_sn::tree::namespace::namespace::Namespace;
+use blobstream_sn::tree::namespace::Namespace;
 
 #[derive(Serde, Drop, Copy, PartialEq)]
 struct NamespaceNode {
@@ -264,10 +264,7 @@ mod NamespaceMerkleTree {
         nodes: Span<NamespaceNode>, head: u256, end: u256
     ) -> (NamespaceNode, u256, bool) {
         if nodes.len() == 0 || head >= nodes.len().into() || head >= end {
-            let nid = Namespace {
-                version: 0x00,
-                id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000000>()
-            };
+            let nid: Namespace = Default::default();
             let node: NamespaceNode = NamespaceNode { min: nid, max: nid, digest: 0 };
             return (node, head, true);
         }

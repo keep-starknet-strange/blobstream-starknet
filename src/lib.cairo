@@ -31,6 +31,7 @@ mod tree {
         mod hasher;
         mod merkle_tree;
         mod namespace;
+        use namespace::Namespace;
         #[cfg(test)]
         mod tests {
             mod test_hasher;

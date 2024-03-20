@@ -4,7 +4,7 @@ use blobstream_sn::tree::consts::{LEAF_PREFIX, NODE_PREFIX, parity_share_namespa
 use blobstream_sn::tree::namespace::merkle_tree::{
     NamespaceNode, NamespaceMerkleMultiproof, NamespaceMerkleProof
 };
-use blobstream_sn::tree::namespace::namespace::Namespace;
+use blobstream_sn::tree::namespace::Namespace;
 
 fn leaf_digest(namespace: Namespace, data: @Bytes) -> NamespaceNode {
     let mut bytes = BytesTrait::new_empty();
