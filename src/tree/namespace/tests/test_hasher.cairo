@@ -1,17 +1,14 @@
 use alexandria_bytes::BytesTrait;
 use blobstream_sn::tree::consts::{parity_share_namespace};
-use blobstream_sn::tree::namespace::hasher::{leaf_digest, node_digest};
-use blobstream_sn::tree::namespace::merkle_tree::{Namespace, NamespaceNode, namespace_node_eq};
+use blobstream_sn::tree::namespace::Namespace;
+use blobstream_sn::tree::namespace::hasher;
+use blobstream_sn::tree::namespace::merkle_tree::{NamespaceNode, namespace_node_eq};
 use core::option::OptionTrait;
 use core::traits::Into;
 
 #[test]
 fn leaf_digest_empty_test() {
-    let bytesval: bytes31 = bytes31_const::<
-        0x00000000000000000000000000000000000000000000000000000000
-    >();
-
-    let nid: Namespace = Namespace { version: 0x00, id: bytesval };
+    let nid: Namespace = Default::default();
 
     let expected: NamespaceNode = NamespaceNode {
         min: nid,
@@ -21,7 +18,7 @@ fn leaf_digest_empty_test() {
 
     let data = BytesTrait::new_empty();
 
-    let node: NamespaceNode = leaf_digest(nid, @data);
+    let node: NamespaceNode = hasher::leaf_digest(nid, @data);
 
     let res = namespace_node_eq(node, expected);
     assert!(res, "Not equal to expected digest");
@@ -43,16 +40,13 @@ fn test_leaf_digest_some() {
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x69);
 
-    let node = leaf_digest(nid, @data);
+    let node = hasher::leaf_digest(nid, @data);
     assert!(node.digest == expected.digest, "Not equal to expected digest");
 }
 
 #[test]
 fn test_node_digest() {
-    let nid_left = Namespace {
-        version: 0x00,
-        id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000000>()
-    };
+    let nid_left: Namespace = Default::default();
     let nid_right = Namespace {
         version: 0xde,
         id: bytes31_const::<0xadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefde>()
@@ -73,17 +67,14 @@ fn test_node_digest() {
         max: nid_right,
         digest: 0xc75cb66ae28d8ebc6eded002c28a8ba0d06d3a78c6b5cbf9b2ade051f0775ac4
     };
-    let node = node_digest(left, right);
+    let node = hasher::node_digest(left, right);
     let res = namespace_node_eq(node, expected);
     assert!(res, "Not equal to expected digest");
 }
 
 #[test]
 fn test_node_parity() {
-    let nid_min = Namespace {
-        version: 0x00,
-        id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000000>()
-    };
+    let nid_min: Namespace = Default::default();
     let nid_max = Namespace {
         version: 0xde,
         id: bytes31_const::<0xadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeefde>()
@@ -106,7 +97,7 @@ fn test_node_parity() {
         digest: 0xc75cb66ae28d8ebc6eded002c28a8ba0d06d3a78c6b5cbf9b2ade051f0775ac4
     };
 
-    let node = node_digest(left, right);
+    let node = hasher::node_digest(left, right);
     let res = namespace_node_eq(node, expected);
     assert!(res, "Not equal to expected digest");
 }
