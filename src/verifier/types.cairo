@@ -2,8 +2,8 @@ use alexandria_bytes::Bytes;
 
 use blobstream_sn::interfaces::DataRoot;
 use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
-use blobstream_sn::tree::namespace::merkle_tree::{NamespaceNode, NamespaceMerkleMultiproof};
 use blobstream_sn::tree::namespace::Namespace;
+use blobstream_sn::tree::namespace::merkle_tree::{NamespaceNode, NamespaceMerkleMultiproof};
 
 struct SharesProof {
     // The shares that were committed to.
