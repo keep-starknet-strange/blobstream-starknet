@@ -138,9 +138,9 @@ mod NamespaceMerkleTree {
 
     fn verify_multi(
         root: NamespaceNode,
-        proof: NamespaceMerkleMultiproof,
+        proof: @NamespaceMerkleMultiproof,
         namespace: Namespace,
-        data: Array<Bytes>
+        data: Span<Bytes>
     ) -> bool {
         // Hash all the leaves to get leaf nodes.
         let mut nodes: Array<NamespaceNode> = array![];
@@ -151,7 +151,7 @@ mod NamespaceMerkleTree {
         };
 
         // Verify inclusion of leaf nodes.
-        return verify_multi_hashes(root, @proof, nodes);
+        return verify_multi_hashes(root, proof, nodes);
     }
 
     fn verify_multi_hashes(

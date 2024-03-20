@@ -1,3 +1,6 @@
+use alexandria_bytes::{Bytes, BytesTrait};
+use blobstream_sn::tree::namespace::hasher::append_bytes28;
+
 // // Celestia-app namespace ID and its version
 // // See: https://celestiaorg.github.io/celestia-app/specs/namespace.html
 #[derive(Serde, Drop, Copy)]
@@ -13,17 +16,25 @@ impl NamespaceDefault of Default<Namespace> {
     }
 }
 
-trait NamespaceValue {
+trait NamespaceValueTrait {
     /// Equivalent of toBytes used in Solidity for comparing namespaces
     fn to_value(self: Namespace) -> u256;
+    fn to_bytes(self: @Namespace) -> Bytes;
 }
 
-impl NamespaceValueTrait of NamespaceValue {
+impl NamespaceValue of NamespaceValueTrait {
     fn to_value(self: Namespace) -> u256 {
         // Same value as bytes29(abi.encodePacked(namespace.version, namespace.id))
         let mut value: u256 = self.id.into();
         value = value + (self.version.into() * 268435456); // 2^28
         return value;
+    }
+
+    fn to_bytes(self: @Namespace) -> Bytes {
+        let mut bytes: Bytes = BytesTrait::new_empty();
+        bytes.append_u8(*self.version);
+        append_bytes28(ref bytes, *self.id);
+        bytes
     }
 }
 
