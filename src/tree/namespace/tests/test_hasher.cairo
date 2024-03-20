@@ -1,7 +1,7 @@
 use alexandria_bytes::BytesTrait;
 use blobstream_sn::tree::consts::{parity_share_namespace};
-use blobstream_sn::tree::namespace::hasher;
 use blobstream_sn::tree::namespace::Namespace;
+use blobstream_sn::tree::namespace::hasher;
 use blobstream_sn::tree::namespace::merkle_tree::{NamespaceNode, namespace_node_eq};
 use core::option::OptionTrait;
 use core::traits::Into;

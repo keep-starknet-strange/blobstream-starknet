@@ -2,10 +2,10 @@
 
 use alexandria_bytes::{Bytes, BytesTrait};
 use blobstream_sn::tree::consts;
+use blobstream_sn::tree::namespace::Namespace;
 use blobstream_sn::tree::namespace::merkle_tree::{
     NamespaceNode, NamespaceMerkleTree, NamespaceMerkleMultiproof
 };
-use blobstream_sn::tree::namespace::Namespace;
 
 #[test]
 fn verify_multi_01() {

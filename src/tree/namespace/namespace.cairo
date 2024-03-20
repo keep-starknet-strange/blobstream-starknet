@@ -9,10 +9,7 @@ struct Namespace {
 impl NamespaceDefault of Default<Namespace> {
     #[inline(always)]
     fn default() -> Namespace {
-        return Namespace {
-            version: 0,
-            id: bytes31_const::<0>()
-        };
+        return Namespace { version: 0, id: bytes31_const::<0>() };
     }
 }
 

@@ -2,11 +2,11 @@
 
 use alexandria_bytes::{Bytes, BytesTrait};
 use blobstream_sn::tree::consts;
+use blobstream_sn::tree::namespace::Namespace;
 use blobstream_sn::tree::namespace::hasher;
 use blobstream_sn::tree::namespace::merkle_tree::{
     NamespaceNode, NamespaceMerkleProof, NamespaceMerkleTree
 };
-use blobstream_sn::tree::namespace::Namespace;
 
 #[test]
 fn verify_none_test() {
