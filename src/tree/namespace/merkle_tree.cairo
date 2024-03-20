@@ -121,13 +121,17 @@ mod NamespaceMerkleTree {
         }
 
         // All remaining elements in proof set will belong to a left sibling.
-        while height - height_offset - 1 < proof_side_nodes_len.into() {
-            node =
-                hasher::node_digest(
-                    *proof.side_nodes.at((height - height_offset - 1).try_into().unwrap()), node
-                );
-            height += 1;
-        };
+        while height
+            - height_offset
+            - 1 < proof_side_nodes_len
+                .into() {
+                    node =
+                        hasher::node_digest(
+                            *proof.side_nodes.at((height - height_offset - 1).try_into().unwrap()),
+                            node
+                        );
+                    height += 1;
+                };
 
         return super::namespace_node_eq(root, node);
     }
@@ -157,12 +161,15 @@ mod NamespaceMerkleTree {
         let mut left_subtrees: Array<NamespaceNode> = array![];
 
         let mut i: u32 = 0;
-        while leaf_index != *proof.begin_key && i < proof.side_nodes.len() {
-            let subtree_size = _next_subtree_size(leaf_index, *proof.begin_key);
-            left_subtrees.append(*proof.side_nodes.at(i));
-            leaf_index += subtree_size;
-            i += 1;
-        };
+        while leaf_index != *proof.begin_key
+            && i < proof
+                .side_nodes
+                .len() {
+                    let subtree_size = _next_subtree_size(leaf_index, *proof.begin_key);
+                    left_subtrees.append(*proof.side_nodes.at(i));
+                    leaf_index += subtree_size;
+                    i += 1;
+                };
 
         // estimate the leaf size of the subtree containing the proof range
         let mut proof_range_subtree_estimate = utils::get_split_point(*proof.end_key) * 2;
@@ -174,10 +181,12 @@ mod NamespaceMerkleTree {
             proof, leaf_nodes.span(), 0, proof_range_subtree_estimate, 0, 0
         );
         let mut i: u32 = proof_head.try_into().unwrap();
-        while i < proof.side_nodes.len() {
-            root_hash = hasher::node_digest(root_hash, *proof.side_nodes.at(i));
-            i += 1;
-        };
+        while i < proof
+            .side_nodes
+            .len() {
+                root_hash = hasher::node_digest(root_hash, *proof.side_nodes.at(i));
+                i += 1;
+            };
 
         return super::namespace_node_eq(root_hash, root);
     }
