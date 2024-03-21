@@ -1,5 +1,5 @@
 use alexandria_bytes::BytesTrait;
-use alexandria_encoding::sol_abi::{SolBytesTrait, SolAbiEncodeTrait};
+use alexandria_encoding::sol_abi::{SolAbiEncodeTrait};
 use blobstream_sn::tree::consts::{parity_share_namespace};
 use blobstream_sn::tree::namespace::Namespace;
 use blobstream_sn::tree::namespace::hasher;

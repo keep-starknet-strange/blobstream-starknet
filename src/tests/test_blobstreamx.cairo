@@ -1,5 +1,5 @@
 use alexandria_bytes::{Bytes, BytesTrait};
-use alexandria_encoding::sol_abi::{SolBytesTrait, SolAbiEncodeTrait};
+use alexandria_encoding::sol_abi::{SolAbiEncodeTrait};
 use blobstream_sn::blobstreamx::blobstreamx;
 use blobstream_sn::interfaces::{
     IBlobstreamXDispatcher, IBlobstreamXDispatcherTrait, Validator, ITendermintXDispatcher,

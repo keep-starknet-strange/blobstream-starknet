@@ -1,5 +1,5 @@
 use alexandria_bytes::BytesTrait;
-use alexandria_encoding::sol_abi::{SolBytesTrait, SolAbiEncodeTrait};
+use alexandria_encoding::sol_abi::{SolAbiEncodeTrait};
 use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
 use blobstream_sn::tree::binary::merkle_tree::ErrorCodes;
 use blobstream_sn::tree::binary::merkle_tree;

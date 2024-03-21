@@ -1,7 +1,7 @@
 /// Implement tests from https://github.com/celestiaorg/blobstream-contracts/blob/master/src/lib/tree/namespace/test/NamespaceMerkleTree.t.sol
 
 use alexandria_bytes::{Bytes, BytesTrait};
-use alexandria_encoding::sol_abi::{SolBytesTrait, SolAbiEncodeTrait};
+use alexandria_encoding::sol_abi::{SolAbiEncodeTrait};
 use blobstream_sn::tree::consts;
 use blobstream_sn::tree::namespace::Namespace;
 use blobstream_sn::tree::namespace::hasher;
