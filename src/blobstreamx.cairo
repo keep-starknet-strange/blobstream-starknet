@@ -148,7 +148,7 @@ mod blobstreamx {
             // load the tuple root at the given index from storage.
             let root: u256 = self.state_data_commitments.read(proof_nonce);
 
-            let mut data_root_bytes = BytesTrait::new_empty()
+            let data_root_bytes = BytesTrait::new_empty()
                 .encode_packed(data_root.height)
                 .encode_packed(data_root.data_root);
 
@@ -232,12 +232,12 @@ mod blobstreamx {
                 TendermintXErrors::TargetBlockNotInRange
             );
 
-            let mut input = BytesTrait::new_empty()
+            let input = BytesTrait::new_empty()
                 .encode_packed(latest_block)
                 .encode_packed(latest_header)
                 .encode_packed(_target_block);
 
-            let mut entry_calldata = BytesTrait::new_empty()
+            let entry_calldata = BytesTrait::new_empty()
                 .encode_packed(selector!("commit_header_range"))
                 .encode_packed(_target_block);
 
@@ -279,7 +279,7 @@ mod blobstreamx {
                 TendermintXErrors::TargetBlockNotInRange
             );
 
-            let mut input = BytesTrait::new_empty()
+            let input = BytesTrait::new_empty()
                 .encode_packed(latest_block)
                 .encode_packed(trusted_header)
                 .encode_packed(_target_block);
@@ -315,11 +315,11 @@ mod blobstreamx {
             let latest_header = self.block_height_to_header_hash.read(latest_block);
             assert(latest_header != 0, TendermintXErrors::LatestHeaderNotFound);
 
-            let mut input = BytesTrait::new_empty()
+            let input = BytesTrait::new_empty()
                 .encode_packed(latest_block)
                 .encode_packed(latest_header);
 
-            let mut entry_calldata = BytesTrait::new_empty()
+            let entry_calldata = BytesTrait::new_empty()
                 .encode_packed(selector!("commit_next_header"))
                 .encode_packed(latest_block);
 
@@ -356,7 +356,7 @@ mod blobstreamx {
             let next_block = _trusted_block + 1;
             assert(next_block > self.get_latest_block(), TendermintXErrors::TargetBlockNotInRange);
 
-            let mut input = BytesTrait::new_empty()
+            let input = BytesTrait::new_empty()
                 .encode_packed(_trusted_block)
                 .encode_packed(trusted_header);
 

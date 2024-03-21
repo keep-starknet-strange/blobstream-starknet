@@ -39,7 +39,7 @@ fn node_digest(left: NamespaceNode, right: NamespaceNode) -> NamespaceNode {
         max = left.max;
     }
 
-    let mut bytes = BytesTrait::new_empty()
+    let bytes = BytesTrait::new_empty()
         .encode_packed(NODE_PREFIX)
         .encode_packed(left.min.version)
         .encode_packed(SolBytesTrait::bytes28(left.min.id))

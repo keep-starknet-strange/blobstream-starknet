@@ -13,7 +13,7 @@ fn leaf_digest_empty_test() {
 #[test]
 fn leaf_digest_test() {
     let exp: u256 = 0x48c90c8ae24688d6bef5d48a30c2cc8b6754335a8db21793cc0a8e3bed321729;
-    let mut data = BytesTrait::new_empty().encode_packed(0xdeadbeef_u32);
+    let data = BytesTrait::new_empty().encode_packed(0xdeadbeef_u32);
     let digest = leaf_digest(@data);
     assert_eq!(digest, exp, "leaf digest");
 }
