@@ -9,9 +9,9 @@ use blobstream_sn::tree::namespace::merkle_tree::{
 
 fn leaf_digest(namespace: Namespace, data: @Bytes) -> NamespaceNode {
     let mut bytes = BytesTrait::new_empty()
-    .encode_packed(LEAF_PREFIX)
-    .encode_packed(namespace.version)
-    .encode_packed(SolBytesTrait::bytes28(namespace.id));
+        .encode_packed(LEAF_PREFIX)
+        .encode_packed(namespace.version)
+        .encode_packed(SolBytesTrait::bytes28(namespace.id));
     bytes.concat(data);
     return NamespaceNode { min: namespace, max: namespace, digest: bytes.sha256() };
 }
@@ -40,17 +40,17 @@ fn node_digest(left: NamespaceNode, right: NamespaceNode) -> NamespaceNode {
     }
 
     let mut bytes = BytesTrait::new_empty()
-    .encode_packed(NODE_PREFIX)
-    .encode_packed(left.min.version)
-    .encode_packed(SolBytesTrait::bytes28(left.min.id))
-    .encode_packed(left.max.version)
-    .encode_packed(SolBytesTrait::bytes28(left.max.id))
-    .encode_packed(left.digest)
-    .encode_packed(right.min.version)
-    .encode_packed(SolBytesTrait::bytes28(right.min.id))
-    .encode_packed(right.max.version)
-    .encode_packed(SolBytesTrait::bytes28(right.max.id))
-    .encode_packed(right.digest);
+        .encode_packed(NODE_PREFIX)
+        .encode_packed(left.min.version)
+        .encode_packed(SolBytesTrait::bytes28(left.min.id))
+        .encode_packed(left.max.version)
+        .encode_packed(SolBytesTrait::bytes28(left.max.id))
+        .encode_packed(left.digest)
+        .encode_packed(right.min.version)
+        .encode_packed(SolBytesTrait::bytes28(right.min.id))
+        .encode_packed(right.max.version)
+        .encode_packed(SolBytesTrait::bytes28(right.max.id))
+        .encode_packed(right.digest);
 
     return NamespaceNode { min: min, max: max, digest: bytes.sha256() };
 }

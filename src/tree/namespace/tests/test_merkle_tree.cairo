@@ -52,8 +52,7 @@ fn verify_one_leaf_some_test() {
     let key: u256 = 0;
     let num_leaves: u256 = 1;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0xdeadbeef_u32);
+    let mut data = BytesTrait::new_empty().encode_packed(0xdeadbeef_u32);
     let is_valid = NamespaceMerkleTree::verify(root, proof, nid, data);
     assert!(is_valid, "One leaf some proof should be valid");
 }
@@ -70,8 +69,7 @@ fn verify_one_leaf_01_test() {
     let key: u256 = 0;
     let num_leaves: u256 = 1;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x01_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x01_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, nid, data);
     assert!(is_valid, "One leaf 01 proof should be valid");
 }
@@ -101,8 +99,7 @@ fn verify_leaf_one_of_two_test() {
     let key: u256 = 0;
     let num_leaves: u256 = 2;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x01_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x01_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, node10, data);
     assert!(is_valid, "Leaf one of two proof should be valid");
 }
@@ -145,8 +142,7 @@ fn verify_leaf_one_of_four_test() {
     let key: u256 = 0;
     let num_leaves: u256 = 4;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x01_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x01_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, node10, data);
     assert!(is_valid, "Leaf one of four proof should be valid");
 }
@@ -194,8 +190,7 @@ fn verify_leaf_one_of_eight_test() {
     let key: u256 = 0;
     let num_leaves: u256 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x01_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x01_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, node10, data);
     assert!(is_valid, "Leaf one of eight proof should be valid");
 }
@@ -235,8 +230,7 @@ fn verify_leaf_seven_of_eight_test() {
     let key: u256 = 6;
     let num_leaves: u256 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x07_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x07_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
     assert!(is_valid, "Leaf seven of eight proof should be valid");
 }
@@ -276,8 +270,7 @@ fn verify_leaf_eight_of_eight_test() {
     let key: u256 = 7;
     let num_leaves: u256 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x08_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x08_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
     assert!(is_valid, "Leaf eight of eight proof should be valid");
 }
@@ -317,8 +310,7 @@ fn verify_leaf_five_of_eight_test() {
     let key: u256 = 4;
     let num_leaves: u256 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x05_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x05_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
     assert!(is_valid, "Leaf five of eight proof should be valid");
 }
@@ -366,8 +358,7 @@ fn verify_leaf_four_of_eight_test() {
     let key: u256 = 3;
     let num_leaves: u256 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x04_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x04_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, node40, data);
     assert!(is_valid, "Leaf four of eight proof should be valid");
 }
@@ -415,8 +406,7 @@ fn verify_leaf_three_of_eight_test() {
     let key: u256 = 2;
     let num_leaves: u256 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x03_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x03_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, node30, data);
     assert!(is_valid, "Leaf three of eight proof should be valid");
 }
@@ -456,8 +446,7 @@ fn verify_leaf_five_of_seven_test() {
     let key: u256 = 4;
     let num_leaves: u256 = 7;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x05_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x05_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
     assert!(is_valid, "Leaf five of seven proof should be valid");
 }
@@ -492,8 +481,7 @@ fn verify_leaf_nine_of_ten_test() {
     let key: u256 = 8;
     let num_leaves: u256 = 10;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x09_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x09_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
     assert!(is_valid, "Leaf nine of ten proof should be valid");
 }
@@ -538,8 +526,7 @@ fn verify_leaf_twelve_of_thirteen_test() {
     let key: u256 = 11;
     let num_leaves: u256 = 13;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x0c_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x0c_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
     assert!(is_valid, "Leaf twelve of thirteen proof should be valid");
 }
@@ -574,8 +561,7 @@ fn verify_leaf_thirteen_of_thirteen_test() {
     let key: u256 = 12;
     let num_leaves: u256 = 13;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x0d_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x0d_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
     assert!(is_valid, "Leaf thirteen of thirteen proof should be valid");
 }
@@ -601,8 +587,7 @@ fn verify_internal_node_one_and_two_of_four_test() {
     let key: u256 = 1;
     let num_leaves: u256 = 4;
     let starting_height: u256 = 2;
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x01_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x01_u8);
 
     let node1 = hasher::leaf_digest(node10, @data);
     let node2 = hasher::leaf_digest(node20, @data);
@@ -637,8 +622,7 @@ fn verify_internal_node_one_and_two_of_three_test() {
     let key: u256 = 0;
     let num_leaves: u256 = 3;
     let starting_height: u256 = 2;
-    let mut data = BytesTrait::new_empty()
-    .encode_packed(0x01_u8);
+    let mut data = BytesTrait::new_empty().encode_packed(0x01_u8);
 
     let node1 = hasher::leaf_digest(node10, @data);
     let node2 = hasher::leaf_digest(node20, @data);

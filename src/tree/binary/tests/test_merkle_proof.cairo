@@ -253,8 +253,8 @@ fn verify_invalid_proof_data_test() {
     let key: u256 = 1;
     let num_leaves: u256 = 5;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
-    let mut data = BytesTrait::new_empty()// correct .encode_packed(0x01_u8);
-    .encode_packed(0x012345_u32);
+    let mut data = BytesTrait::new_empty() // correct .encode_packed(0x01_u8);
+        .encode_packed(0x012345_u32);
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
     assert!(error_code == ErrorCodes::NoError, "verify invalid proof data test failed with error");
     assert_eq!(is_valid, false, "verify invalid proof data test should be invalid");
