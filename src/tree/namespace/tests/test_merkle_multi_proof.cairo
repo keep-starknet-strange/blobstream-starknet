@@ -1,6 +1,7 @@
 /// Implement tests from https://github.com/celestiaorg/blobstream-contracts/blob/master/src/lib/tree/namespace/test/NamespaceMerkleMultiproof.t.sol
 
 use alexandria_bytes::{Bytes, BytesTrait};
+use alexandria_encoding::sol_abi::{SolAbiEncodeTrait};
 use blobstream_sn::tree::consts;
 use blobstream_sn::tree::namespace::Namespace;
 use blobstream_sn::tree::namespace::merkle_tree::{
@@ -39,10 +40,8 @@ fn verify_multi_01() {
     let begin_key: u256 = 1;
     let end_key: u256 = 3;
     let proof = NamespaceMerkleMultiproof { begin_key, end_key, side_nodes };
-    let mut data_val1: Bytes = BytesTrait::new_empty();
-    data_val1.append_u8(0x02);
-    let mut data_val2: Bytes = BytesTrait::new_empty();
-    data_val2.append_u8(0x03);
+    let data_val1: Bytes = BytesTrait::new_empty().encode_packed(0x02_u8);
+    let data_val2: Bytes = BytesTrait::new_empty().encode_packed(0x03_u8);
     let data: Array<Bytes> = array![data_val1, data_val2];
     let is_valid = NamespaceMerkleTree::verify_multi(root, proof, nid, data);
     assert!(is_valid, "verify_multi_01 failed");

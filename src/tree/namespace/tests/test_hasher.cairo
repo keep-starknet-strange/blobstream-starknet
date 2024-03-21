@@ -1,4 +1,5 @@
 use alexandria_bytes::BytesTrait;
+use alexandria_encoding::sol_abi::{SolAbiEncodeTrait};
 use blobstream_sn::tree::consts::{parity_share_namespace};
 use blobstream_sn::tree::namespace::Namespace;
 use blobstream_sn::tree::namespace::hasher;
@@ -37,8 +38,7 @@ fn test_leaf_digest_some() {
         digest: 0x3624c7f7169cb5bbd0d010b851ebd0edca10b2a1b126f5fb1a6d5e0d98356e63
     };
 
-    let mut data = BytesTrait::new_empty();
-    data.append_u8(0x69);
+    let data = BytesTrait::new_empty().encode_packed(0x69_u8);
 
     let node = hasher::leaf_digest(nid, @data);
     assert!(node.digest == expected.digest, "Not equal to expected digest");
