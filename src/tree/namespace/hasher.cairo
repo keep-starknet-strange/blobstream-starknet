@@ -1,4 +1,5 @@
 use alexandria_bytes::{Bytes, BytesTrait};
+use alexandria_encoding::sol_abi::{SolBytesTrait, SolAbiEncodeTrait};
 use alexandria_math::U256BitShift;
 use blobstream_sn::tree::consts::{LEAF_PREFIX, NODE_PREFIX, parity_share_namespace};
 use blobstream_sn::tree::namespace::Namespace;
@@ -7,10 +8,10 @@ use blobstream_sn::tree::namespace::merkle_tree::{
 };
 
 fn leaf_digest(namespace: Namespace, data: @Bytes) -> NamespaceNode {
-    let mut bytes = BytesTrait::new_empty();
-    bytes.append_u8(LEAF_PREFIX);
-    bytes.append_u8(namespace.version);
-    append_bytes28(ref bytes, namespace.id);
+    let mut bytes = BytesTrait::new_empty()
+    .encode_packed(LEAF_PREFIX)
+    .encode_packed(namespace.version)
+    .encode_packed(SolBytesTrait::bytes28(namespace.id));
     bytes.concat(data);
     return NamespaceNode { min: namespace, max: namespace, digest: bytes.sha256() };
 }
@@ -38,18 +39,18 @@ fn node_digest(left: NamespaceNode, right: NamespaceNode) -> NamespaceNode {
         max = left.max;
     }
 
-    let mut bytes = BytesTrait::new_empty();
-    bytes.append_u8(NODE_PREFIX);
-    bytes.append_u8(left.min.version);
-    append_bytes28(ref bytes, left.min.id);
-    bytes.append_u8(left.max.version);
-    append_bytes28(ref bytes, left.max.id);
-    bytes.append_u256(left.digest);
-    bytes.append_u8(right.min.version);
-    append_bytes28(ref bytes, right.min.id);
-    bytes.append_u8(right.max.version);
-    append_bytes28(ref bytes, right.max.id);
-    bytes.append_u256(right.digest);
+    let mut bytes = BytesTrait::new_empty()
+    .encode_packed(NODE_PREFIX)
+    .encode_packed(left.min.version)
+    .encode_packed(SolBytesTrait::bytes28(left.min.id))
+    .encode_packed(left.max.version)
+    .encode_packed(SolBytesTrait::bytes28(left.max.id))
+    .encode_packed(left.digest)
+    .encode_packed(right.min.version)
+    .encode_packed(SolBytesTrait::bytes28(right.min.id))
+    .encode_packed(right.max.version)
+    .encode_packed(SolBytesTrait::bytes28(right.max.id))
+    .encode_packed(right.digest);
 
     return NamespaceNode { min: min, max: max, digest: bytes.sha256() };
 }

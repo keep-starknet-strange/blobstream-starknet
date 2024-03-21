@@ -1,4 +1,5 @@
 use alexandria_bytes::{Bytes, BytesTrait};
+use alexandria_encoding::sol_abi::{SolBytesTrait, SolAbiEncodeTrait};
 use blobstream_sn::blobstreamx::blobstreamx;
 use blobstream_sn::interfaces::{
     IBlobstreamXDispatcher, IBlobstreamXDispatcherTrait, Validator, ITendermintXDispatcher,
@@ -87,14 +88,14 @@ fn blobstreamx_fulfill_commit_header_range() {
     let gateway = get_gateway_contract(bsx.contract_address);
 
     // test data: https://sepolia.etherscan.io/tx/0x38ff4174e1e2c56d26f1f54e564fe282a662cff8335b3cd368e9a29004cee04d#eventlog
-    let mut input = BytesTrait::new_empty();
-    input.append_u64(TEST_START_BLOCK);
-    input.append_u256(TEST_HEADER);
-    input.append_u64(TEST_END_BLOCK);
+    let mut input = BytesTrait::new_empty()
+        .encode_packed(TEST_START_BLOCK)
+        .encode_packed(TEST_HEADER)
+        .encode_packed(TEST_END_BLOCK);
 
-    let mut output = BytesTrait::new_empty();
-    output.append_u256(0x94a3afe8ce56375bedcb401c07a38a93a6b9d47461a01b6a410d5a958ca9bc7a);
-    output.append_u256(0xAAA0E18EB3689B8D88BE03EA19589E3565DB343F6509C8601DB6AFA01255A488);
+    let mut output = BytesTrait::new_empty()
+        .encode_packed(0x94a3afe8ce56375bedcb401c07a38a93a6b9d47461a01b6a410d5a958ca9bc7a_u256)
+        .encode_packed(0xAAA0E18EB3689B8D88BE03EA19589E3565DB343F6509C8601DB6AFA01255A488_u256);
 
     gateway
         .fulfill_call(
