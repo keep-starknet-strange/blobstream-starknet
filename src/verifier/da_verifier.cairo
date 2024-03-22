@@ -35,10 +35,22 @@ mod DAVerifier {
         const OutOfBoundsRange: felt252 = 'OutOfBoundsRange';
     }
 
+    /// Verifies that the shares, which were posted to Celestia, were committed to by the Blobstream smart contract.
+    ///
+    /// # Arguments
+    ///
+    /// * `bridge` - The Blobstream smart contract instance.
+    /// * `shares_proof` - The proof of the shares to the data root tuple root.
+    /// * `root` - The data root of the block that contains the shares.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the proof is valid, `false` otherwise.
+    /// * An error code if the proof is invalid, Error::NoError otherwise.
     fn verify_shares_to_data_root_tuple_root(
         bridge: IDAOracleDispatcher, shares_proof: SharesProof, root: u256
     ) -> (bool, felt252) {
-        // checking that the data root was committed to by the Blobstream smart contract.
+        // check that the data root was committed to by the Blobstream smart contract.
         let (success, error) = verify_multi_row_roots_to_data_root_tuple_root(
             bridge,
             shares_proof.row_roots.span(),
@@ -60,6 +72,21 @@ mod DAVerifier {
         );
     }
 
+    /// Verifies the shares to data root tuple root proof.
+    ///
+    /// # Arguments
+    ///
+    /// * `data` - The data that needs to be proven.
+    /// * `share_proofs` - The share to the row roots proof.
+    /// * `namespace` - The namespace of the shares.
+    /// * `row_roots` - The row roots where the shares belong.
+    /// * `row_proofs` - The proofs of the rowRoots to the data root.
+    /// * `root` - The data root of the block that contains the shares.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the proof is valid, `false` otherwise.
+    /// * An error code if the proof is invalid, Error::NoError otherwise.
     fn verify_shares_to_data_root_tuple_root_proof(
         data: Span<Bytes>,
         share_proofs: Span<NamespaceMerkleMultiproof>,
@@ -68,6 +95,7 @@ mod DAVerifier {
         row_proofs: Span<BinaryMerkleProof>,
         root: u256
     ) -> (bool, felt252) {
+        // check that the rows roots commit to the data root
         let (success, error) = verify_multi_row_roots_to_data_root_tuple_root_proof(
             row_roots, row_proofs, root
         );
@@ -118,9 +146,20 @@ mod DAVerifier {
         return (true, Error::NoError);
     }
 
-    // Verifies that a row/column root, from a Celestia block,
-    // was committed to by the Blobstream smart contract.
-    // Returns (success, error).
+    /// Verifies that a row/column root, from a Celestia block, was committed to by the Blobstream smart contract.
+    ///
+    /// # Arguments
+    ///
+    /// * `bridge` - The Blobstream smart contract instance.
+    /// * `row_root` - The row/column root to be proven.
+    /// * `row_proof` - The proof of the row/column root to the data root.
+    /// * `attestation_proof` - The proof of the data root tuple to the data root tuple root that was posted to the Blobstream contract.
+    /// * `root` - The data root of the block that contains the row.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the proof is valid, `false` otherwise.
+    /// * An error code if the proof is invalid, Error::NoError otherwise.
     fn verify_row_root_to_data_root_tuple_root(
         bridge: IDAOracleDispatcher,
         row_root: NamespaceNode,
@@ -139,9 +178,22 @@ mod DAVerifier {
             return (false, Error::InvalidDataRootTupleToDataRootTupleRootProof);
         }
 
+        // check that the row root commits to the data root
         return verify_row_root_to_data_root_tuple_root_proof(row_root, row_proof, root);
     }
 
+    /// Verifies that a row/column root proof, from a Celestia block, to its corresponding data root.
+    ///
+    /// # Arguments
+    ///
+    /// * `row_root` - The row/column root to be proven.
+    /// * `row_proof` - The proof of the row/column root to the data root.
+    /// * `root` - The data root of the block that contains the row.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the proof is valid, `false` otherwise.
+    /// * An error code if the proof is invalid, ErrorCodes.NoError otherwise.
     fn verify_row_root_to_data_root_tuple_root_proof(
         row_root: NamespaceNode, row_proof: BinaryMerkleProof, root: u256
     ) -> (bool, felt252) {
@@ -157,6 +209,20 @@ mod DAVerifier {
         return (true, Error::NoError);
     }
 
+    /// Verifies that a set of rows/columns, from a Celestia block, were committed to by the Blobstream smart contract.
+    ///
+    /// # Arguments
+    ///
+    /// * `bridge` - The Blobstream smart contract instance.
+    /// * `row_roots` - The set of row/column roots to be proved.
+    /// * `row_proofs` - The set of proofs of the _rowRoots in the same order.
+    /// * `attestation_proof` - The proof of the data root tuple to the data root tuple root that was posted to the Blobstream contract.
+    /// * `root` - The data root of the block that contains the rows.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the proof is valid, `false` otherwise.
+    /// * An error code if the proof is invalid, Error::NoError otherwise.
     fn verify_multi_row_roots_to_data_root_tuple_root(
         bridge: IDAOracleDispatcher,
         row_roots: Span<NamespaceNode>,
@@ -174,9 +240,22 @@ mod DAVerifier {
             return (false, Error::InvalidDataRootTupleToDataRootTupleRootProof);
         }
 
+        // check that the rows roots commit to the data root
         return verify_multi_row_roots_to_data_root_tuple_root_proof(row_roots, row_proofs, root);
     }
 
+    /// Verifies the proof of a set of rows/columns, from a Celestia block, to their corresponding data root.
+    ///
+    /// # Arguments
+    ///
+    /// * `row_roots` - The set of row/column roots to be proved.
+    /// * `row_proofs` - The set of proofs of the _rowRoots in the same order.
+    /// * `root` - The data root of the block that contains the rows.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the proof is valid, `false` otherwise.
+    /// * An error code if the proof is invalid, Error::NoError otherwise.
     fn verify_multi_row_roots_to_data_root_tuple_root_proof(
         row_roots: Span<NamespaceNode>, row_proofs: Span<BinaryMerkleProof>, root: u256
     ) -> (bool, felt252) {
