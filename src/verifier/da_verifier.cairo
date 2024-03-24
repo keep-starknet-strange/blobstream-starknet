@@ -290,11 +290,13 @@ mod DAVerifier {
     }
 
     fn compute_square_size_from_share_proof(proof: NamespaceMerkleMultiproof) -> u256 {
-        let mut extended_square_row_size: u8 = 1;
         // `i` could actually fit in a u8
         // currently max square size is 128 => extended square size is 256
         // max number of side nodes in a a binary tree with 256 leaves is log2(256) = 8
         let mut i: u32 = 0;
+        // same for `extended_square_row_size`, but defining them as u32 may provide some
+        // flexibility if celestia protocol changes
+        let mut extended_square_row_size: u32 = 1;
         while i < proof.side_nodes.len() {
             extended_square_row_size *= 2;
             i += 1;
