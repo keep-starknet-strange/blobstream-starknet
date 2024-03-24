@@ -180,16 +180,6 @@ fn test_compute_square_size_from_share_proof() {
     assert_eq!(expected_square_size, actual_square_size, "square size mismatch");
 }
 
-#[test]
-fn attestation_proof_test() {
-    let checkpoint = AttestationProof {
-        commit_nonce: 1,
-        data_root: DataRoot { height: 2, data_root: 3 },
-        proof: BinaryMerkleProof { side_nodes: array![1], key: 4, num_leaves: 5 },
-    };
-    assert!(checkpoint.commit_nonce == 1, "stub for verifier test");
-}
-
 /// Contains the necessary information to create proofs for the token
 /// transfer transaction that happened on Celestia. It represents the data mentioned in
 /// the comment at the beginning of this file.

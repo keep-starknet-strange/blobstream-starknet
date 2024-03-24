@@ -3,14 +3,12 @@
 
 use alexandria_bytes::{Bytes, BytesTrait};
 use blobstream_sn::interfaces::{IDAOracleDispatcher, IDAOracleDispatcherTrait};
+use blobstream_sn::tests::common::setup_base;
 use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
 use blobstream_sn::tree::namespace::Namespace;
-use blobstream_sn::tree::namespace::merkle_tree::{
-    NamespaceNode, NamespaceMerkleMultiproof
-};
-use blobstream_sn::verifier::types::{SharesProof, AttestationProof};
+use blobstream_sn::tree::namespace::merkle_tree::{NamespaceNode, NamespaceMerkleMultiproof};
 use blobstream_sn::verifier::da_verifier::DAVerifier;
-use blobstream_sn::tests::common::setup_base;
+use blobstream_sn::verifier::types::{SharesProof, AttestationProof};
 use snforge_std as snf;
 use starknet::ContractAddress;
 
@@ -242,11 +240,12 @@ fn test_unavailable_data() {
 }
 
 #[test]
+#[ignore] // test exceeds default steps limit, run with `--max-n-steps 4294967295`
 // test case 2: a rollup header pointing to available data that is invalid
 fn test_invalid_data() {
     let bsx_address = setup();
     let bridge = IDAOracleDispatcher { contract_address: bsx_address };
-    
+
     // let's create the sequence span of the rollup data in the Celestia block
     let height: u256 = 21;
     let start_index: u256 = 1;
@@ -279,17 +278,52 @@ fn test_invalid_data() {
         data_root: TestFixture::get_data_root_tuple(),
         proof: TestFixture::get_data_root_tuple_proof()
     };
-    let shares_proof = SharesProof {
+    let share_proof = SharesProof {
         data, share_proofs, namespace, row_roots, row_proofs, attestation_proof
     };
+
+    // variables used later but computed here because `share_proof` is moved
+    let share_index_in_row: u256 = *share_proof.share_proofs.at(0).begin_key;
+    let share_index_in_row_major_order: u256 = share_index_in_row
+        + *share_proof.row_proofs.at(0).num_leaves * *share_proof.row_proofs.at(0).key;
 
     // let's authenticate the share proof to the data root tuple root to be sure that
     // the square size is valid.
     let (valid, error) = DAVerifier::verify_shares_to_data_root_tuple_root(
-        bridge, shares_proof, root: TestFixture::data_root()
+        bridge, share_proof, root: TestFixture::data_root()
     );
     assert!(valid, "proofs should be valid");
     assert_eq!(error, DAVerifier::Error::NoError, "expected no error");
+
+    // now that we're sure that the proof is valid and the square size is valid,
+    // we can compare the square size against the sequence referenced in the rollup
+    // header to see if the data exists
+    let end_index: u256 = header.sequence.index + header.sequence.length;
+    // this checks that indeed the data referenced in the header is part of the Celestia
+    // block, i.e. the sequence of spans in not out of the block's bounds
+    assert!(square_size >= end_index, "expected end index to be in the block's bounds");
+    // the last step is to prove that the share is part of the rollup data
+    // referenced in the rollup header
+    // to do so, we will use the proof, already authenticated above, to get the index,
+    // then, we will compare it against the spans sequence
+
+    // since we're using nmt multiproofs, we have a begin key and an end key of the shares proven
+    // however, in our case, we're only proving a single share
+    // thus, we can take the begin key as the index
+    // note: in the case of multiple shares in the proof, we will need to check all the shares
+    // if they're part of the sequence of spans, then only use the ones that are part of it
+
+    // check if the share is part of the sequence of spans
+    assert!(
+        header.sequence.index <= share_index_in_row_major_order, "share index out of bounds: inferior"
+    );
+    assert!(share_index_in_row_major_order <= end_index, "share index out of bounds: superior");
+// at this level we can parse the share to get the transactions, and compare them to
+// the rollup state
+// then, we would be able to know if there is an invalid transaction or not
+// as explained in the test overview at the beginning of the file, the third transaction
+// is an invalid transaction.
+// for the sake of simplicity, we will not parse the shares as that is rollup specific
 }
 
 /// TestFixture contains the necessary information to create proofs for the blob
