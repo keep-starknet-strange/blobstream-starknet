@@ -152,7 +152,6 @@ mod blobstreamx {
             data_root_bytes.append_u256(data_root.data_root);
 
             let (is_proof_valid, _) = merkle_tree::verify(root, @proof, @data_root_bytes);
-
             is_proof_valid
         }
     }

@@ -4,10 +4,12 @@ use blobstream_sn::tests::common::setup_base;
 use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
 use blobstream_sn::tree::binary::merkle_tree as binary_merkle_tree;
 use blobstream_sn::tree::namespace::Namespace;
-use blobstream_sn::tree::namespace::merkle_tree::{NamespaceNode, NamespaceMerkleMultiproof, NamespaceMerkleTree};
+use blobstream_sn::tree::namespace::merkle_tree::{
+    NamespaceNode, NamespaceMerkleMultiproof, NamespaceMerkleTree
+};
 use blobstream_sn::verifier::da_verifier::DAVerifier;
-use blobstream_sn::verifier::types::{AttestationProof, SharesProof};
 use blobstream_sn::verifier::types::DataRoot;
+use blobstream_sn::verifier::types::{AttestationProof, SharesProof};
 use snforge_std as snf;
 use starknet::ContractAddress;
 
@@ -47,7 +49,7 @@ use starknet::ContractAddress;
 fn setup() -> ContractAddress {
     let bsx_address = setup_base();
 
-    // Store the commitment we verify against.
+    // store the commitment we verify against
     let proof_nonce: u64 = TestFixture::data_root_tuple_root_nonce().try_into().unwrap();
     let data_commitment: u256 = TestFixture::data_root_tuple_root();
     snf::store(
@@ -68,10 +70,14 @@ fn test_verify_shares_to_data_root_tuple_root() {
     let bridge = IDAOracleDispatcher { contract_address: bsx_address };
 
     let data: Array<Bytes> = array![TestFixture::share_data()];
-    let share_proofs: Array<NamespaceMerkleMultiproof> = array![TestFixture::get_share_to_row_root_proof()];
+    let share_proofs: Array<NamespaceMerkleMultiproof> = array![
+        TestFixture::get_share_to_row_root_proof()
+    ];
     let namespace: Namespace = TestFixture::get_namespace();
     let row_roots: Array<NamespaceNode> = array![TestFixture::get_first_row_root_node()];
-    let row_proofs: Array<BinaryMerkleProof> = array![TestFixture::get_row_root_to_data_root_proof()];
+    let row_proofs: Array<BinaryMerkleProof> = array![
+        TestFixture::get_row_root_to_data_root_proof()
+    ];
     let attestation_proof = AttestationProof {
         commit_nonce: TestFixture::data_root_tuple_root_nonce(),
         data_root: TestFixture::get_data_root_tuple(),
@@ -83,9 +89,7 @@ fn test_verify_shares_to_data_root_tuple_root() {
     let root: u256 = TestFixture::data_root();
 
     let (valid, error) = DAVerifier::verify_shares_to_data_root_tuple_root(
-        bridge,
-        shares_proof,
-        root
+        bridge, shares_proof, root
     );
     assert!(valid, "proofs should be valid");
     assert_eq!(error, DAVerifier::Error::NoError, "expected no error");
@@ -119,7 +123,8 @@ fn test_verify_multi_row_roots_to_data_root_tuple_root() {
     let bridge = IDAOracleDispatcher { contract_address: bsx_address };
 
     let row_roots: Span<NamespaceNode> = array![TestFixture::get_first_row_root_node()].span();
-    let row_proofs: Span<BinaryMerkleProof> = array![TestFixture::get_row_root_to_data_root_proof()].span();
+    let row_proofs: Span<BinaryMerkleProof> = array![TestFixture::get_row_root_to_data_root_proof()]
+        .span();
     let attestation_proof = AttestationProof {
         commit_nonce: TestFixture::data_root_tuple_root_nonce(),
         data_root: TestFixture::get_data_root_tuple(),
@@ -127,13 +132,8 @@ fn test_verify_multi_row_roots_to_data_root_tuple_root() {
     };
     let root: u256 = TestFixture::data_root();
 
-
     let (valid, error) = DAVerifier::verify_multi_row_roots_to_data_root_tuple_root(
-        bridge,
-        row_roots,
-        row_proofs,
-        attestation_proof,
-        root
+        bridge, row_roots, row_proofs, attestation_proof, root
     );
     assert!(valid, "proofs should be valid");
     assert_eq!(error, DAVerifier::Error::NoError, "expected no error");
@@ -155,8 +155,8 @@ fn test_compute_square_size_from_row_proof() {
     let (actual_square_size, error) = DAVerifier::compute_square_size_from_row_proof(
         TestFixture::get_row_root_to_data_root_proof()
     );
-    assert_eq!(expected_square_size, actual_square_size, "invalid square size");
-    assert_eq!(error, DAVerifier::Error::NoError, "expected no error");
+    assert_eq!(expected_square_size, actual_square_size, "square size mismatch");
+    assert_eq!(error, DAVerifier::Error::NoError, "compute square size from row proof failed");
 }
 
 #[test]
@@ -177,7 +177,7 @@ fn test_compute_square_size_from_share_proof() {
     let actual_square_size = DAVerifier::compute_square_size_from_share_proof(
         TestFixture::get_share_to_row_root_proof()
     );
-    assert_eq!(expected_square_size, actual_square_size, "invalid square size");
+    assert_eq!(expected_square_size, actual_square_size, "square size mismatch");
 }
 
 #[test]
@@ -426,18 +426,14 @@ mod TestFixture {
     /// The shares to row root proof.
     fn get_share_to_row_root_proof() -> NamespaceMerkleMultiproof {
         NamespaceMerkleMultiproof {
-            begin_key: 0,
-            end_key: 1,
-            side_nodes: share_to_data_root_proof_side_nodes()
+            begin_key: 0, end_key: 1, side_nodes: share_to_data_root_proof_side_nodes()
         }
     }
 
-    /// Rpw root to data root proof.
+    /// Row root to data root proof.
     fn get_row_root_to_data_root_proof() -> BinaryMerkleProof {
         BinaryMerkleProof {
-            side_nodes: row_root_to_data_root_proof_side_nodes(),
-            key: 0,
-            num_leaves: 4
+            side_nodes: row_root_to_data_root_proof_side_nodes(), key: 0, num_leaves: 4
         }
     }
 }
