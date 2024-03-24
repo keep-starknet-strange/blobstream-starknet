@@ -282,6 +282,21 @@ mod DAVerifier {
         return (true, Error::NoError);
     }
 
+    /// Computes the Celestia block square size from a row/column root to data root binary Merkle proof.
+    ///
+    /// Note: The provided proof is not authenticated to the Blobstream smart contract. It is the user's responsibility
+    /// to verify that the proof is valid and was successfully committed to using
+    /// the `verify_row_root_to_data_root_tuple_root()` function.
+    /// Note: The minimum square size is 1. Thus, we don't expect the proof to have number of leaves equal to 0.
+    ///
+    /// # Arguments
+    ///
+    /// * `proof` - The proof of the row/column root to the data root.
+    ///
+    /// # Returns
+    ///
+    /// * The square size of the corresponding block.
+    /// * An error code if the `proof` is invalid, `Error::NoError` otherwise.
     fn compute_square_size_from_row_proof(proof: BinaryMerkleProof) -> (u256, felt252) {
         if proof.num_leaves % 4 != 0 {
             return (0, Error::InvalidNumberOfLeavesInProof);
@@ -289,6 +304,20 @@ mod DAVerifier {
         return (proof.num_leaves / 4, Error::NoError);
     }
 
+    /// Computes the Celestia block square size from a shares to row/column root proof.
+    ///
+    /// Note: The provided proof is not authenticated to the Blobstream smart contract. It is the user's responsibility
+    /// to verify that the proof is valid and that the shares were successfully committed to using
+    /// the `verify_shares_to_data_root_tuple_root()` function.
+    /// Note: The minimum square size is 1. Thus, we don't expect the proof to be devoid of any side nodes.
+    ///
+    /// # Arguments
+    ///
+    /// * `proof` - The proof of the shares to the row/column root.
+    ///
+    /// # Returns
+    ///
+    /// * The square size of the corresponding block.
     fn compute_square_size_from_share_proof(proof: NamespaceMerkleMultiproof) -> u256 {
         // `i` could actually fit in a u8
         // currently max square size is 128 => extended square size is 256
@@ -301,6 +330,8 @@ mod DAVerifier {
             extended_square_row_size *= 2;
             i += 1;
         };
+        // we divide the extended square row size by 2 because the square size is the
+        // the size of the row of the original square size.
         return extended_square_row_size.into() / 2;
     }
 }
