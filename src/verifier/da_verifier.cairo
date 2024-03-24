@@ -1,3 +1,5 @@
+/// The DAVerifier verifies that some shares, which were posted on Celestia, were committed to
+/// by the BlobstreamX smart contract.
 mod DAVerifier {
     use alexandria_bytes::{Bytes, BytesTrait};
     use blobstream_sn::interfaces::{IDAOracleDispatcher, IDAOracleDispatcherTrait};
@@ -61,7 +63,6 @@ mod DAVerifier {
         if !success {
             return (false, error);
         }
-
         return verify_shares_to_data_root_tuple_root_proof(
             shares_proof.data.span(),
             shares_proof.share_proofs.span(),
@@ -276,6 +277,7 @@ mod DAVerifier {
                     error = Error::InvalidRowToDataRootProof;
                     break;
                 }
+                i += 1;
             };
         if error != Error::NoError {
             return (false, error);
