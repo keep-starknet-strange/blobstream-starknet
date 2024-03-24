@@ -31,10 +31,6 @@ mod DAVerifier {
         const UnequalDataLengthAndNumberOfSharesProofs: felt252 = 'UnequalDLandNSP';
         // The number of leaves in the binary merkle proof is not divisible by 4.
         const InvalidNumberOfLeavesInProof: felt252 = 'InvalidNumberOfLeavesInProof';
-        // The provided range is invalid.
-        const InvalidRange: felt252 = 'InvalidRange';
-        // The provided range is out of bounds.
-        const OutOfBoundsRange: felt252 = 'OutOfBoundsRange';
     }
 
     /// Verifies that the shares, which were posted to Celestia, were committed to by the Blobstream smart contract.
@@ -294,7 +290,15 @@ mod DAVerifier {
     }
 
     fn compute_square_size_from_share_proof(proof: NamespaceMerkleMultiproof) -> u256 {
-        let extended_square_row_size = proof.side_nodes.len();
+        let mut extended_square_row_size: u8 = 1;
+        // `i` could actually fit in a u8
+        // currently max square size is 128 => extended square size is 256
+        // max number of side nodes in a a binary tree with 256 leaves is log2(256) = 8
+        let mut i: u32 = 0;
+        while i < proof.side_nodes.len() {
+            extended_square_row_size *= 2;
+            i += 1;
+        };
         return extended_square_row_size.into() / 2;
     }
 }

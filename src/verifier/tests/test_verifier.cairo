@@ -2,8 +2,9 @@ use alexandria_bytes::{Bytes, BytesTrait};
 use blobstream_sn::interfaces::{IDAOracleDispatcher, IDAOracleDispatcherTrait};
 use blobstream_sn::tests::common::setup_base;
 use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
+use blobstream_sn::tree::binary::merkle_tree as binary_merkle_tree;
 use blobstream_sn::tree::namespace::Namespace;
-use blobstream_sn::tree::namespace::merkle_tree::{NamespaceNode, NamespaceMerkleMultiproof};
+use blobstream_sn::tree::namespace::merkle_tree::{NamespaceNode, NamespaceMerkleMultiproof, NamespaceMerkleTree};
 use blobstream_sn::verifier::da_verifier::DAVerifier;
 use blobstream_sn::verifier::types::{AttestationProof, SharesProof};
 use blobstream_sn::verifier::types::DataRoot;
@@ -65,6 +66,7 @@ fn setup() -> ContractAddress {
 fn test_verify_shares_to_data_root_tuple_root() {
     let bsx_address = setup();
     let bridge = IDAOracleDispatcher { contract_address: bsx_address };
+
     let data: Array<Bytes> = array![TestFixture::share_data()];
     let share_proofs: Array<NamespaceMerkleMultiproof> = array![TestFixture::get_share_to_row_root_proof()];
     let namespace: Namespace = TestFixture::get_namespace();
@@ -91,7 +93,91 @@ fn test_verify_shares_to_data_root_tuple_root() {
 
 #[test]
 fn test_verify_row_root_to_data_root_tuple_root() {
+    let bsx_address = setup();
+    let bridge = IDAOracleDispatcher { contract_address: bsx_address };
 
+    let attestation_proof = AttestationProof {
+        commit_nonce: TestFixture::data_root_tuple_root_nonce(),
+        data_root: TestFixture::get_data_root_tuple(),
+        proof: TestFixture::get_data_root_tuple_proof()
+    };
+
+    let (valid, error) = DAVerifier::verify_row_root_to_data_root_tuple_root(
+        bridge: bridge,
+        row_root: TestFixture::get_first_row_root_node(),
+        row_proof: TestFixture::get_row_root_to_data_root_proof(),
+        attestation_proof: attestation_proof,
+        root: TestFixture::data_root()
+    );
+    assert!(valid, "proofs should be valid");
+    assert_eq!(error, DAVerifier::Error::NoError, "expected no error");
+}
+
+#[test]
+fn test_verify_multi_row_roots_to_data_root_tuple_root() {
+    let bsx_address = setup();
+    let bridge = IDAOracleDispatcher { contract_address: bsx_address };
+
+    let row_roots: Span<NamespaceNode> = array![TestFixture::get_first_row_root_node()].span();
+    let row_proofs: Span<BinaryMerkleProof> = array![TestFixture::get_row_root_to_data_root_proof()].span();
+    let attestation_proof = AttestationProof {
+        commit_nonce: TestFixture::data_root_tuple_root_nonce(),
+        data_root: TestFixture::get_data_root_tuple(),
+        proof: TestFixture::get_data_root_tuple_proof()
+    };
+    let root: u256 = TestFixture::data_root();
+
+
+    let (valid, error) = DAVerifier::verify_multi_row_roots_to_data_root_tuple_root(
+        bridge,
+        row_roots,
+        row_proofs,
+        attestation_proof,
+        root
+    );
+    assert!(valid, "proofs should be valid");
+    assert_eq!(error, DAVerifier::Error::NoError, "expected no error");
+}
+
+#[test]
+fn test_compute_square_size_from_row_proof() {
+    // check that the merkle proof is valid
+    let (valid_merkle_proof, error) = binary_merkle_tree::verify(
+        root: TestFixture::data_root(),
+        proof: @TestFixture::get_row_root_to_data_root_proof(),
+        data: @TestFixture::first_row_root()
+    );
+    assert!(valid_merkle_proof, "merkle proof should be valid");
+    assert_eq!(error, binary_merkle_tree::ErrorCodes::NoError, "expected no error");
+
+    // check that the computed square size is correct
+    let expected_square_size: u256 = 1;
+    let (actual_square_size, error) = DAVerifier::compute_square_size_from_row_proof(
+        TestFixture::get_row_root_to_data_root_proof()
+    );
+    assert_eq!(expected_square_size, actual_square_size, "invalid square size");
+    assert_eq!(error, DAVerifier::Error::NoError, "expected no error");
+}
+
+#[test]
+fn test_compute_square_size_from_share_proof() {
+    let data: Span<Bytes> = array![TestFixture::share_data()].span();
+
+    // check that the merkle proof is valid
+    let valid_merkle_proof = NamespaceMerkleTree::verify_multi(
+        root: TestFixture::get_first_row_root_node(),
+        proof: @TestFixture::get_share_to_row_root_proof(),
+        namespace: TestFixture::get_namespace(),
+        data: data
+    );
+    assert!(valid_merkle_proof, "merkle proof should be valid");
+
+    // check that the computed square size is correct
+    let expected_square_size: u256 = 1;
+    let actual_square_size = DAVerifier::compute_square_size_from_share_proof(
+        TestFixture::get_share_to_row_root_proof()
+    );
+    assert_eq!(expected_square_size, actual_square_size, "invalid square size");
 }
 
 #[test]
