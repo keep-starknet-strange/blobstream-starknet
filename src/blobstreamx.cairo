@@ -1,6 +1,7 @@
 #[starknet::contract]
 mod blobstreamx {
     use alexandria_bytes::{Bytes, BytesTrait};
+    use alexandria_encoding::sol_abi::{SolAbiEncodeTrait};
     use blobstream_sn::interfaces::{
         DataRoot, TendermintXErrors, IBlobstreamX, IDAOracle, ITendermintX
     };
@@ -8,6 +9,7 @@ mod blobstreamx {
         IEVMFactsRegistryMockDispatcher, IEVMFactsRegistryMockDispatcherImpl
     };
     use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
+    use blobstream_sn::tree::binary::merkle_tree;
     use core::starknet::event::EventEmitter;
     use core::traits::Into;
     use openzeppelin::access::ownable::OwnableComponent;
@@ -144,7 +146,7 @@ mod blobstreamx {
     #[abi(embed_v0)]
     impl IDAOracleImpl of IDAOracle<ContractState> {
         fn verify_attestation(
-            self: @ContractState, proof_nonce: u64, root: DataRoot, proof: BinaryMerkleProof
+            self: @ContractState, proof_nonce: u64, data_root: DataRoot, proof: BinaryMerkleProof
         ) -> bool {
             assert(!self.frozen.read(), Errors::ContractFrozen);
 
@@ -153,11 +155,15 @@ mod blobstreamx {
             }
 
             // load the tuple root at the given index from storage.
-            let _data_root = self.state_data_commitments.read(proof_nonce);
+            let root: u256 = self.state_data_commitments.read(proof_nonce);
 
-            // return isProofValid;
-            // TODO(#69 + #24): BinaryMerkleTree.verify(root, _proof, abi.encode(_tuple));
-            false
+            let data_root_bytes = BytesTrait::new_empty()
+                .encode_packed(data_root.height)
+                .encode_packed(data_root.data_root);
+
+            let (is_proof_valid, _) = merkle_tree::verify(root, @proof, @data_root_bytes);
+
+            is_proof_valid
         }
     }
 
@@ -254,14 +260,14 @@ mod blobstreamx {
                 TendermintXErrors::TargetBlockNotInRange
             );
 
-            let mut input = BytesTrait::new_empty();
-            input.append_u64(latest_block);
-            input.append_u256(latest_header);
-            input.append_u64(_target_block);
+            let input = BytesTrait::new_empty()
+                .encode_packed(latest_block)
+                .encode_packed(latest_header)
+                .encode_packed(_target_block);
 
-            let mut entry_calldata = BytesTrait::new_empty();
-            entry_calldata.append_felt252(selector!("commit_header_range"));
-            entry_calldata.append_u64(_target_block);
+            let entry_calldata = BytesTrait::new_empty()
+                .encode_packed(selector!("commit_header_range"))
+                .encode_packed(_target_block);
 
             ISuccinctGatewayDispatcher { contract_address: self.gateway.read() }
                 .request_call(
@@ -301,10 +307,10 @@ mod blobstreamx {
                 TendermintXErrors::TargetBlockNotInRange
             );
 
-            let mut input = BytesTrait::new_empty();
-            input.append_u64(latest_block);
-            input.append_u256(trusted_header);
-            input.append_u64(_target_block);
+            let input = BytesTrait::new_empty()
+                .encode_packed(latest_block)
+                .encode_packed(trusted_header)
+                .encode_packed(_target_block);
 
             // Get the output of the header_range proof from the gateway.
             let (target_header, data_commitment) = ISuccinctGatewayDispatcher {
@@ -337,13 +343,13 @@ mod blobstreamx {
             let latest_header = self.block_height_to_header_hash.read(latest_block);
             assert(latest_header != 0, TendermintXErrors::LatestHeaderNotFound);
 
-            let mut input = BytesTrait::new_empty();
-            input.append_u64(latest_block);
-            input.append_u256(latest_header);
+            let input = BytesTrait::new_empty()
+                .encode_packed(latest_block)
+                .encode_packed(latest_header);
 
-            let mut entry_calldata = BytesTrait::new_empty();
-            entry_calldata.append_felt252(selector!("commit_next_header"));
-            entry_calldata.append_u64(latest_block);
+            let entry_calldata = BytesTrait::new_empty()
+                .encode_packed(selector!("commit_next_header"))
+                .encode_packed(latest_block);
 
             ISuccinctGatewayDispatcher { contract_address: self.gateway.read() }
                 .request_call(
@@ -378,9 +384,9 @@ mod blobstreamx {
             let next_block = _trusted_block + 1;
             assert(next_block > self.get_latest_block(), TendermintXErrors::TargetBlockNotInRange);
 
-            let mut input = BytesTrait::new_empty();
-            input.append_u64(_trusted_block);
-            input.append_u256(trusted_header);
+            let input = BytesTrait::new_empty()
+                .encode_packed(_trusted_block)
+                .encode_packed(trusted_header);
 
             // Get the output of the next_header proof from the gateway.
             let (next_header, data_commitment) = ISuccinctGatewayDispatcher {

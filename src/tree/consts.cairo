@@ -1,4 +1,4 @@
-use blobstream_sn::tree::namespace::merkle_tree::Namespace;
+use blobstream_sn::tree::namespace::Namespace;
 use core::bytes_31::bytes31_const;
 
 const MAX_HEIGHT: u256 = 256;
