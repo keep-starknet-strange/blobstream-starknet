@@ -1,8 +1,7 @@
 /// The DAVerifier verifies that some shares, which were posted on Celestia, were committed to
 /// by the BlobstreamX smart contract.
 mod DAVerifier {
-    use core::traits::TryInto;
-use alexandria_bytes::{Bytes, BytesTrait};
+    use alexandria_bytes::{Bytes, BytesTrait};
     use blobstream_sn::interfaces::{IDAOracleDispatcher, IDAOracleDispatcherTrait};
     use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
     use blobstream_sn::tree::binary::merkle_tree;
@@ -11,6 +10,7 @@ use alexandria_bytes::{Bytes, BytesTrait};
     };
     use blobstream_sn::tree::namespace::{Namespace, NamespaceValueTrait};
     use blobstream_sn::verifier::types::{SharesProof, AttestationProof};
+    use core::traits::TryInto;
 
     // TODO: Error naming & other naming: to enum?
     // I am not sure what is better practice, so far we have been using mostly
@@ -122,7 +122,7 @@ use alexandria_bytes::{Bytes, BytesTrait};
             .len() {
                 // should begin_key and end_key fields really be u256 ?
                 let diff = *share_proofs.at(i).end_key - *share_proofs.at(i).begin_key;
-                number_of_shares_in_proofs += diff.try_into().unwrap(); 
+                number_of_shares_in_proofs += diff.try_into().unwrap();
                 i += 1;
             };
 

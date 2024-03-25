@@ -315,7 +315,8 @@ fn test_invalid_data() {
 
     // check if the share is part of the sequence of spans
     assert!(
-        header.sequence.index <= share_index_in_row_major_order, "share index out of bounds: inferior"
+        header.sequence.index <= share_index_in_row_major_order,
+        "share index out of bounds: inferior"
     );
     assert!(share_index_in_row_major_order <= end_index, "share index out of bounds: superior");
 // at this level we can parse the share to get the transactions, and compare them to
