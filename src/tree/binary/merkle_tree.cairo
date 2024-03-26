@@ -3,7 +3,7 @@ use blobstream_sn::tree::binary::hasher::{leaf_digest, node_digest};
 use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
 use blobstream_sn::tree::utils::{path_length_from_key, get_split_point};
 
-#[derive(Copy, Drop, PartialEq)]
+#[derive(Copy, Drop, PartialEq, Debug)]
 enum ErrorCodes {
     NoError,
     InvalidNumberOfSideNodes,

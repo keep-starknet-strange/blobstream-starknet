@@ -1,3 +1,5 @@
+/// The DAVerifier verifies that some shares, which were posted on Celestia, were committed to
+/// by the BlobstreamX smart contract.
 mod DAVerifier {
     use alexandria_bytes::{Bytes, BytesTrait};
     use blobstream_sn::interfaces::{IDAOracleDispatcher, IDAOracleDispatcherTrait};
@@ -8,9 +10,15 @@ mod DAVerifier {
     };
     use blobstream_sn::tree::namespace::{Namespace, NamespaceValueTrait};
     use blobstream_sn::verifier::types::{SharesProof, AttestationProof};
+    use core::traits::TryInto;
 
     // TODO: Error naming & other naming: to enum?
+    // I am not sure what is better practice, so far we have been using mostly
+    // modules and consts for errors in piltover and here
+    // I can make the change but I suppose we should stick to only one
+
     // TODO: data_root_tuple -> data_root & data_root_tuple_root -> data_root?
+    // not sure what you mean here
     mod Error {
         const NoError: felt252 = 'NoError';
         // The shares to the rows proof is invalid.
@@ -29,16 +37,24 @@ mod DAVerifier {
         const UnequalDataLengthAndNumberOfSharesProofs: felt252 = 'UnequalDLandNSP';
         // The number of leaves in the binary merkle proof is not divisible by 4.
         const InvalidNumberOfLeavesInProof: felt252 = 'InvalidNumberOfLeavesInProof';
-        // The provided range is invalid.
-        const InvalidRange: felt252 = 'InvalidRange';
-        // The provided range is out of bounds.
-        const OutOfBoundsRange: felt252 = 'OutOfBoundsRange';
     }
 
+    /// Verifies that the shares, which were posted to Celestia, were committed to by the Blobstream smart contract.
+    ///
+    /// # Arguments
+    ///
+    /// * `bridge` - The Blobstream smart contract instance.
+    /// * `shares_proof` - The proof of the shares to the data root tuple root.
+    /// * `root` - The data root of the block that contains the shares.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the proof is valid, `false` otherwise.
+    /// * An error code if the proof is invalid, Error::NoError otherwise.
     fn verify_shares_to_data_root_tuple_root(
         bridge: IDAOracleDispatcher, shares_proof: SharesProof, root: u256
     ) -> (bool, felt252) {
-        // checking that the data root was committed to by the Blobstream smart contract.
+        // check that the data root was committed to by the Blobstream smart contract.
         let (success, error) = verify_multi_row_roots_to_data_root_tuple_root(
             bridge,
             shares_proof.row_roots.span(),
@@ -49,7 +65,6 @@ mod DAVerifier {
         if !success {
             return (false, error);
         }
-
         return verify_shares_to_data_root_tuple_root_proof(
             shares_proof.data.span(),
             shares_proof.share_proofs.span(),
@@ -60,6 +75,21 @@ mod DAVerifier {
         );
     }
 
+    /// Verifies the shares to data root tuple root proof.
+    ///
+    /// # Arguments
+    ///
+    /// * `data` - The data that needs to be proven.
+    /// * `share_proofs` - The share to the row roots proof.
+    /// * `namespace` - The namespace of the shares.
+    /// * `row_roots` - The row roots where the shares belong.
+    /// * `row_proofs` - The proofs of the rowRoots to the data root.
+    /// * `root` - The data root of the block that contains the shares.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the proof is valid, `false` otherwise.
+    /// * An error code if the proof is invalid, Error::NoError otherwise.
     fn verify_shares_to_data_root_tuple_root_proof(
         data: Span<Bytes>,
         share_proofs: Span<NamespaceMerkleMultiproof>,
@@ -68,6 +98,7 @@ mod DAVerifier {
         row_proofs: Span<BinaryMerkleProof>,
         root: u256
     ) -> (bool, felt252) {
+        // check that the rows roots commit to the data root
         let (success, error) = verify_multi_row_roots_to_data_root_tuple_root_proof(
             row_roots, row_proofs, root
         );
@@ -79,17 +110,23 @@ mod DAVerifier {
             return (false, Error::UnequalShareProofsAndRowRootsNumber);
         }
 
-        //TODO: to u32?
-        let mut number_of_shares_in_proofs: u256 = 0;
+        // TODO: to u32?
+        // currently max square size is 128 => extended square size 256
+        // max number of shares = 256 * 256 = 65,536 => fits in a u32
+        // to the extent of my understanding of the celestia protocol key values 
+        // should then also fit inside a u32
+        // then, why are NamespaceMerkleMultiproof key fields u256 ?
+        let mut number_of_shares_in_proofs: u32 = 0;
         let mut i: u32 = 0;
         while i < share_proofs
             .len() {
-                number_of_shares_in_proofs += *share_proofs.at(i).end_key
-                    - *share_proofs.at(i).begin_key;
+                // should begin_key and end_key fields really be u256 ?
+                let diff = *share_proofs.at(i).end_key - *share_proofs.at(i).begin_key;
+                number_of_shares_in_proofs += diff.try_into().unwrap();
                 i += 1;
             };
 
-        if data.len().into() != number_of_shares_in_proofs {
+        if data.len() != number_of_shares_in_proofs {
             return (false, Error::UnequalDataLengthAndNumberOfSharesProofs);
         }
 
@@ -100,6 +137,7 @@ mod DAVerifier {
             .len() {
                 let shares_used: u256 = *share_proofs.at(i).end_key - *share_proofs.at(i).begin_key;
                 // TODO: Do i need to check for errors here & Span
+                // may be solved if NamespaceMerkleMultiproof used u32 fields
                 let s: Span<Bytes> = data.slice(cursor, cursor + shares_used.try_into().unwrap());
                 if !NamespaceMerkleTree::verify_multi(
                     *row_roots.at(i), share_proofs.at(i), namespace, s
@@ -118,9 +156,20 @@ mod DAVerifier {
         return (true, Error::NoError);
     }
 
-    // Verifies that a row/column root, from a Celestia block,
-    // was committed to by the Blobstream smart contract.
-    // Returns (success, error).
+    /// Verifies that a row/column root, from a Celestia block, was committed to by the Blobstream smart contract.
+    ///
+    /// # Arguments
+    ///
+    /// * `bridge` - The Blobstream smart contract instance.
+    /// * `row_root` - The row/column root to be proven.
+    /// * `row_proof` - The proof of the row/column root to the data root.
+    /// * `attestation_proof` - The proof of the data root tuple to the data root tuple root that was posted to the Blobstream contract.
+    /// * `root` - The data root of the block that contains the row.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the proof is valid, `false` otherwise.
+    /// * An error code if the proof is invalid, Error::NoError otherwise.
     fn verify_row_root_to_data_root_tuple_root(
         bridge: IDAOracleDispatcher,
         row_root: NamespaceNode,
@@ -130,6 +179,10 @@ mod DAVerifier {
     ) -> (bool, felt252) {
         // check that the data root was commited to by the Blobstream smart contract
         // TODO: safe unwrap?
+        // a choice was made to use a u64 instead of a u256 (from the solidity contract)
+        // for the `state_proof_nonce` in the blobstreamx contract
+        // I suppose the `commit_nonce` field should actually be a u64 then which would 
+        // solve the problem
         if !bridge
             .verify_attestation(
                 attestation_proof.commit_nonce.try_into().unwrap(),
@@ -139,9 +192,22 @@ mod DAVerifier {
             return (false, Error::InvalidDataRootTupleToDataRootTupleRootProof);
         }
 
+        // check that the row root commits to the data root
         return verify_row_root_to_data_root_tuple_root_proof(row_root, row_proof, root);
     }
 
+    /// Verifies that a row/column root proof, from a Celestia block, to its corresponding data root.
+    ///
+    /// # Arguments
+    ///
+    /// * `row_root` - The row/column root to be proven.
+    /// * `row_proof` - The proof of the row/column root to the data root.
+    /// * `root` - The data root of the block that contains the row.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the proof is valid, `false` otherwise.
+    /// * An error code if the proof is invalid, ErrorCodes.NoError otherwise.
     fn verify_row_root_to_data_root_tuple_root_proof(
         row_root: NamespaceNode, row_proof: BinaryMerkleProof, root: u256
     ) -> (bool, felt252) {
@@ -157,6 +223,20 @@ mod DAVerifier {
         return (true, Error::NoError);
     }
 
+    /// Verifies that a set of rows/columns, from a Celestia block, were committed to by the Blobstream smart contract.
+    ///
+    /// # Arguments
+    ///
+    /// * `bridge` - The Blobstream smart contract instance.
+    /// * `row_roots` - The set of row/column roots to be proved.
+    /// * `row_proofs` - The set of proofs of the _rowRoots in the same order.
+    /// * `attestation_proof` - The proof of the data root tuple to the data root tuple root that was posted to the Blobstream contract.
+    /// * `root` - The data root of the block that contains the rows.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the proof is valid, `false` otherwise.
+    /// * An error code if the proof is invalid, Error::NoError otherwise.
     fn verify_multi_row_roots_to_data_root_tuple_root(
         bridge: IDAOracleDispatcher,
         row_roots: Span<NamespaceNode>,
@@ -174,9 +254,22 @@ mod DAVerifier {
             return (false, Error::InvalidDataRootTupleToDataRootTupleRootProof);
         }
 
+        // check that the rows roots commit to the data root
         return verify_multi_row_roots_to_data_root_tuple_root_proof(row_roots, row_proofs, root);
     }
 
+    /// Verifies the proof of a set of rows/columns, from a Celestia block, to their corresponding data root.
+    ///
+    /// # Arguments
+    ///
+    /// * `row_roots` - The set of row/column roots to be proved.
+    /// * `row_proofs` - The set of proofs of the _rowRoots in the same order.
+    /// * `root` - The data root of the block that contains the rows.
+    ///
+    /// # Returns
+    ///
+    /// * `true` if the proof is valid, `false` otherwise.
+    /// * An error code if the proof is invalid, Error::NoError otherwise.
     fn verify_multi_row_roots_to_data_root_tuple_root_proof(
         row_roots: Span<NamespaceNode>, row_proofs: Span<BinaryMerkleProof>, root: u256
     ) -> (bool, felt252) {
@@ -197,6 +290,7 @@ mod DAVerifier {
                     error = Error::InvalidRowToDataRootProof;
                     break;
                 }
+                i += 1;
             };
         if error != Error::NoError {
             return (false, error);
@@ -205,6 +299,21 @@ mod DAVerifier {
         return (true, Error::NoError);
     }
 
+    /// Computes the Celestia block square size from a row/column root to data root binary Merkle proof.
+    ///
+    /// Note: The provided proof is not authenticated to the Blobstream smart contract. It is the user's responsibility
+    /// to verify that the proof is valid and was successfully committed to using
+    /// the `verify_row_root_to_data_root_tuple_root()` function.
+    /// Note: The minimum square size is 1. Thus, we don't expect the proof to have number of leaves equal to 0.
+    ///
+    /// # Arguments
+    ///
+    /// * `proof` - The proof of the row/column root to the data root.
+    ///
+    /// # Returns
+    ///
+    /// * The square size of the corresponding block.
+    /// * An error code if the `proof` is invalid, `Error::NoError` otherwise.
     fn compute_square_size_from_row_proof(proof: BinaryMerkleProof) -> (u256, felt252) {
         if proof.num_leaves % 4 != 0 {
             return (0, Error::InvalidNumberOfLeavesInProof);
@@ -212,8 +321,35 @@ mod DAVerifier {
         return (proof.num_leaves / 4, Error::NoError);
     }
 
+    /// Computes the Celestia block square size from a shares to row/column root proof.
+    ///
+    /// Note: The provided proof is not authenticated to the Blobstream smart contract. It is the user's responsibility
+    /// to verify that the proof is valid and that the shares were successfully committed to using
+    /// the `verify_shares_to_data_root_tuple_root()` function.
+    /// Note: The minimum square size is 1. Thus, we don't expect the proof to be devoid of any side nodes.
+    ///
+    /// # Arguments
+    ///
+    /// * `proof` - The proof of the shares to the row/column root.
+    ///
+    /// # Returns
+    ///
+    /// * The square size of the corresponding block.
     fn compute_square_size_from_share_proof(proof: NamespaceMerkleMultiproof) -> u256 {
-        let extended_square_row_size = proof.side_nodes.len();
+        // TODO
+        // `i` could actually fit in a u8
+        // currently max square size is 128 => extended square size is 256
+        // max number of side nodes in a a binary tree with 256 leaves is log2(256) = 8
+        let mut i: u32 = 0;
+        // same for `extended_square_row_size`, but defining them as u32 may provide some
+        // flexibility if celestia protocol changes
+        let mut extended_square_row_size: u32 = 1;
+        while i < proof.side_nodes.len() {
+            extended_square_row_size *= 2;
+            i += 1;
+        };
+        // we divide the extended square row size by 2 because the square size is the
+        // the size of the row of the original square size.
         return extended_square_row_size.into() / 2;
     }
 }

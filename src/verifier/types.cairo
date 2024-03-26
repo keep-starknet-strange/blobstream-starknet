@@ -5,6 +5,9 @@ use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
 use blobstream_sn::tree::namespace::Namespace;
 use blobstream_sn::tree::namespace::merkle_tree::{NamespaceNode, NamespaceMerkleMultiproof};
 
+// Data needed to verify that some shares, posted to the Celestia 
+// network, were committed to by the Blobstream smart contract.
+#[derive(Drop)]
 struct SharesProof {
     // The shares that were committed to.
     data: Array<Bytes>,
