@@ -19,9 +19,9 @@ struct SpanSequence {
     height: u256,
     // Index of the first share containing the rollup transaction data
     // inside the Celestia block
-    index: u256,
+    index: u32,
     // Number of shares that the rollup transaction data spans on.
-    length: u256,
+    length: u32,
 }
 
 /// A rollup header is a simple example of the fields a Celestium header would contain.
@@ -175,7 +175,7 @@ fn setup() -> ContractAddress {
     let bsx_address = setup_base();
 
     // store the commitment we verify against
-    let proof_nonce: u64 = TestFixture::data_root_tuple_root_nonce().try_into().unwrap();
+    let proof_nonce: u64 = TestFixture::data_root_tuple_root_nonce();
     let data_commitment: u256 = TestFixture::data_root_tuple_root();
     snf::store(
         bsx_address,
@@ -197,8 +197,8 @@ fn test_unavailable_data() {
 
     // let's create an arbitrary span that is out of bounds of the target Celestia block
     let height: u256 = 21;
-    let start_index: u256 = 0;
-    let length: u256 = 10;
+    let start_index: u32 = 0;
+    let length: u32 = 10;
     let sequence = SpanSequence { height, index: start_index, length };
     // an invalid header that points to data that doesn't exist in the target Celestia block
     let header = RollupHeader {
@@ -233,7 +233,7 @@ fn test_unavailable_data() {
     // Now that we're sure that the proof is valid and the square size is valid,
     // we can compare the square size against the sequence referenced in the rollup
     // header to see if the data exists
-    let end_index: u256 = header.sequence.height + header.sequence.length;
+    let end_index: u32 = header.sequence.index + header.sequence.length;
     // this checks that indeed the data referenced in the header is out of bounds of the square.
     // thus the data doesn't exist => unavailable
     assert!(!(square_size >= end_index));
@@ -248,8 +248,8 @@ fn test_invalid_data() {
 
     // let's create the sequence span of the rollup data in the Celestia block
     let height: u256 = 21;
-    let start_index: u256 = 1;
-    let length: u256 = 1;
+    let start_index: u32 = 1;
+    let length: u32 = 1;
     let sequence = SpanSequence { height, index: start_index, length };
     // a header that points to the rollup data posted in Celestia
     let header = RollupHeader {
@@ -283,8 +283,8 @@ fn test_invalid_data() {
     };
 
     // variables used later but computed here because `share_proof` is moved
-    let share_index_in_row: u256 = *share_proof.share_proofs.at(0).begin_key;
-    let share_index_in_row_major_order: u256 = share_index_in_row
+    let share_index_in_row: u32 = *share_proof.share_proofs.at(0).begin_key;
+    let share_index_in_row_major_order: u32 = share_index_in_row
         + *share_proof.row_proofs.at(0).num_leaves * *share_proof.row_proofs.at(0).key;
 
     // let's authenticate the share proof to the data root tuple root to be sure that
@@ -298,7 +298,7 @@ fn test_invalid_data() {
     // now that we're sure that the proof is valid and the square size is valid,
     // we can compare the square size against the sequence referenced in the rollup
     // header to see if the data exists
-    let end_index: u256 = header.sequence.index + header.sequence.length;
+    let end_index: u32 = header.sequence.index + header.sequence.length;
     // this checks that indeed the data referenced in the header is part of the Celestia
     // block, i.e. the sequence of spans in not out of the block's bounds
     assert!(square_size >= end_index, "expected end index to be in the block's bounds");
@@ -319,12 +319,12 @@ fn test_invalid_data() {
         "share index out of bounds: inferior"
     );
     assert!(share_index_in_row_major_order <= end_index, "share index out of bounds: superior");
-// at this level we can parse the share to get the transactions, and compare them to
-// the rollup state
-// then, we would be able to know if there is an invalid transaction or not
-// as explained in the test overview at the beginning of the file, the third transaction
-// is an invalid transaction.
-// for the sake of simplicity, we will not parse the shares as that is rollup specific
+    // at this level we can parse the share to get the transactions, and compare them to
+    // the rollup state
+    // then, we would be able to know if there is an invalid transaction or not
+    // as explained in the test overview at the beginning of the file, the third transaction
+    // is an invalid transaction.
+    // for the sake of simplicity, we will not parse the shares as that is rollup specific
 }
 
 /// TestFixture contains the necessary information to create proofs for the blob
@@ -508,7 +508,7 @@ mod TestFixture {
     }
 
     /// The original square size of the block containing the submitted blob.
-    fn square_size() -> u256 {
+    fn square_size() -> u32 {
         2
     }
 
@@ -518,7 +518,7 @@ mod TestFixture {
     }
 
     /// The data root tuple root nonce in the Blobstream contract.
-    fn data_root_tuple_root_nonce() -> u256 {
+    fn data_root_tuple_root_nonce() -> u64 {
         2
     }
 

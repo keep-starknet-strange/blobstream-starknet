@@ -12,13 +12,6 @@ mod DAVerifier {
     use blobstream_sn::verifier::types::{SharesProof, AttestationProof};
     use core::traits::TryInto;
 
-    // TODO: Error naming & other naming: to enum?
-    // I am not sure what is better practice, so far we have been using mostly
-    // modules and consts for errors in piltover and here
-    // I can make the change but I suppose we should stick to only one
-
-    // TODO: data_root_tuple -> data_root & data_root_tuple_root -> data_root?
-    // not sure what you mean here
     mod Error {
         const NoError: felt252 = 'NoError';
         // The shares to the rows proof is invalid.
@@ -110,19 +103,12 @@ mod DAVerifier {
             return (false, Error::UnequalShareProofsAndRowRootsNumber);
         }
 
-        // TODO: to u32?
-        // currently max square size is 128 => extended square size 256
-        // max number of shares = 256 * 256 = 65,536 => fits in a u32
-        // to the extent of my understanding of the celestia protocol key values 
-        // should then also fit inside a u32
-        // then, why are NamespaceMerkleMultiproof key fields u256 ?
         let mut number_of_shares_in_proofs: u32 = 0;
         let mut i: u32 = 0;
         while i < share_proofs
             .len() {
-                // should begin_key and end_key fields really be u256 ?
                 let diff = *share_proofs.at(i).end_key - *share_proofs.at(i).begin_key;
-                number_of_shares_in_proofs += diff.try_into().unwrap();
+                number_of_shares_in_proofs += diff;
                 i += 1;
             };
 
@@ -135,17 +121,15 @@ mod DAVerifier {
         let mut error: felt252 = Error::NoError;
         while i < share_proofs
             .len() {
-                let shares_used: u256 = *share_proofs.at(i).end_key - *share_proofs.at(i).begin_key;
-                // TODO: Do i need to check for errors here & Span
-                // may be solved if NamespaceMerkleMultiproof used u32 fields
-                let s: Span<Bytes> = data.slice(cursor, cursor + shares_used.try_into().unwrap());
+                let shares_used: u32 = *share_proofs.at(i).end_key - *share_proofs.at(i).begin_key;
+                let s: Span<Bytes> = data.slice(cursor, cursor + shares_used);
                 if !NamespaceMerkleTree::verify_multi(
                     *row_roots.at(i), share_proofs.at(i), namespace, s
                 ) {
                     error = Error::InvalidSharesToRowsProof;
                     break;
                 }
-                cursor += shares_used.try_into().unwrap();
+                cursor += shares_used;
 
                 i += 1;
             };
@@ -178,14 +162,9 @@ mod DAVerifier {
         root: u256
     ) -> (bool, felt252) {
         // check that the data root was commited to by the Blobstream smart contract
-        // TODO: safe unwrap?
-        // a choice was made to use a u64 instead of a u256 (from the solidity contract)
-        // for the `state_proof_nonce` in the blobstreamx contract
-        // I suppose the `commit_nonce` field should actually be a u64 then which would 
-        // solve the problem
         if !bridge
             .verify_attestation(
-                attestation_proof.commit_nonce.try_into().unwrap(),
+                attestation_proof.commit_nonce,
                 attestation_proof.data_root,
                 attestation_proof.proof
             ) {
@@ -247,7 +226,7 @@ mod DAVerifier {
         // check that the data root was commited to by the Blobstream smart contract
         if !bridge
             .verify_attestation(
-                attestation_proof.commit_nonce.try_into().unwrap(),
+                attestation_proof.commit_nonce,
                 attestation_proof.data_root,
                 attestation_proof.proof
             ) {
@@ -314,7 +293,7 @@ mod DAVerifier {
     ///
     /// * The square size of the corresponding block.
     /// * An error code if the `proof` is invalid, `Error::NoError` otherwise.
-    fn compute_square_size_from_row_proof(proof: BinaryMerkleProof) -> (u256, felt252) {
+    fn compute_square_size_from_row_proof(proof: BinaryMerkleProof) -> (u32, felt252) {
         if proof.num_leaves % 4 != 0 {
             return (0, Error::InvalidNumberOfLeavesInProof);
         }
@@ -335,14 +314,8 @@ mod DAVerifier {
     /// # Returns
     ///
     /// * The square size of the corresponding block.
-    fn compute_square_size_from_share_proof(proof: NamespaceMerkleMultiproof) -> u256 {
-        // TODO
-        // `i` could actually fit in a u8
-        // currently max square size is 128 => extended square size is 256
-        // max number of side nodes in a a binary tree with 256 leaves is log2(256) = 8
+    fn compute_square_size_from_share_proof(proof: NamespaceMerkleMultiproof) -> u32 {
         let mut i: u32 = 0;
-        // same for `extended_square_row_size`, but defining them as u32 may provide some
-        // flexibility if celestia protocol changes
         let mut extended_square_row_size: u32 = 1;
         while i < proof.side_nodes.len() {
             extended_square_row_size *= 2;
@@ -350,6 +323,6 @@ mod DAVerifier {
         };
         // we divide the extended square row size by 2 because the square size is the
         // the size of the row of the original square size.
-        return extended_square_row_size.into() / 2;
+        return extended_square_row_size / 2;
     }
 }

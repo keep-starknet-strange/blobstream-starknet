@@ -7,8 +7,8 @@ use blobstream_sn::tree::binary::merkle_tree;
 fn verify_none_test() {
     let root: u256 = BytesTrait::new_empty().sha256();
     let side_nodes: Array<u256> = array![];
-    let key: u256 = 0;
-    let num_leaves: u256 = 0;
+    let key: u32 = 0;
+    let num_leaves: u32 = 0;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty();
     let (is_valid, _) = merkle_tree::verify(root, @proof, @data);
@@ -19,8 +19,8 @@ fn verify_none_test() {
 fn verify_one_leaf_empty_test() {
     let root: u256 = 0x6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d;
     let side_nodes: Array<u256> = array![];
-    let key: u256 = 0;
-    let num_leaves: u256 = 1;
+    let key: u32 = 0;
+    let num_leaves: u32 = 1;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty();
     let (is_valid, error_code) = merkle_tree::verify(root, @proof, @data);
@@ -32,8 +32,8 @@ fn verify_one_leaf_empty_test() {
 fn verify_one_leaf_test() {
     let root: u256 = 0x48c90c8ae24688d6bef5d48a30c2cc8b6754335a8db21793cc0a8e3bed321729;
     let side_nodes: Array<u256> = array![];
-    let key: u256 = 0;
-    let num_leaves: u256 = 1;
+    let key: u32 = 0;
+    let num_leaves: u32 = 1;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u32(0xdeadbeef);
@@ -46,8 +46,8 @@ fn verify_one_leaf_test() {
 fn verify_one_leaf_01_test() {
     let root: u256 = 0xb413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2;
     let side_nodes: Array<u256> = array![];
-    let key: u256 = 0;
-    let num_leaves: u256 = 1;
+    let key: u32 = 0;
+    let num_leaves: u32 = 1;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
@@ -64,8 +64,8 @@ fn verify_leaf_one_of_eight_test() {
         0x78850a5ab36238b076dd99fd258c70d523168704247988a94caa8c9ccd056b8d,
         0x4301a067262bbb18b4919742326f6f6d706099f9c0e8b0f2db7b88f204b2cf09
     ];
-    let key: u256 = 0;
-    let num_leaves: u256 = 8;
+    let key: u32 = 0;
+    let num_leaves: u32 = 8;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
@@ -82,8 +82,8 @@ fn verify_leaf_two_of_eight_test() {
         0x78850a5ab36238b076dd99fd258c70d523168704247988a94caa8c9ccd056b8d,
         0x4301a067262bbb18b4919742326f6f6d706099f9c0e8b0f2db7b88f204b2cf09
     ];
-    let key: u256 = 1;
-    let num_leaves: u256 = 8;
+    let key: u32 = 1;
+    let num_leaves: u32 = 8;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x02);
@@ -100,8 +100,8 @@ fn verify_leaf_three_of_eight_test() {
         0x6bcf0e2e93e0a18e22789aee965e6553f4fbe93f0acfc4a705d691c8311c4965,
         0x4301a067262bbb18b4919742326f6f6d706099f9c0e8b0f2db7b88f204b2cf09
     ];
-    let key: u256 = 2;
-    let num_leaves: u256 = 8;
+    let key: u32 = 2;
+    let num_leaves: u32 = 8;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x03);
@@ -118,8 +118,8 @@ fn verify_leaf_seven_of_eight_test() {
         0x90eeb2c4a04ec33ee4dd2677593331910e4203db4fcc120a6cdb95b13cfe83f0,
         0xfa02d31a63cc11cc624881e52af14af7a1c6ab745efa71021cb24086b9b1793f
     ];
-    let key: u256 = 6;
-    let num_leaves: u256 = 8;
+    let key: u32 = 6;
+    let num_leaves: u32 = 8;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x07);
@@ -136,8 +136,8 @@ fn verify_leaf_eight_of_eight_test() {
         0x90eeb2c4a04ec33ee4dd2677593331910e4203db4fcc120a6cdb95b13cfe83f0,
         0xfa02d31a63cc11cc624881e52af14af7a1c6ab745efa71021cb24086b9b1793f
     ];
-    let key: u256 = 7;
-    let num_leaves: u256 = 8;
+    let key: u32 = 7;
+    let num_leaves: u32 = 8;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x08);
@@ -155,8 +155,8 @@ fn verify_proof_of_five_leaves_test() {
         0x4f35212d12f9ad2036492c95f1fe79baf4ec7bd9bef3dffa7579f2293ff546a4
     ];
 
-    let key: u256 = 1;
-    let num_leaves: u256 = 5;
+    let key: u32 = 1;
+    let num_leaves: u32 = 5;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
@@ -177,8 +177,8 @@ fn verify_invalid_proof_root_test() {
         0x4f35212d12f9ad2036492c95f1fe79baf4ec7bd9bef3dffa7579f2293ff546a4
     ];
 
-    let key: u256 = 1;
-    let num_leaves: u256 = 5;
+    let key: u32 = 1;
+    let num_leaves: u32 = 5;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
@@ -197,8 +197,8 @@ fn verify_invalid_proof_key_test() {
     ];
 
     // correct key: u256 = 1;
-    let key: u256 = 2;
-    let num_leaves: u256 = 5;
+    let key: u32 = 2;
+    let num_leaves: u32 = 5;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
@@ -216,9 +216,9 @@ fn verify_invalid_proof_number_of_leaves_test() {
         0x4f35212d12f9ad2036492c95f1fe79baf4ec7bd9bef3dffa7579f2293ff546a4
     ];
 
-    let key: u256 = 1;
-    // correct num_leaves: u256 = 5;
-    let num_leaves: u256 = 200;
+    let key: u32 = 1;
+    // correct num_leaves: u32 = 5;
+    let num_leaves: u32 = 200;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
@@ -240,8 +240,8 @@ fn verify_invalid_proof_side_nodes_test() {
         0x5f35212d12f9ad2036492c95f1fe79baf4ec7bd9bef3dffa7579f2293ff546a4
     ];
 
-    let key: u256 = 1;
-    let num_leaves: u256 = 5;
+    let key: u32 = 1;
+    let num_leaves: u32 = 5;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
@@ -261,8 +261,8 @@ fn verify_invalid_proof_data_test() {
         0x4f35212d12f9ad2036492c95f1fe79baf4ec7bd9bef3dffa7579f2293ff546a4
     ];
 
-    let key: u256 = 1;
-    let num_leaves: u256 = 5;
+    let key: u32 = 1;
+    let num_leaves: u32 = 5;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     // correct data.append_u8(0x01);
@@ -276,8 +276,8 @@ fn verify_invalid_proof_data_test() {
 fn same_key_and_leaves_number_test() {
     let root: u256 = 0xb855b42d6c30f5b087e05266783fbd6e394f7b926013ccaa67700a8b0c5a596f;
     let side_nodes: Array<u256> = array![];
-    let key: u256 = 3;
-    let num_leaves: u256 = 3;
+    let key: u32 = 3;
+    let num_leaves: u32 = 3;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
@@ -293,8 +293,8 @@ fn same_key_and_leaves_number_test() {
 fn consecutive_key_and_number_of_leaves_test() {
     let root: u256 = 0xb855b42d6c30f5b087e05266783fbd6e394f7b926013ccaa67700a8b0c5a596f;
     let side_nodes: Array<u256> = array![];
-    let key: u256 = 6;
-    let num_leaves: u256 = 7;
+    let key: u32 = 6;
+    let num_leaves: u32 = 7;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);
@@ -314,8 +314,8 @@ fn key_not_in_tree_test() {
         0x78850a5ab36238b076dd99fd258c70d523168704247988a94caa8c9ccd056b8d,
         0x4301a067262bbb18b4919742326f6f6d706099f9c0e8b0f2db7b88f204b2cf09
     ];
-    let key: u256 = 9;
-    let num_leaves: u256 = 8;
+    let key: u32 = 9;
+    let num_leaves: u32 = 8;
     let proof: BinaryMerkleProof = BinaryMerkleProof { side_nodes, key, num_leaves };
     let mut data = BytesTrait::new_empty();
     data.append_u8(0x01);

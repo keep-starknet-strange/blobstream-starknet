@@ -28,7 +28,7 @@ struct SharesProof {
 #[derive(Drop)]
 struct AttestationProof {
     // attestation nonce that commits to the data root tuple
-    commit_nonce: u256,
+    commit_nonce: u64,
     //data root tuple that was committed to
     data_root: DataRoot,
     // binary merkle proof of the tuple to the commitment

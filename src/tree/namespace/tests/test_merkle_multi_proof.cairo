@@ -7,7 +7,6 @@ use blobstream_sn::tree::namespace::merkle_tree::{
     NamespaceNode, NamespaceMerkleTree, NamespaceMerkleMultiproof
 };
 
-// TODO: Test all namespace ordering ops w/ ver and id
 #[test]
 fn verify_multi_01() {
     let nid = Namespace {
@@ -37,8 +36,8 @@ fn verify_multi_01() {
         }
     ];
 
-    let begin_key: u256 = 1;
-    let end_key: u256 = 3;
+    let begin_key: u32 = 1;
+    let end_key: u32 = 3;
     let proof = NamespaceMerkleMultiproof { begin_key, end_key, side_nodes };
     let mut data_val1: Bytes = BytesTrait::new_empty();
     data_val1.append_u8(0x02);

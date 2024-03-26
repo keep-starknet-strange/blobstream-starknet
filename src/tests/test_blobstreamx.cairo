@@ -72,8 +72,8 @@ fn test_verify_attestation() {
         0xb5d4d27ec6b206a205bf09dde3371ffba62e5b53d27bbec4255b7f4f27ef5d90,
         0x406e22ba94989ca721453057a1391fc531edb342c86a0ab4cc722276b54036ec,
     ];
-    let key: u256 = 2;
-    let num_leaves: u256 = 4;
+    let key: u32 = 2;
+    let num_leaves: u32 = 4;
     let proof = BinaryMerkleProof { side_nodes, key, num_leaves, };
 
     let is_proof_valid: bool = bsx.verify_attestation(proof_nonce, data, proof);

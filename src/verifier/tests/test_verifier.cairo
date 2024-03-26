@@ -50,7 +50,7 @@ fn setup() -> ContractAddress {
     let bsx_address = setup_base();
 
     // store the commitment we verify against
-    let proof_nonce: u64 = TestFixture::data_root_tuple_root_nonce().try_into().unwrap();
+    let proof_nonce: u64 = TestFixture::data_root_tuple_root_nonce();
     let data_commitment: u256 = TestFixture::data_root_tuple_root();
     snf::store(
         bsx_address,
@@ -151,7 +151,7 @@ fn test_compute_square_size_from_row_proof() {
     assert_eq!(error, binary_merkle_tree::ErrorCodes::NoError, "expected no error");
 
     // check that the computed square size is correct
-    let expected_square_size: u256 = 1;
+    let expected_square_size: u32 = 1;
     let (actual_square_size, error) = DAVerifier::compute_square_size_from_row_proof(
         TestFixture::get_row_root_to_data_root_proof()
     );
@@ -173,7 +173,7 @@ fn test_compute_square_size_from_share_proof() {
     assert!(valid_merkle_proof, "merkle proof should be valid");
 
     // check that the computed square size is correct
-    let expected_square_size: u256 = 1;
+    let expected_square_size: u32 = 1;
     let actual_square_size = DAVerifier::compute_square_size_from_share_proof(
         TestFixture::get_share_to_row_root_proof()
     );
@@ -308,7 +308,7 @@ mod TestFixture {
     }
 
     /// The data root tuple root nonce in the Blobstream contract.
-    fn data_root_tuple_root_nonce() -> u256 {
+    fn data_root_tuple_root_nonce() -> u64 {
         2
     }
 
