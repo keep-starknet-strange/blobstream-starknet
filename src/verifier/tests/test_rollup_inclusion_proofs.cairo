@@ -319,12 +319,12 @@ fn test_invalid_data() {
         "share index out of bounds: inferior"
     );
     assert!(share_index_in_row_major_order <= end_index, "share index out of bounds: superior");
-    // at this level we can parse the share to get the transactions, and compare them to
-    // the rollup state
-    // then, we would be able to know if there is an invalid transaction or not
-    // as explained in the test overview at the beginning of the file, the third transaction
-    // is an invalid transaction.
-    // for the sake of simplicity, we will not parse the shares as that is rollup specific
+// at this level we can parse the share to get the transactions, and compare them to
+// the rollup state
+// then, we would be able to know if there is an invalid transaction or not
+// as explained in the test overview at the beginning of the file, the third transaction
+// is an invalid transaction.
+// for the sake of simplicity, we will not parse the shares as that is rollup specific
 }
 
 /// TestFixture contains the necessary information to create proofs for the blob

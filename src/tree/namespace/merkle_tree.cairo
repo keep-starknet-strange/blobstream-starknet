@@ -95,8 +95,7 @@ mod NamespaceMerkleTree {
                 exit_after = true;
                 break;
             }
-            let side_node: NamespaceNode = *side_nodes_span
-                .at((height - height_offset - 1));
+            let side_node: NamespaceNode = *side_nodes_span.at((height - height_offset - 1));
             if proof.key - sub_tree_start_index < rounding_factor / 2 {
                 node = hasher::node_digest(node, side_node);
             } else {
@@ -113,10 +112,7 @@ mod NamespaceMerkleTree {
             if proof_side_nodes_len <= height - height_offset - 1 {
                 return false;
             }
-            node =
-                hasher::node_digest(
-                    node, *proof.side_nodes.at((height - height_offset - 1))
-                );
+            node = hasher::node_digest(node, *proof.side_nodes.at((height - height_offset - 1)));
             height += 1;
         }
 
@@ -124,13 +120,10 @@ mod NamespaceMerkleTree {
         while height
             - height_offset
             - 1 < proof_side_nodes_len {
-                    node =
-                        hasher::node_digest(
-                            *proof.side_nodes.at((height - height_offset - 1)),
-                            node
-                        );
-                    height += 1;
-                };
+                node =
+                    hasher::node_digest(*proof.side_nodes.at((height - height_offset - 1)), node);
+                height += 1;
+            };
 
         return super::namespace_node_eq(root, node);
     }

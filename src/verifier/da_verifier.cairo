@@ -2,6 +2,7 @@
 /// by the BlobstreamX smart contract.
 mod DAVerifier {
     use alexandria_bytes::{Bytes, BytesTrait};
+    use alexandria_encoding::sol_abi::{SolAbiEncodeTrait};
     use blobstream_sn::interfaces::{IDAOracleDispatcher, IDAOracleDispatcherTrait};
     use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
     use blobstream_sn::tree::binary::merkle_tree;
@@ -164,9 +165,7 @@ mod DAVerifier {
         // check that the data root was commited to by the Blobstream smart contract
         if !bridge
             .verify_attestation(
-                attestation_proof.commit_nonce,
-                attestation_proof.data_root,
-                attestation_proof.proof
+                attestation_proof.commit_nonce, attestation_proof.data_root, attestation_proof.proof
             ) {
             return (false, Error::InvalidDataRootTupleToDataRootTupleRootProof);
         }
@@ -190,10 +189,10 @@ mod DAVerifier {
     fn verify_row_root_to_data_root_tuple_root_proof(
         row_root: NamespaceNode, row_proof: BinaryMerkleProof, root: u256
     ) -> (bool, felt252) {
-        let mut row_root_encoded: Bytes = BytesTrait::new_empty();
-        row_root_encoded.concat(@row_root.min.to_bytes());
-        row_root_encoded.concat(@row_root.max.to_bytes());
-        row_root_encoded.append_u256(row_root.digest);
+        let row_root_encoded: Bytes = BytesTrait::new_empty()
+            .encode_packed(row_root.min.to_bytes())
+            .encode_packed(row_root.max.to_bytes())
+            .encode_packed(row_root.digest);
         let (valid, _) = merkle_tree::verify(root, @row_proof, @row_root_encoded);
         if !valid {
             return (false, Error::InvalidRowToDataRootProof);
@@ -226,9 +225,7 @@ mod DAVerifier {
         // check that the data root was commited to by the Blobstream smart contract
         if !bridge
             .verify_attestation(
-                attestation_proof.commit_nonce,
-                attestation_proof.data_root,
-                attestation_proof.proof
+                attestation_proof.commit_nonce, attestation_proof.data_root, attestation_proof.proof
             ) {
             return (false, Error::InvalidDataRootTupleToDataRootTupleRootProof);
         }
@@ -260,10 +257,10 @@ mod DAVerifier {
         let mut error: felt252 = Error::NoError;
         while i < row_proofs
             .len() {
-                let mut row_root: Bytes = BytesTrait::new_empty();
-                row_root.concat(@row_roots.at(i).min.to_bytes());
-                row_root.concat(@row_roots.at(i).max.to_bytes());
-                row_root.append_u256(*row_roots.at(i).digest);
+                let row_root: Bytes = BytesTrait::new_empty()
+                    .encode_packed(row_roots.at(i).min.to_bytes())
+                    .encode_packed(row_roots.at(i).max.to_bytes())
+                    .encode_packed(*row_roots.at(i).digest);
                 let (valid, _) = merkle_tree::verify(root, row_proofs.at(i), @row_root);
                 if !valid {
                     error = Error::InvalidRowToDataRootProof;

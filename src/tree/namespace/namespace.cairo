@@ -1,5 +1,5 @@
 use alexandria_bytes::{Bytes, BytesTrait};
-use blobstream_sn::tree::namespace::hasher::append_bytes28;
+use alexandria_encoding::sol_abi::{SolBytesTrait, SolAbiEncodeTrait};
 
 // // Celestia-app namespace ID and its version
 // // See: https://celestiaorg.github.io/celestia-app/specs/namespace.html
@@ -31,10 +31,9 @@ impl NamespaceValue of NamespaceValueTrait {
     }
 
     fn to_bytes(self: @Namespace) -> Bytes {
-        let mut bytes: Bytes = BytesTrait::new_empty();
-        bytes.append_u8(*self.version);
-        append_bytes28(ref bytes, *self.id);
-        bytes
+        BytesTrait::new_empty()
+            .encode_packed(*self.version)
+            .encode_packed(SolBytesTrait::bytes28(*self.id))
     }
 }
 

@@ -20,10 +20,7 @@ fn verify(root: u256, proof: @BinaryMerkleProof, data: @Bytes) -> (bool, ErrorCo
         if (proof.side_nodes.len() != 0) {
             return (false, ErrorCodes::InvalidNumberOfSideNodes);
         }
-    } else if (proof
-        .side_nodes
-        .len()
-        != path_length_from_key(*proof.key, *proof.num_leaves)) {
+    } else if (proof.side_nodes.len() != path_length_from_key(*proof.key, *proof.num_leaves)) {
         return (false, ErrorCodes::InvalidNumberOfSideNodes);
     }
 
