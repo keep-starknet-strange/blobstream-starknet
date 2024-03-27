@@ -33,6 +33,16 @@ To test the project, run:
 snforge test
 ```
 
+## Scripts
+
+In order to run `submit-state-diff.sh` follow this tutorial to start a
+Celestia [light node](https://docs.celestia.org/developers/node-tutorial)
+for the [Mocha testnet](https://docs.celestia.org/nodes/mocha-testnet).
+
+```bash
+bash scripts/submit-state-diff.sh
+```
+
 ## Contributors ✨
 
 We live on contributions. If you'd like to contribute please follow the [guide](CONTRIBUTING.md).
