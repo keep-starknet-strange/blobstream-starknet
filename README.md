@@ -35,7 +35,7 @@ snforge test
 
 ## Scripts
 
-***submit-state-diff***
+### `submit-state-diff`
 
 You must have a Celestia light node for this script.
 Follow this [tutorial](https://docs.celestia.org/developers/node-tutorial) to init
