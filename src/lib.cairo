@@ -31,7 +31,7 @@ mod tree {
         mod hasher;
         mod merkle_tree;
         mod namespace;
-        use namespace::Namespace;
+        use namespace::{Namespace, NamespaceValueTrait};
         #[cfg(test)]
         mod tests {
             mod test_hasher;
@@ -47,9 +47,11 @@ mod tree {
 }
 
 mod verifier {
+    mod da_verifier;
     mod types;
     #[cfg(test)]
     mod tests {
+        mod test_rollup_inclusion_proofs;
         mod test_verifier;
     }
 }

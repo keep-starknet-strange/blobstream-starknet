@@ -11,7 +11,7 @@ fn node_digest(left: u256, right: u256) -> u256 {
 }
 
 fn leaf_digest(data: @Bytes) -> u256 {
-    let mut bytes = BytesTrait::new_empty().encode_packed(LEAF_PREFIX);
-    bytes.concat(data);
-    bytes.sha256()
+    let mut digest: Bytes = BytesTrait::new_empty().encode_packed(LEAF_PREFIX);
+    digest.concat(data);
+    digest.sha256()
 }

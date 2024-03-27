@@ -3,7 +3,7 @@ use blobstream_sn::tree::binary::hasher::{leaf_digest, node_digest};
 use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
 use blobstream_sn::tree::utils::{path_length_from_key, get_split_point};
 
-#[derive(Copy, Drop, PartialEq)]
+#[derive(Copy, Drop, PartialEq, Debug)]
 enum ErrorCodes {
     NoError,
     InvalidNumberOfSideNodes,
@@ -20,10 +20,7 @@ fn verify(root: u256, proof: @BinaryMerkleProof, data: @Bytes) -> (bool, ErrorCo
         if (proof.side_nodes.len() != 0) {
             return (false, ErrorCodes::InvalidNumberOfSideNodes);
         }
-    } else if (proof
-        .side_nodes
-        .len()
-        .into() != path_length_from_key(*proof.key, *proof.num_leaves)) {
+    } else if (proof.side_nodes.len() != path_length_from_key(*proof.key, *proof.num_leaves)) {
         return (false, ErrorCodes::InvalidNumberOfSideNodes);
     }
 
@@ -57,7 +54,7 @@ fn verify(root: u256, proof: @BinaryMerkleProof, data: @Bytes) -> (bool, ErrorCo
 
 // Use the `leaf_hash` and `side_nodes` to recusively compute the root hash of the Merkle tree.
 fn compute_root_hash(
-    key: u256, num_leaves: u256, leaf_hash: u256, side_nodes: Span<u256>
+    key: u32, num_leaves: u32, leaf_hash: u256, side_nodes: Span<u256>
 ) -> (u256, ErrorCodes) {
     // Handle the base case(s) of the recursion.
     if (num_leaves == 0) {
@@ -74,7 +71,7 @@ fn compute_root_hash(
     }
 
     // Recursively compute the hashes of the subtrees.
-    let num_left: u256 = get_split_point(num_leaves);
+    let num_left: u32 = get_split_point(num_leaves);
     let side_nodes_left: Span<u256> = side_nodes.slice(0, side_nodes.len() - 1);
     if (key < num_left) {
         // Left subtree

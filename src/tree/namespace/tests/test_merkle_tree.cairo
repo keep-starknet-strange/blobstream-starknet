@@ -15,8 +15,8 @@ fn verify_none_test() {
     let empty = BytesTrait::new_empty();
     let root = NamespaceNode { min: nid, max: nid, digest: empty.sha256() };
     let side_nodes: Array<NamespaceNode> = array![];
-    let key: u256 = 0;
-    let num_leaves: u256 = 0;
+    let key: u32 = 0;
+    let num_leaves: u32 = 0;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty();
     let is_valid = NamespaceMerkleTree::verify(root, proof, nid, data);
@@ -32,8 +32,8 @@ fn verify_one_leaf_empty_test() {
         digest: 0x0679246d6c4216de0daa08e5523fb2674db2b6599c3b72ff946b488a15290b62
     };
     let side_nodes: Array<NamespaceNode> = array![];
-    let key: u256 = 0;
-    let num_leaves: u256 = 1;
+    let key: u32 = 0;
+    let num_leaves: u32 = 1;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty();
     let is_valid = NamespaceMerkleTree::verify(root, proof, nid, data);
@@ -49,8 +49,8 @@ fn verify_one_leaf_some_test() {
         digest: 0x56d8381cfe28e8eb21da620145b7b977a74837720da5147b00bfab6f1b4af24d
     };
     let side_nodes: Array<NamespaceNode> = array![];
-    let key: u256 = 0;
-    let num_leaves: u256 = 1;
+    let key: u32 = 0;
+    let num_leaves: u32 = 1;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0xdeadbeef_u32);
     let is_valid = NamespaceMerkleTree::verify(root, proof, nid, data);
@@ -66,8 +66,8 @@ fn verify_one_leaf_01_test() {
         digest: 0x353857cdb4c745eb9fdebbd8ec44093fabb9f08d437e2298d9e6afa1a409b30c
     };
     let side_nodes: Array<NamespaceNode> = array![];
-    let key: u256 = 0;
-    let num_leaves: u256 = 1;
+    let key: u32 = 0;
+    let num_leaves: u32 = 1;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0x01_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, nid, data);
@@ -96,8 +96,8 @@ fn verify_leaf_one_of_two_test() {
             digest: 0xc5fd5617b70207108c8d9bcf624b1eedf39b763af86f660255947674e043cd2c
         }
     ];
-    let key: u256 = 0;
-    let num_leaves: u256 = 2;
+    let key: u32 = 0;
+    let num_leaves: u32 = 2;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0x01_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, node10, data);
@@ -139,8 +139,8 @@ fn verify_leaf_one_of_four_test() {
             digest: 0x2aa20c7587b009772a9a88402b7cc8fcb82edc9e31754e95544a670a696f55a7
         }
     ];
-    let key: u256 = 0;
-    let num_leaves: u256 = 4;
+    let key: u32 = 0;
+    let num_leaves: u32 = 4;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0x01_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, node10, data);
@@ -187,8 +187,8 @@ fn verify_leaf_one_of_eight_test() {
             digest: 0x5aa3e7ea31995fdd38f41015275229b290a8ee4810521db766ad457b9a8373d6
         }
     ];
-    let key: u256 = 0;
-    let num_leaves: u256 = 8;
+    let key: u32 = 0;
+    let num_leaves: u32 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0x01_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, node10, data);
@@ -227,8 +227,8 @@ fn verify_leaf_seven_of_eight_test() {
             digest: 0xa8dcd9f365fb64aa6d72b5027fe74db0fc7d009c2d75c7b9b9656927281cb35e
         }
     ];
-    let key: u256 = 6;
-    let num_leaves: u256 = 8;
+    let key: u32 = 6;
+    let num_leaves: u32 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0x07_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
@@ -267,8 +267,8 @@ fn verify_leaf_eight_of_eight_test() {
             digest: 0xa8dcd9f365fb64aa6d72b5027fe74db0fc7d009c2d75c7b9b9656927281cb35e
         }
     ];
-    let key: u256 = 7;
-    let num_leaves: u256 = 8;
+    let key: u32 = 7;
+    let num_leaves: u32 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0x08_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
@@ -307,8 +307,8 @@ fn verify_leaf_five_of_eight_test() {
             digest: 0xa8dcd9f365fb64aa6d72b5027fe74db0fc7d009c2d75c7b9b9656927281cb35e
         }
     ];
-    let key: u256 = 4;
-    let num_leaves: u256 = 8;
+    let key: u32 = 4;
+    let num_leaves: u32 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0x05_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
@@ -355,8 +355,8 @@ fn verify_leaf_four_of_eight_test() {
             digest: 0x5aa3e7ea31995fdd38f41015275229b290a8ee4810521db766ad457b9a8373d6
         }
     ];
-    let key: u256 = 3;
-    let num_leaves: u256 = 8;
+    let key: u32 = 3;
+    let num_leaves: u32 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0x04_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, node40, data);
@@ -403,8 +403,8 @@ fn verify_leaf_three_of_eight_test() {
             digest: 0x5aa3e7ea31995fdd38f41015275229b290a8ee4810521db766ad457b9a8373d6
         }
     ];
-    let key: u256 = 2;
-    let num_leaves: u256 = 8;
+    let key: u32 = 2;
+    let num_leaves: u32 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0x03_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, node30, data);
@@ -443,8 +443,8 @@ fn verify_leaf_five_of_seven_test() {
             digest: 0xa8dcd9f365fb64aa6d72b5027fe74db0fc7d009c2d75c7b9b9656927281cb35e
         }
     ];
-    let key: u256 = 4;
-    let num_leaves: u256 = 7;
+    let key: u32 = 4;
+    let num_leaves: u32 = 7;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0x05_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
@@ -478,8 +478,8 @@ fn verify_leaf_nine_of_ten_test() {
             digest: 0xee695202b2d3090a2319e7491483cf50e71a5907cebcf1fed4d02daa02f39827
         }
     ];
-    let key: u256 = 8;
-    let num_leaves: u256 = 10;
+    let key: u32 = 8;
+    let num_leaves: u32 = 10;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0x09_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
@@ -523,8 +523,8 @@ fn verify_leaf_twelve_of_thirteen_test() {
             digest: 0xee695202b2d3090a2319e7491483cf50e71a5907cebcf1fed4d02daa02f39827
         }
     ];
-    let key: u256 = 11;
-    let num_leaves: u256 = 13;
+    let key: u32 = 11;
+    let num_leaves: u32 = 13;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0x0c_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
@@ -558,8 +558,8 @@ fn verify_leaf_thirteen_of_thirteen_test() {
             digest: 0xee695202b2d3090a2319e7491483cf50e71a5907cebcf1fed4d02daa02f39827
         }
     ];
-    let key: u256 = 12;
-    let num_leaves: u256 = 13;
+    let key: u32 = 12;
+    let num_leaves: u32 = 13;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let data = BytesTrait::new_empty().encode_packed(0x0d_u8);
     let is_valid = NamespaceMerkleTree::verify(root, proof, consts::parity_share_namespace(), data);
@@ -584,9 +584,9 @@ fn verify_internal_node_one_and_two_of_four_test() {
         version: 0x00,
         id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000010>()
     };
-    let key: u256 = 1;
-    let num_leaves: u256 = 4;
-    let starting_height: u256 = 2;
+    let key: u32 = 1;
+    let num_leaves: u32 = 4;
+    let starting_height: u32 = 2;
     let data = BytesTrait::new_empty().encode_packed(0x01_u8);
 
     let node1 = hasher::leaf_digest(node10, @data);
@@ -619,9 +619,9 @@ fn verify_internal_node_one_and_two_of_three_test() {
         version: 0x00,
         id: bytes31_const::<0x00000000000000000000000000000000000000000000000000000010>()
     };
-    let key: u256 = 0;
-    let num_leaves: u256 = 3;
-    let starting_height: u256 = 2;
+    let key: u32 = 0;
+    let num_leaves: u32 = 3;
+    let starting_height: u32 = 2;
     let data = BytesTrait::new_empty().encode_packed(0x01_u8);
 
     let node1 = hasher::leaf_digest(node10, @data);
@@ -646,15 +646,15 @@ fn verify_inner_leaf_is_root_test() {
         max: nid,
         digest: 0xc59fa9c4ec515726c2b342544433f844c7b930cf7a5e7abab593332453ceaf70
     };
-    let key: u256 = 0;
-    let num_leaves: u256 = 1;
+    let key: u32 = 0;
+    let num_leaves: u32 = 1;
     let proof = NamespaceMerkleProof { side_nodes: array![], key, num_leaves };
     let node = NamespaceNode {
         min: nid,
         max: nid,
         digest: 0xc59fa9c4ec515726c2b342544433f844c7b930cf7a5e7abab593332453ceaf70
     };
-    let starting_height: u256 = 1;
+    let starting_height: u32 = 1;
     let is_valid = NamespaceMerkleTree::verify_inner(root, proof, node, starting_height);
     assert!(is_valid, "Inner leaf is root proof should be valid");
 }
@@ -670,15 +670,15 @@ fn verify_inner_false_for_starting_height_zero_test() {
         max: node20,
         digest: 0xc59fa9c4ec515726c2b342544433f844c7b930cf7a5e7abab593332453ceaf70
     };
-    let key: u256 = 0;
-    let num_leaves: u256 = 1;
+    let key: u32 = 0;
+    let num_leaves: u32 = 1;
     let proof = NamespaceMerkleProof { side_nodes: array![], key, num_leaves };
     let node = NamespaceNode {
         min: node20,
         max: node20,
         digest: 0xc59fa9c4ec515726c2b342544433f844c7b930cf7a5e7abab593332453ceaf70
     };
-    let starting_height: u256 = 0;
+    let starting_height: u32 = 0;
     let is_valid = NamespaceMerkleTree::verify_inner(root, proof, node, starting_height);
     assert!(!is_valid, "Inner false for starting height zero proof should be invalid");
 }
@@ -694,15 +694,15 @@ fn verify_inner_false_for_too_large_key_test() {
         max: node20,
         digest: 0xc59fa9c4ec515726c2b342544433f844c7b930cf7a5e7abab593332453ceaf70
     };
-    let key: u256 = 3; // key is larger than num_leaves
-    let num_leaves: u256 = 1;
+    let key: u32 = 3; // key is larger than num_leaves
+    let num_leaves: u32 = 1;
     let proof = NamespaceMerkleProof { side_nodes: array![], key, num_leaves };
     let node = NamespaceNode {
         min: node20,
         max: node20,
         digest: 0xc59fa9c4ec515726c2b342544433f844c7b930cf7a5e7abab593332453ceaf70
     };
-    let starting_height: u256 = 1;
+    let starting_height: u32 = 1;
     let is_valid = NamespaceMerkleTree::verify_inner(root, proof, node, starting_height);
     assert!(!is_valid, "Inner false for too large key proof should be invalid");
 }
@@ -725,15 +725,15 @@ fn verify_inner_false_for_incorrect_proof_length() {
             digest: 0x24ddc56b10cebbf760b3a744ad3a0e91093db34b4d22995f6de6dac918e38ae5
         }
     ];
-    let key: u256 = 0;
-    let num_leaves: u256 = 1;
+    let key: u32 = 0;
+    let num_leaves: u32 = 1;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let node = NamespaceNode {
         min: node20,
         max: node20,
         digest: 0xc59fa9c4ec515726c2b342544433f844c7b930cf7a5e7abab593332453ceaf70
     };
-    let starting_height: u256 = 1;
+    let starting_height: u32 = 1;
     let is_valid = NamespaceMerkleTree::verify_inner(root, proof, node, starting_height);
     assert!(!is_valid, "Inner false for incorrect proof length proof should be invalid");
 }
@@ -778,8 +778,8 @@ fn verify_inner_one_of_eight_test() {
         max: node20,
         digest: 0x1dae5c3d39a8bf31ea33ba368238a52f816cd50485c580565609554cf360c91f
     };
-    let key: u256 = 0;
-    let num_leaves: u256 = 8;
+    let key: u32 = 0;
+    let num_leaves: u32 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let is_valid = NamespaceMerkleTree::verify_inner(root, proof, node, 2);
     assert!(is_valid, "Inner one of eight proof should be valid");
@@ -817,8 +817,8 @@ fn verify_inner_seven_of_eight_test() {
         max: consts::parity_share_namespace(),
         digest: 0x1b79ffd74644e8c287fe5f1dd70bc8ea02738697cebf2810ffb2dc5157485c40
     };
-    let key: u256 = 6;
-    let num_leaves: u256 = 8;
+    let key: u32 = 6;
+    let num_leaves: u32 = 8;
     let proof = NamespaceMerkleProof { side_nodes, key, num_leaves };
     let is_valid = NamespaceMerkleTree::verify_inner(root, proof, node, 2);
     assert!(is_valid, "Inner seven of eight proof should be valid");

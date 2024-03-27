@@ -37,12 +37,12 @@ fn verify_multi_01() {
         }
     ];
 
-    let begin_key: u256 = 1;
-    let end_key: u256 = 3;
+    let begin_key: u32 = 1;
+    let end_key: u32 = 3;
     let proof = NamespaceMerkleMultiproof { begin_key, end_key, side_nodes };
     let data_val1: Bytes = BytesTrait::new_empty().encode_packed(0x02_u8);
     let data_val2: Bytes = BytesTrait::new_empty().encode_packed(0x03_u8);
     let data: Array<Bytes> = array![data_val1, data_val2];
-    let is_valid = NamespaceMerkleTree::verify_multi(root, proof, nid, data);
+    let is_valid = NamespaceMerkleTree::verify_multi(root, @proof, nid, data.span());
     assert!(is_valid, "verify_multi_01 failed");
 }
