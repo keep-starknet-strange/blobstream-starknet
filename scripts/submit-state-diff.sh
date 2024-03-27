@@ -29,6 +29,7 @@ for arg in "$@"; do
     "--namespace") set -- "$@" "-n" ;;
     "--data-path") set -- "$@" "-d" ;;
     "--verbose") set -- "$@" "-v" ;;
+    "--help") set -- "$@" "-h" ;;
     *) set -- "$@" "$arg"
   esac
 done
@@ -45,7 +46,11 @@ while getopts ":n:d:vh" opt; do
     v)
       VERBOSE=true
       ;;
-    ?|h)
+    h)
+      usage
+      exit 0
+      ;;
+    *)
       echo "Invalid option: $OPTARG" 1>&2
       usage
       exit 1
@@ -55,12 +60,12 @@ done
 
 # Check Dependencies
 if ! command -v celestia > /dev/null; then
-    echo "please install:\n\thttps://docs.celestia.org/developers/node-tutorial"
+    echo -e "please install:\n\thttps://docs.celestia.org/developers/node-tutorial"
     exit 1
 fi
 
 CEL_BALANCE=$(celestia state balance --token $AUTH_TOKEN | jq -r '.result.amount')
-if [ ${#CEL_BALANCE} -gt 0 ]; then
+if [ ${CEL_BALANCE} -gt 0 ]; then
     echo "Celestia Account Balance: $CEL_BALANCE UTIA"
 else
     echo "Celestia Account: insufficient balance"
