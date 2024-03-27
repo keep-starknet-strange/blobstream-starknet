@@ -37,9 +37,9 @@ snforge test
 
 ***submit-state-diff***
 
-Prereq follow this tutorial to init a
-Celestia [light node](https://docs.celestia.org/developers/node-tutorial)
-for the [Mocha testnet](https://docs.celestia.org/nodes/mocha-testnet).
+You must have a Celestia light node running in order to run this scrip.
+Follow this [tutorial](https://docs.celestia.org/developers/node-tutorial) to init
+a node for the [Mocha testnet](https://docs.celestia.org/nodes/mocha-testnet).
 
 ```bash
 bash scripts/submit-state-diff.sh
