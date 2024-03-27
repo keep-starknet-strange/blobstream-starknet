@@ -15,10 +15,11 @@ DATA_PATH="src/tests/data/os_output.json"
 
 usage() {
   echo "usage: $0 [-n namespace] [-d path] [-v]"
-  echo -e "\t submit data to celestia"
+  echo -e "\tsubmit data to celestia"
   echo
   echo -e "\t-n, --namespace                   celestia Namespace(default: SN_APP)"
   echo -e "\t-d, --data-path                   local path to data for submission"
+  echo -e "\t-v, --verbose                     display verbose output"
 }
 
 # Transform long options to short ones
@@ -27,25 +28,24 @@ for arg in "$@"; do
   case "$arg" in
     "--namespace") set -- "$@" "-n" ;;
     "--data-path") set -- "$@" "-d" ;;
+    "--verbose") set -- "$@" "-v" ;;
     *) set -- "$@" "$arg"
   esac
 done
 
 # Parse command line arguments
-while getopts ":h:v:n:d:" opt; do
+while getopts ":n:d:vh" opt; do
   case ${opt} in
-    h )
-      usage
-      exit 0
-      ;;
-    n )
+    n)
       NAMESPACE="${OPTARG}"
       ;;
-    d )
+    d)
       DATA_PATH="${OPTARG}"
       ;;
-
-    * )
+    v)
+      VERBOSE=true
+      ;;
+    ?|h)
       echo "Invalid option: $OPTARG" 1>&2
       usage
       exit 1
@@ -78,9 +78,7 @@ echo "Submission Results:"
 CEL_RESPONSE=$(celestia blob submit $HEX_NS $HEX_DATA --token $AUTH_TOKEN)
 echo $CEL_RESPONSE | jq
 
-# TODO: potentially helpful for integration
-# if $VERBOSE; then
-#     HEIGHT=$(echo $CEL_RESPONSE | jq '.result.height')
-#     echo $HEIGHT
-#     celestia header get-by-height $HEIGHT --token $AUTH_TOKEN
-# fi
+if $VERBOSE; then
+    HEIGHT=$(echo $CEL_RESPONSE | jq '.result.height')
+    celestia header get-by-height $HEIGHT --token $AUTH_TOKEN
+fi
