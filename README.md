@@ -37,7 +37,7 @@ snforge test
 
 ***submit-state-diff***
 
-You must have a Celestia light node running in order to run this scrip.
+You must have a Celestia light node for this script.
 Follow this [tutorial](https://docs.celestia.org/developers/node-tutorial) to init
 a node for the [Mocha testnet](https://docs.celestia.org/nodes/mocha-testnet).
 
