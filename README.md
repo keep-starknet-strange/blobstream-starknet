@@ -35,7 +35,9 @@ snforge test
 
 ## Scripts
 
-In order to run `submit-state-diff.sh` follow this tutorial to start a
+***submit-state-diff***
+
+Prereq follow this tutorial to init a
 Celestia [light node](https://docs.celestia.org/developers/node-tutorial)
 for the [Mocha testnet](https://docs.celestia.org/nodes/mocha-testnet).
 
