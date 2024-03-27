@@ -5,6 +5,9 @@ mod blobstreamx {
     use blobstream_sn::interfaces::{
         DataRoot, TendermintXErrors, IBlobstreamX, IDAOracle, ITendermintX
     };
+    use blobstream_sn::mocks::evm_facts_registry::{
+        IEVMFactsRegistryMockDispatcher, IEVMFactsRegistryMockDispatcherImpl
+    };
     use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
     use blobstream_sn::tree::binary::merkle_tree;
     use core::starknet::event::EventEmitter;
@@ -34,6 +37,8 @@ mod blobstreamx {
         header_range_function_id: u256,
         next_header_function_id: u256,
         frozen: bool,
+        herodotus_facts_registry: ContractAddress,
+        blobstreamx_l1_contract: felt252,
         #[substorage(v0)]
         ownable: OwnableComponent::Storage,
         #[substorage(v0)]
@@ -114,6 +119,8 @@ mod blobstreamx {
         header: u256,
         header_range_function_id: u256,
         next_header_function_id: u256,
+        herodotus_facts_registry: ContractAddress,
+        blobstreamx_l1_contract: felt252
     ) {
         self.data_commitment_max.write(1000);
         self.gateway.write(gateway);
@@ -124,6 +131,8 @@ mod blobstreamx {
         self.header_range_function_id.write(header_range_function_id);
         self.next_header_function_id.write(next_header_function_id);
         self.frozen.write(false);
+        self.herodotus_facts_registry.write(herodotus_facts_registry);
+        self.blobstreamx_l1_contract.write(blobstreamx_l1_contract);
     }
 
     #[abi(embed_v0)]
@@ -189,6 +198,10 @@ mod blobstreamx {
             self.state_proof_nonce.read()
         }
 
+        fn get_state_data_commitment(self: @ContractState, state_nonce: u64) -> u256 {
+            self.state_data_commitments.read(state_nonce)
+        }
+
         fn get_header_range_id(self: @ContractState) -> u256 {
             self.header_range_function_id.read()
         }
@@ -212,6 +225,21 @@ mod blobstreamx {
         fn set_frozen(ref self: ContractState, _frozen: bool) {
             self.ownable.assert_only_owner();
             self.frozen.write(_frozen);
+        }
+
+        fn get_herodotus_facts_registry(self: @ContractState) -> ContractAddress {
+            self.herodotus_facts_registry.read()
+        }
+        fn set_herodotus_facts_registry(ref self: ContractState, facts_registry: ContractAddress) {
+            self.ownable.assert_only_owner();
+            self.herodotus_facts_registry.write(facts_registry);
+        }
+        fn get_blobstreamx_l1_contract(self: @ContractState) -> felt252 {
+            self.blobstreamx_l1_contract.read()
+        }
+        fn set_blobstreamx_l1_contract(ref self: ContractState, l1_contract: felt252) {
+            self.ownable.assert_only_owner();
+            self.blobstreamx_l1_contract.write(l1_contract);
         }
 
         /// Request a header_range proof for the next header hash and a data commitment for the block range [latest_block, _target_block).
@@ -380,6 +408,50 @@ mod blobstreamx {
             self.emit(HeadUpdate { target_block: next_block, target_header: next_header });
             self.state_proof_nonce.write(proof_nonce + 1);
             self.latest_block.write(next_block);
+        }
+
+        /// This assumes all existing data_commitments mappings match L1 Blobstream
+        fn update_data_commitments_from_facts(ref self: ContractState, l1_block: u256) {
+            assert(!self.frozen.read(), Errors::ContractFrozen);
+
+            let herodotus_facts_registry = IEVMFactsRegistryMockDispatcher {
+                contract_address: self.get_herodotus_facts_registry()
+            };
+
+            // Get the proof nonce for the new state data commitments
+            let blobstreamx_l1_proof_nonce_slot: u256 = 0xfc;
+            let new_state_proof_nonce = herodotus_facts_registry
+                .get_slot_value(
+                    self.blobstreamx_l1_contract.read(), l1_block, blobstreamx_l1_proof_nonce_slot
+                );
+            assert!(new_state_proof_nonce.is_some(), "No proof nonce found for block {}", l1_block);
+            let new_state_proof_nonce: u64 = new_state_proof_nonce.unwrap().try_into().unwrap();
+            assert!(
+                new_state_proof_nonce > self.get_state_proof_nonce(),
+                "State proof nonce does not increase on block {}",
+                l1_block
+            );
+
+            // Loop though all the new state data commitments
+            let blobstreamx_l1_data_commitment_map_slot: u256 = 0xfe;
+            let mut current_proof_nonce = self.get_state_proof_nonce();
+            while current_proof_nonce < new_state_proof_nonce {
+                let mut dc_slot_encoded: Bytes = BytesTrait::new_empty();
+                dc_slot_encoded.append_u256(current_proof_nonce.into());
+                dc_slot_encoded.append_u256(blobstreamx_l1_data_commitment_map_slot);
+                let dc_slot: u256 = dc_slot_encoded.keccak();
+                let data_commitment = herodotus_facts_registry
+                    .get_slot_value(self.blobstreamx_l1_contract.read(), l1_block, dc_slot);
+                assert!(
+                    data_commitment.is_some(),
+                    "No data commitment found for block {} and proof nonce {}",
+                    l1_block,
+                    current_proof_nonce
+                );
+                self.state_data_commitments.write(current_proof_nonce, data_commitment.unwrap());
+                current_proof_nonce += 1;
+            };
+            self.state_proof_nonce.write(new_state_proof_nonce);
         }
     }
 }

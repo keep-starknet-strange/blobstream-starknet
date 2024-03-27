@@ -2,6 +2,7 @@ pub mod blobstreamx;
 mod interfaces;
 
 mod mocks {
+    mod evm_facts_registry;
     mod function_verifier;
     mod upgradeable;
 }

@@ -52,6 +52,8 @@ trait IBlobstreamX<TContractState> {
     fn get_gateway(self: @TContractState) -> ContractAddress;
     // Nonce for proof events. Must be incremented sequentially
     fn get_state_proof_nonce(self: @TContractState) -> u64;
+    // Data commitment for given nonce.
+    fn get_state_data_commitment(self: @TContractState, state_nonce: u64) -> u256;
     // Header range function id.
     fn get_header_range_id(self: @TContractState) -> u256;
     fn set_header_range_id(ref self: TContractState, _function_id: u256);
@@ -61,6 +63,12 @@ trait IBlobstreamX<TContractState> {
     // Contract freezing state.
     fn get_frozen(self: @TContractState) -> bool;
     fn set_frozen(ref self: TContractState, _frozen: bool);
+    // Address to the Herodotus Fact Registry contract.
+    fn get_herodotus_facts_registry(self: @TContractState) -> ContractAddress;
+    fn set_herodotus_facts_registry(ref self: TContractState, facts_registry: ContractAddress);
+    // L1 Address to the BlobstreamX proxy contract.
+    fn get_blobstreamx_l1_contract(self: @TContractState) -> felt252;
+    fn set_blobstreamx_l1_contract(ref self: TContractState, l1_contract: felt252);
     // Prove the validity of the header at the target block and a data commitment for the block range [latestBlock, _targetBlock).
     fn request_header_range(ref self: TContractState, _target_block: u64);
     // Commits the new header at targetBlock and the data commitment for the block range [trustedBlock, targetBlock).
@@ -69,4 +77,6 @@ trait IBlobstreamX<TContractState> {
     fn request_next_header(ref self: TContractState);
     // Stores the new header for _trustedBlock + 1 and the data commitment for the block range [_trustedBlock, _trustedBlock + 1).
     fn commit_next_header(ref self: TContractState, _trusted_block: u64);
+    // Use the Herodotus Fact Registry to update data commitments from facts at the l1_block.
+    fn update_data_commitments_from_facts(ref self: TContractState, l1_block: u256);
 }

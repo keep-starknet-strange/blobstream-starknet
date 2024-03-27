@@ -16,6 +16,9 @@ const HEADER_RANGE_DIGEST: u256 = 0xb646edd6dbb2e5482b2449404cf1888b8f4cd6958c79
 const NEXT_HEADER_DIGEST: u256 = 0xfd6c88812a160ff288fe557111815b3433c539c77a3561086cfcdd9482bceb8;
 const TOTAL_SUPPLY: u256 = 0x100000000000000000000000000000001;
 
+// Current Sepolia proxy contract address
+const BLOBSTREAMX_L1_ADDRESS: felt252 = 0x48B257EC1610d04191cC2c528d0c940AdbE1E439;
+
 fn OWNER() -> ContractAddress {
     contract_address_const::<'OWNER'>()
 }
@@ -57,6 +60,10 @@ fn setup_base() -> ContractAddress {
         .deploy(@array![NEXT_HEADER_DIGEST.low.into(), NEXT_HEADER_DIGEST.high.into()])
         .unwrap();
 
+    // deploy the mock herodotus fact registry
+    let herodotus_registry_class = snf::declare("EVMFactsRegistryMock");
+    let herodotus_facts_registry = herodotus_registry_class.deploy(@array![]).unwrap();
+
     // register verifier functions w/ gateway
     let header_range_func_id = gateway
         .register_function(OWNER(), header_range_verifier, 'HEADER_RANGE');
@@ -75,6 +82,8 @@ fn setup_base() -> ContractAddress {
         header_range_func_id.high.into(),
         next_header_func_id.low.into(),
         next_header_func_id.high.into(),
+        herodotus_facts_registry.into(),
+        BLOBSTREAMX_L1_ADDRESS.into()
     ];
     blobstreamx_class.deploy(@calldata).unwrap()
 }
