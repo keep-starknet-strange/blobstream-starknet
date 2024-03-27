@@ -77,6 +77,7 @@ if [ ! -f $DATA_PATH ]; then
     exit 1
 fi
 
+# Format and submit data
 HEX_NS=0x$(xxd -p <<< $NAMESPACE)
 HEX_DATA=$(xxd -p -c 0 $DATA_PATH)
 echo "Submission Results:"
