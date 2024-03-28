@@ -436,10 +436,10 @@ mod blobstreamx {
             let blobstreamx_l1_data_commitment_map_slot: u256 = 0xfe;
             let mut current_proof_nonce = self.get_state_proof_nonce();
             while current_proof_nonce < new_state_proof_nonce {
-                let mut dc_slot_encoded: Bytes = BytesTrait::new_empty();
-                dc_slot_encoded.append_u256(current_proof_nonce.into());
-                dc_slot_encoded.append_u256(blobstreamx_l1_data_commitment_map_slot);
-                let dc_slot: u256 = dc_slot_encoded.keccak();
+                let dc_slot: u256 = BytesTrait::new_empty()
+                    .encode(current_proof_nonce)
+                    .encode(blobstreamx_l1_data_commitment_map_slot)
+                    .keccak();
                 let data_commitment = herodotus_facts_registry
                     .get_slot_value(self.blobstreamx_l1_contract.read(), l1_block, dc_slot);
                 assert!(
