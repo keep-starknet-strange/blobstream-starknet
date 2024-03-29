@@ -3,6 +3,9 @@ use snforge_std as snf;
 use snforge_std::{ContractClassTrait, CheatTarget, SpyOn, EventSpy};
 use starknet::{ContractAddress, contract_address_const};
 use succinct_sn::fee_vault::succinct_fee_vault;
+use succinct_sn::interfaces::{
+    ISuccinctGatewayDispatcher, ISuccinctGatewayDispatcherTrait
+};
 use succinct_sn::function_registry::interfaces::{
     IFunctionRegistryDispatcher, IFunctionRegistryDispatcherTrait
 };
@@ -27,6 +30,10 @@ fn NEW_OWNER() -> ContractAddress {
     contract_address_const::<'NEW_OWNER'>()
 }
 
+fn PROVER() -> ContractAddress {
+    contract_address_const::<'PROVER'>()
+}
+
 fn setup_base() -> ContractAddress {
     // deploy the token associated with the fee vault
     let mut calldata = array![];
@@ -49,7 +56,13 @@ fn setup_base() -> ContractAddress {
     let gateway_addr = succinct_gateway_class
         .deploy(@array![OWNER().into(), fee_vault_address.into()])
         .unwrap();
-    let gateway = IFunctionRegistryDispatcher { contract_address: gateway_addr };
+    let gateway = ISuccinctGatewayDispatcher { contract_address: gateway_addr };
+    let function_registry = IFunctionRegistryDispatcher { contract_address: gateway_addr };
+
+    // Setup the gateway contract
+    snf::start_prank(CheatTarget::One(gateway.contract_address), OWNER());
+    gateway.set_prover(PROVER(), true);
+    snf::stop_prank(CheatTarget::One(gateway.contract_address));
 
     // deploy the mock function verifier
     let func_verifier_class = snf::declare("function_verifier_mock");
@@ -65,9 +78,9 @@ fn setup_base() -> ContractAddress {
     let herodotus_facts_registry = herodotus_registry_class.deploy(@array![]).unwrap();
 
     // register verifier functions w/ gateway
-    let header_range_func_id = gateway
+    let header_range_func_id = function_registry
         .register_function(OWNER(), header_range_verifier, 'HEADER_RANGE');
-    let next_header_func_id = gateway
+    let next_header_func_id = function_registry
         .register_function(OWNER(), next_header_verifier, 'NEXT_HEADER');
 
     // deploy blobstreamx

@@ -9,9 +9,9 @@ test = "snforge test"
 snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.19.0" }
 starknet = ">=2.6.3"
 openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", rev = "f22438c" }
-alexandria_bytes = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "c1a604e" }
-alexandria_math = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "c1a604e" }
-succinct_sn = { git = "https://github.com/keep-starknet-strange/succinct-starknet.git", rev = "7890c7b" }
+alexandria_bytes = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "39ccd99" }
+alexandria_math = { git = "https://github.com/keep-starknet-strange/alexandria.git", rev = "39ccd99" }
+succinct_sn = { git = "https://github.com/keep-starknet-strange/succinct-starknet.git", rev = "c8f7941" }
 
 [[target.starknet-contract]]
 casm = true
