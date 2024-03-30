@@ -6,8 +6,8 @@ use succinct_sn::fee_vault::succinct_fee_vault;
 use succinct_sn::function_registry::interfaces::{
     IFunctionRegistryDispatcher, IFunctionRegistryDispatcherTrait
 };
-use succinct_sn::interfaces::{ISuccinctGatewayDispatcher, ISuccinctGatewayDispatcherTrait};
 use succinct_sn::interfaces::{IFeeVaultDispatcher, IFeeVaultDispatcherTrait};
+use succinct_sn::interfaces::{ISuccinctGatewayDispatcher, ISuccinctGatewayDispatcherTrait};
 
 // https://sepolia.etherscan.io/tx/0xadced8dc7f4bb01d730ed78daecbf9640417c5bd60b0ada23c9045cc953481a5#eventlog
 const TEST_START_BLOCK: u64 = 846054;
