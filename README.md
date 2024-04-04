@@ -43,6 +43,18 @@ Then, within the Rust project `bindings/` run:
 cargo build
 ````
 
+## Scripts
+
+### `submit-state-diff`
+
+You must have a Celestia light node for this script.
+Follow this [tutorial](https://docs.celestia.org/developers/node-tutorial) to init
+a node for the [Mocha testnet](https://docs.celestia.org/nodes/mocha-testnet).
+
+```bash
+bash scripts/submit-state-diff.sh
+```
+
 ## Contributors ✨
 
 We live on contributions. If you'd like to contribute please follow the [guide](CONTRIBUTING.md).
