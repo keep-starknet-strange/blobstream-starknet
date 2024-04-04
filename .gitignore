@@ -16,3 +16,5 @@ book/book/
 package.json
 yarn.lock
 node_modules/
+
+.env
