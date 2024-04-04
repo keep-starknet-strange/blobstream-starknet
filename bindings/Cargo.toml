@@ -1,0 +1,10 @@
+[package]
+name = "bindings"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+cainome = { git = "https://github.com/cartridge-gg/cainome", tag = "v0.2.5", features = ["abigen-rs"] }
+starknet = "0.9.0"
