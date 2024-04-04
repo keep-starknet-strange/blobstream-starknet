@@ -1,5 +1,9 @@
 #!/bin/bash
-source ../.env
+
+# Load env variable from `.env` only if they're not already set
+if [ -z "$STARKNET_KEYSTORE" ] || [ -z "$STARKNET_ACCOUNT" ]; then
+  source ../.env
+fi
 
 # Check if required env variables are set, if not exit
 if [ -z "$STARKNET_KEYSTORE" ]; then
