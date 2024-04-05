@@ -1,8 +1,10 @@
 #!/bin/bash
 
+PROJECT_ROOT=`git rev-parse --show-toplevel`
+
 # Load env variable from `.env` only if they're not already set
 if [ -z "$STARKNET_KEYSTORE" ] || [ -z "$STARKNET_ACCOUNT" ]; then
-  source ../.env
+  source $PROJECT_ROOT/.env
 fi
 
 # Check if required env variables are set, if not exit
@@ -15,7 +17,7 @@ elif [ -z "$STARKNET_ACCOUNT" ]; then
 fi
 
 # Constants
-SIERRA_FILE=../target/dev/blobstream_sn_blobstreamx.contract_class.json
+SIERRA_FILE=$PROJECT_ROOT/target/dev/blobstream_sn_blobstreamx.contract_class.json
 # Optional arguments
 HERODOTUS_FACTS_REGISTRY_ADDRESS="0x07d3550237ecf2d6ddef9b78e59b38647ee511467fe000ce276f245a006b40bc"
 BLOBSTREAMX_L1_ADDRESS="0x48B257EC1610d04191cC2c528d0c940AdbE1E439"
