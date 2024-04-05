@@ -33,6 +33,16 @@ To test the project, run:
 snforge test
 ```
 
+## Bindings (Rust)
+
+To build/update the bindings, first build the contract with `scarb`.
+
+Then, within the Rust project `bindings/` run:
+
+````bash
+cargo build
+````
+
 ## Scripts
 
 ### `submit-state-diff`
