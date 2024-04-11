@@ -53,7 +53,7 @@ display_help() {
   echo "   -d, --debug                              save logs in debug_blobstreamx.log"
 
   echo
-  echo "Example: $0 --owner 0x0 --height 0x1 --header 0x2"
+  echo "Example: $0 --owner 0x0 --height 1 --header 2"
 }
 
 # Transform long options to short ones

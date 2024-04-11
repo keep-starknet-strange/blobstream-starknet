@@ -8,15 +8,16 @@
 HERODOTUS_API_URL="https://api.herodotus.cloud/"
 BLOBSTREAMX_SOURCE_CHAIN_ID="11155111"
 BLOBSTREAMX_DESTINATION_CHAIN_ID="SN_SEPOLIA"
-STATE_PROOF_NONCE_SLOT="0x00000000000000000000000000000000000000000000000000000000000000fc"
-STATE_DATA_COMMITMENT_MAP_SLOT="0x00000000000000000000000000000000000000000000000000000000000000fe"
+L1_STATE_PROOF_NONCE_SLOT="0x00000000000000000000000000000000000000000000000000000000000000fc"
+L1_STATE_DATA_COMMITMENT_MAP_SLOT="0x00000000000000000000000000000000000000000000000000000000000000fe"
+SN_STATE_PROOF_NONCE_SLOT="0x014b6daa0cec03ba4339e793f3875bb9b847d3153c67e97dc14fc96d048d4c7c"
 
 # Optional arguments
 L1_RPC_URL="https://sepolia.infura.io/v3/bed8a8401c894421bd7cd31050e7ced6"
 STARKNET_RPC_URL="https://starknet-sepolia.infura.io/v3/bed8a8401c894421bd7cd31050e7ced6"
 BLOBSTREAMX_L1_ADDRESS="0x48B257EC1610d04191cC2c528d0c940AdbE1E439"
 #TODO : Change address to the Sepolia address once it is deployed
-BLOBSTREAMX_STARKNET_ADDRESS="0x48B257EC1610d04191cC2c528d0c940AdbE1E439"
+BLOBSTREAMX_STARKNET_ADDRESS="0x04179fb9990b3c7e44de802c4e40c8f395862d79a8c5eaa7340d999a5c1f625d"
 
 NO_SEND=false
 VERBOSE=false
@@ -24,6 +25,11 @@ WAIT=true
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 WORK_DIR=$SCRIPT_DIR/..
+
+# Load env variable from `.env` only if they're not already set
+if [ -z "$HERODOTUS_API_KEY" ] && [ "$NO_SEND" = false ]; then
+  source $WORK_DIR/.env
+fi
 
 display_help() {
   echo "Usage: $0 [option...] {arguments...}"
@@ -120,18 +126,14 @@ L1_BLOCK_NUM=$(echo $L1_BLOCK_NUM_RES | jq -r '.result')
 LATEST_PROOF_NONCE_RES=$(curl $L1_RPC_URL \
     -X POST \
     -H "Content-Type: application/json" \
-    -d '{"jsonrpc":"2.0","method":"eth_getStorageAt","params":["'"$BLOBSTREAMX_L1_ADDRESS"'","'"$STATE_PROOF_NONCE_SLOT"'","'"$L1_BLOCK_NUM"'"],"id":1}' 2>/dev/null)
+    -d '{"jsonrpc":"2.0","method":"eth_getStorageAt","params":["'"$BLOBSTREAMX_L1_ADDRESS"'","'"$L1_STATE_PROOF_NONCE_SLOT"'","'"$L1_BLOCK_NUM"'"],"id":1}' 2>/dev/null)
 LATEST_PROOF_NONCE=$(echo $LATEST_PROOF_NONCE_RES | jq -r '.result')
 
-#TODO: Do a call to get_state_proof_nonce() once the function is deployed & replace hardcoded
-#STARKNET_PROOF_NONCE_RES=$(curl $STARKNET_RPC_URL \
-#    -X POST \
-#    -H "Content-Type: application/json" \
-#    -d '{"jsonrpc":"2.0","method":"starknet_getState","params":["'"$BLOBSTREAMX_STARKNET_ADDRESS"'",'"$LATEST_PROOF_NONCE"'],"id":1}' 2>/dev/null)
-#TODO: Remove the hardcoded value once the blobstreamx contract is deployed on Starknet
-#STARKNET_PROOF_NONCE_RES=$(echo '{"jsonrpc":"2.0","id":1,"result":"0x00000000000000000000000000000000000000000000000000000000000006cb"}')
-#STARKNET_PROOF_NONCE=$(echo $STARKNET_PROOF_NONCE_RES | jq -r '.result')
-STARKNET_PROOF_NONCE=$((LATEST_PROOF_NONCE - 4))
+STARKNET_PROOF_NONCE_RES=$(curl $STARKNET_RPC_URL \
+   -X POST \
+   -H "Content-Type: application/json" \
+   -d '{"jsonrpc":"2.0","method":"starknet_getStorageAt", "params":["'"$BLOBSTREAMX_STARKNET_ADDRESS"'", "'"$SN_STATE_PROOF_NONCE_SLOT"'", "pending"],"id":1}' 2>/dev/null)
+STARKNET_PROOF_NONCE=$(echo $STARKNET_PROOF_NONCE_RES | jq -r '.result')
 
 if [ "$VERBOSE" = true ]; then
   echo "Latest L1 block number: $L1_BLOCK_NUM"
@@ -143,8 +145,8 @@ DATA_COMMITMENT_SLOTS=''
 # Loop through each missing state_proofNonce to build the batch query slots
 for ((i = $STARKNET_PROOF_NONCE; i <= LATEST_PROOF_NONCE - 1; i++)); do
   # Data commitment slot for each proofNonce is located at
-  # keccak256(abi.encode(proofNonce, STATE_DATA_COMMITMENT_MAP_SLOT))
-  DATA_COMMITMENT_ENCODED_SLOT=$(printf "%064x%064x" $i $STATE_DATA_COMMITMENT_MAP_SLOT)
+  # keccak256(abi.encode(proofNonce, L1_STATE_DATA_COMMITMENT_MAP_SLOT))
+  DATA_COMMITMENT_ENCODED_SLOT=$(printf "%064x%064x" $i $L1_STATE_DATA_COMMITMENT_MAP_SLOT)
   DATA_COMMITMENT_SLOT=$(echo $DATA_COMMITMENT_ENCODED_SLOT | keccak-256sum -x -l | awk '{print $1}')
   
   if [ -z "$DATA_COMMITMENT_SLOTS" ]; then
@@ -173,7 +175,7 @@ HERODOTUS_QUERY='{
         "accounts": {
           "'$BLOBSTREAMX_L1_ADDRESS'": {
             "slots": [
-              "'$STATE_PROOF_NONCE_SLOT'",
+              "'$L1_STATE_PROOF_NONCE_SLOT'",
               '$DATA_COMMITMENT_SLOTS'
             ],
             "props": []
@@ -220,8 +222,8 @@ fi
 
 # Wait for state proof nonce slot to be relayed
 echo
-echo "Waiting for state proof nonce slot $STATE_PROOF_NONCE_SLOT to be relayed..."
-$SCRIPT_DIR/wait-for-herodotus-fulfill.sh -b $L1_BLOCK_NUM_DEC -a $BLOBSTREAMX_L1_ADDRESS -S $STATE_PROOF_NONCE_SLOT $([ "$VERBOSE" = true ] && echo "-v")
+echo "Waiting for state proof nonce slot $L1_STATE_PROOF_NONCE_SLOT to be relayed..."
+$SCRIPT_DIR/wait-for-herodotus-fulfill.sh -b $L1_BLOCK_NUM_DEC -a $BLOBSTREAMX_L1_ADDRESS -S $L1_STATE_PROOF_NONCE_SLOT $([ "$VERBOSE" = true ] && echo "-v")
 # Loop thru each data commitment slot to wait for the data to be relayed (comma separated)
 for slot in $(echo $DATA_COMMITMENT_SLOTS | tr ',' '\n' | tr -d '"'); do
   echo
