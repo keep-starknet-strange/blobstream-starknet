@@ -97,7 +97,6 @@ else
     COMMAND="starkli invoke --network sepolia --keystore $STARKNET_KEYSTORE --account $STARKNET_ACCOUNT --max-fee $MAX_FEE --watch $BLOBSTREAMX_STARKNET_ADDRESS update_data_commitments_from_facts u256:$L1_BLOCK_NUMBER"
 fi
 
-# Call the update_data_commitments_from_facts function
 if [ "$VERBOSE" = true ]; then
   echo "$COMMAND"
 fi
@@ -109,4 +108,7 @@ if [[ $output == *"Error"* ]]; then
   exit 1
 fi
 
-echo "Data commitments updated successfully from Herodotus Fact registry for block $L1_BLOCK_NUMBER."
+tx=$(echo "$output" | grep -oP '0x[0-9a-fA-F]+' | tail -n 1) 
+
+echo "Data commitments updated successfully for block $L1_BLOCK_NUMBER"
+echo "See transaction: $tx"
