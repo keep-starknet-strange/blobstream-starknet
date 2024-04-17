@@ -21,6 +21,7 @@ SIERRA_FILE=$PROJECT_ROOT/target/dev/blobstream_sn_blobstreamx.contract_class.js
 # Optional arguments
 HERODOTUS_FACTS_REGISTRY_ADDRESS="0x07d3550237ecf2d6ddef9b78e59b38647ee511467fe000ce276f245a006b40bc"
 BLOBSTREAMX_L1_ADDRESS="0x48B257EC1610d04191cC2c528d0c940AdbE1E439"
+MAX_FEE="none"
 # TODO : Change when Succint contracts are deployed
 GATEWAY_ADDRESS="0x07e4220832ecf2d6ddef9b78e59b38647ee511467fe000ce225f245a006b32cb"
 HEADER_RANGE_FUNCTION_ID="0x1"
@@ -35,7 +36,7 @@ display_help() {
   echo "                                            (required)"
   echo "   -a, --header U256                        Header hash for the corresponding block height"
   echo "                                            (required)"
-
+  
   echo
   echo "   -g, --gateway ADDR                       Succint gateway contract address on Starknet"
   echo "                                            (default: $GATEWAY_ADDRESS (SEPOLIA))"
@@ -47,13 +48,15 @@ display_help() {
   echo "                                            (default: $HERODOTUS_FACTS_REGISTRY_ADDRESS (SEPOLIA))"
   echo "   -b, --blobstreamx-l1 ADDR                BlobstreamX contract address on L1"
   echo "                                            (default: $BLOBSTREAMX_L1_ADDRESS (SEPOLIA))"
+  echo "   -m, --max-fee ETH                        Max fee"
+  echo "                                            (default: estimated automatically)"
 
   echo
   echo "   -h, --help                               display help"
   echo "   -d, --debug                              save logs in debug_blobstreamx.log"
 
   echo
-  echo "Example: $0 --owner 0x0 --height 0x1 --header 0x2"
+  echo "Example: $0 --owner 0x0 --height 1 --header 2"
 }
 
 # Transform long options to short ones
@@ -68,6 +71,7 @@ for arg in "$@"; do
     "--next-header-function-id") set -- "$@" "-n" ;;
     "--herodotus-facts-registry") set -- "$@" "-f" ;;
     "--blobstreamx-l1") set -- "$@" "-b" ;;
+    "--max-fee") set -- "$@" "-m" ;;
     "--help") set -- "$@" "-h" ;;
     "--debug") set -- "$@" "-d" ;;
     --*) unrecognized_options+=("$arg") ;;
@@ -82,7 +86,7 @@ if [ ! -z "${unrecognized_options[@]}" ]; then
 fi
 
 # Parse command line arguments
-while getopts ":hdg:o:a:H:r:n:f:b:-:" opt; do
+while getopts ":hdg:o:a:H:r:n:f:b:m:-:" opt; do
   case ${opt} in
     h )
       display_help
@@ -114,6 +118,9 @@ while getopts ":hdg:o:a:H:r:n:f:b:-:" opt; do
       ;;
     b )
       BLOBSTREAMX_L1_ADDRESS="$OPTARG"
+      ;;
+    m )
+      MAX_FEE="$OPTARG"
       ;;
     \? )
       echo "Invalid option: $OPTARG" 1>&2
@@ -171,11 +178,17 @@ declare() {
 deploy() {
     class_hash=$(declare | tail -n 1)
 
+    if [ "$MAX_FEE" = "none" ]; then
+      COMMAND="starkli deploy --network sepolia --keystore $STARKNET_KEYSTORE --account $STARKNET_ACCOUNT --watch $class_hash $GATEWAY_ADDRESS $OWNER $HEIGHT u256:$HEADER u256:$HEADER_RANGE_FUNCTION_ID u256:$NEXT_HEADER_FUNCTION_ID $HERODOTUS_FACTS_REGISTRY_ADDRESS $BLOBSTREAMX_L1_ADDRESS"
+    else
+      COMMAND="starkli deploy --network sepolia --keystore $STARKNET_KEYSTORE --account $STARKNET_ACCOUNT --max-fee $MAX_FEE --watch $class_hash $GATEWAY_ADDRESS $OWNER $HEIGHT u256:$HEADER u256:$HEADER_RANGE_FUNCTION_ID u256:$NEXT_HEADER_FUNCTION_ID $HERODOTUS_FACTS_REGISTRY_ADDRESS $BLOBSTREAMX_L1_ADDRESS"
+    fi
+    
     if [ "$DEBUG" = true ]; then
-        echo "deploy --network sepolia --keystore $STARKNET_KEYSTORE --account $STARKNET_ACCOUNT --watch $class_hash $GATEWAY_ADDRESS $OWNER $HEIGHT u256:$HEADER u256:$HEADER_RANGE_FUNCTION_ID u256:$NEXT_HEADER_FUNCTION_ID $HERODOTUS_FACTS_REGISTRY_ADDRESS $BLOBSTREAMX_L1_ADDRESS" >> debug_blobstreamx.log
+        echo "$COMMAND" >> debug_blobstreamx.log
     fi
 
-    output=$(starkli deploy --network sepolia --keystore $STARKNET_KEYSTORE --account $STARKNET_ACCOUNT --watch $class_hash "$GATEWAY_ADDRESS" "$OWNER" "$HEIGHT" u256:"$HEADER" u256:"$HEADER_RANGE_FUNCTION_ID" u256:"$NEXT_HEADER_FUNCTION_ID" "$HERODOTUS_FACTS_REGISTRY_ADDRESS" "$BLOBSTREAMX_L1_ADDRESS" 2>&1)
+    output=$($COMMAND 2>&1)
 
     if [ "$DEBUG" = true ]; then
         echo "$output" >> debug_blobstreamx.log
