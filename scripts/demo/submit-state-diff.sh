@@ -11,7 +11,7 @@ VERBOSE=false
 
 # Optional
 NAMESPACE="SN_APP"
-DATA_PATH="src/tests/data/os_output.json"
+DATA_PATH="scripts/demo/os_output.json"
 
 usage() {
   echo "usage: $0 [-n namespace] [-d path] [-v]"

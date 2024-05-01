@@ -16,7 +16,6 @@ SN_STATE_PROOF_NONCE_SLOT="0x014b6daa0cec03ba4339e793f3875bb9b847d3153c67e97dc14
 L1_RPC_URL="https://sepolia.infura.io/v3/bed8a8401c894421bd7cd31050e7ced6"
 STARKNET_RPC_URL="https://starknet-sepolia.infura.io/v3/bed8a8401c894421bd7cd31050e7ced6"
 BLOBSTREAMX_L1_ADDRESS="0xF0c6429ebAB2e7DC6e05DaFB61128bE21f13cb1e"
-#TODO : Change address to the Sepolia address once it is deployed
 BLOBSTREAMX_STARKNET_ADDRESS="0x04179fb9990b3c7e44de802c4e40c8f395862d79a8c5eaa7340d999a5c1f625d"
 
 NO_SEND=false
