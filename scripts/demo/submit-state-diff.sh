@@ -79,7 +79,7 @@ fi
 
 # Format and submit data
 HEX_NS=0x$(xxd -p <<< $NAMESPACE)
-HEX_DATA=$(xxd -p -c 0 $DATA_PATH)
+HEX_DATA=$(xxd -p -c 0 $DATA_PATH | tr -d '\n')
 echo "Submission Results:"
 CEL_RESPONSE=$(celestia blob submit $HEX_NS $HEX_DATA --token $AUTH_TOKEN)
 echo $CEL_RESPONSE | jq
