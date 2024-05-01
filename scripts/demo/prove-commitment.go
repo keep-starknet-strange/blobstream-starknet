@@ -7,15 +7,15 @@ import (
 	"os"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	blobstreamxwrapper "github.com/succinctlabs/blobstreamx/bindings"
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
+	blobstreamxwrapper "github.com/succinctlabs/blobstreamx/bindings"
 	"github.com/tendermint/tendermint/rpc/client/http"
 )
 
 // default block height
-var CELESTIA_HEIGHT int64 = 1723705
-var ETH_RPC string = "https://sepolia.infura.io/v3/bed8a8401c894421bd7cd31050e7ced6";
+var CELESTIA_HEIGHT int64 = 1727045
+var ETH_RPC string = "https://sepolia.infura.io/v3/bed8a8401c894421bd7cd31050e7ced6"
 var CEL_RPC string = "tcp://rpc-mocha.pops.one:26657"
 var BLOBSTREAMX_ADDR string = "0xF0c6429ebAB2e7DC6e05DaFB61128bE21f13cb1e"
 
@@ -65,8 +65,8 @@ func verify() error {
 	eventsIterator, err := wrapper.FilterDataCommitmentStored(
 		&bind.FilterOpts{
 			Context: ctx,
-			Start: LatestBlockNumber - 90000,
-			End: &LatestBlockNumber,
+			Start:   LatestBlockNumber - 90000,
+			End:     &LatestBlockNumber,
 		},
 		nil,
 		nil,
@@ -99,7 +99,7 @@ func verify() error {
 	if event == nil {
 		return fmt.Errorf("couldn't find range containing the transaction height")
 	}
-	
+
 	fmt.Println("Commitment Info:")
 	fmt.Printf("\tdata commitment \t\t%x\n", event.DataCommitment)
 	fmt.Printf("\tdata root tuple\t\t\t(%x, %d)\n", blockRes.Block.DataHash, CELESTIA_HEIGHT)
@@ -114,7 +114,7 @@ func verify() error {
 
 	// ---------------- Verify Inclusion --------------------
 	tuple := blobstreamxwrapper.DataRootTuple{
-		Height: big.NewInt(CELESTIA_HEIGHT),
+		Height:   big.NewInt(CELESTIA_HEIGHT),
 		DataRoot: *(*[32]byte)(blockRes.Block.DataHash),
 	}
 
@@ -124,7 +124,7 @@ func verify() error {
 	}
 	wrappedProof := blobstreamxwrapper.BinaryMerkleProof{
 		SideNodes: sideNodes,
-		Key: big.NewInt(dcProof.Proof.Index),
+		Key:       big.NewInt(dcProof.Proof.Index),
 		NumLeaves: big.NewInt(dcProof.Proof.Total),
 	}
 

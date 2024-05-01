@@ -1,6 +1,4 @@
-// 
 // Query the data root inclusion proof for given block height (default 5 block buffer)
-// 
 package main
 
 import (
@@ -12,7 +10,7 @@ import (
 )
 
 // default block height
-var CELESTIA_HEIGHT uint64 = 1723705
+var CELESTIA_HEIGHT uint64 = 1727045
 
 func main() {
 	ctx := context.Background()
@@ -30,7 +28,7 @@ func main() {
 	if len(os.Args) > 1 {
 		CELESTIA_HEIGHT, _ = strconv.ParseUint(os.Args[1], 10, 64)
 	}
-	
+
 	dcProof, err := trpc.DataRootInclusionProof(ctx, CELESTIA_HEIGHT, CELESTIA_HEIGHT-5, CELESTIA_HEIGHT+5)
 	if err != nil {
 		fmt.Println(err)
