@@ -17,14 +17,6 @@ in [Cairo](https://book.cairo-lang.org/) for [Starknet](https://starknet.io/).
 
 See the book to dive down the [blobhole...](https://blobstream-stark.net)
 
-## Install tools and dependencies
-
-The project relies on scarb. You have to install it first then.
-
-```
-curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh -s -- -v nightly
-```
-
 ## Build
 
 To build the project, run:
