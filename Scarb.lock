@@ -4,7 +4,7 @@ version = 1
 [[package]]
 name = "alexandria_bytes"
 version = "0.1.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=c1a604e#c1a604eaba40b026c2b477a9b293e40244432e0a"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=39ccd99#39ccd99b1c017ba1c6b53f6d74775f5ab0054735"
 dependencies = [
  "alexandria_data_structures",
  "alexandria_math",
@@ -13,7 +13,7 @@ dependencies = [
 [[package]]
 name = "alexandria_data_structures"
 version = "0.2.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=c1a604e#c1a604eaba40b026c2b477a9b293e40244432e0a"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=39ccd99#39ccd99b1c017ba1c6b53f6d74775f5ab0054735"
 dependencies = [
  "alexandria_encoding",
 ]
@@ -21,7 +21,7 @@ dependencies = [
 [[package]]
 name = "alexandria_encoding"
 version = "0.1.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=c1a604e#c1a604eaba40b026c2b477a9b293e40244432e0a"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=39ccd99#39ccd99b1c017ba1c6b53f6d74775f5ab0054735"
 dependencies = [
  "alexandria_bytes",
  "alexandria_math",
@@ -31,7 +31,7 @@ dependencies = [
 [[package]]
 name = "alexandria_math"
 version = "0.2.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=c1a604e#c1a604eaba40b026c2b477a9b293e40244432e0a"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=39ccd99#39ccd99b1c017ba1c6b53f6d74775f5ab0054735"
 dependencies = [
  "alexandria_data_structures",
 ]
@@ -39,9 +39,18 @@ dependencies = [
 [[package]]
 name = "alexandria_numeric"
 version = "0.1.0"
-source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=c1a604e#c1a604eaba40b026c2b477a9b293e40244432e0a"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=39ccd99#39ccd99b1c017ba1c6b53f6d74775f5ab0054735"
 dependencies = [
  "alexandria_math",
+ "alexandria_searching",
+]
+
+[[package]]
+name = "alexandria_searching"
+version = "0.1.0"
+source = "git+https://github.com/keep-starknet-strange/alexandria.git?rev=39ccd99#39ccd99b1c017ba1c6b53f6d74775f5ab0054735"
+dependencies = [
+ "alexandria_data_structures",
 ]
 
 [[package]]
@@ -68,7 +77,7 @@ source = "git+https://github.com/foundry-rs/starknet-foundry?tag=v0.19.0#a3391dc
 [[package]]
 name = "succinct_sn"
 version = "0.1.0"
-source = "git+https://github.com/keep-starknet-strange/succinct-starknet.git?rev=7890c7b#7890c7b5d4ae1fc0ae1237bb85ade3ff131018b5"
+source = "git+https://github.com/keep-starknet-strange/succinct-starknet.git?rev=c8f7941#c8f79418bb12487a1c21d1ea55a94835b7002c6a"
 dependencies = [
  "alexandria_bytes",
  "openzeppelin",

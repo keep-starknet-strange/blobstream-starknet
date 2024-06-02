@@ -1,7 +1,7 @@
 #[starknet::contract]
 mod blobstreamx {
     use alexandria_bytes::{Bytes, BytesTrait};
-    use alexandria_encoding::sol_abi::{SolAbiEncodeTrait};
+    use alexandria_encoding::sol_abi::{SolAbiEncodeTrait, SolAbiDecodeTrait};
     use blobstream_sn::interfaces::{
         DataRoot, TendermintXErrors, IBlobstreamX, IDAOracle, ITendermintX
     };
@@ -312,10 +312,14 @@ mod blobstreamx {
                 .encode_packed(_target_block);
 
             // Get the output of the header_range proof from the gateway.
-            let (target_header, data_commitment) = ISuccinctGatewayDispatcher {
+            let verified_output = ISuccinctGatewayDispatcher {
                 contract_address: self.get_gateway()
             }
                 .verified_call(self.get_header_range_id(), input);
+
+            let mut offset = 0;
+            let target_header = verified_output.decode(ref offset);
+            let data_commitment = verified_output.decode(ref offset);
 
             let proof_nonce = self.get_state_proof_nonce();
             self.block_height_to_header_hash.write(_target_block, target_header);
@@ -388,10 +392,14 @@ mod blobstreamx {
                 .encode_packed(trusted_header);
 
             // Get the output of the next_header proof from the gateway.
-            let (next_header, data_commitment) = ISuccinctGatewayDispatcher {
+            let verified_output = ISuccinctGatewayDispatcher {
                 contract_address: self.gateway.read()
             }
                 .verified_call(self.next_header_function_id.read(), input);
+
+            let mut offset = 0;
+            let next_header = verified_output.decode(ref offset);
+            let data_commitment = verified_output.decode(ref offset);
 
             let proof_nonce = self.get_state_proof_nonce();
             self.block_height_to_header_hash.write(next_block, next_header);

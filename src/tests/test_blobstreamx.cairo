@@ -10,7 +10,7 @@ use blobstream_sn::mocks::evm_facts_registry::{
 };
 use blobstream_sn::tests::common::{
     setup_base, setup_spied, setup_succinct_gateway, TEST_START_BLOCK, TEST_END_BLOCK, TEST_HEADER,
-    BLOBSTREAMX_L1_ADDRESS, OWNER
+    BLOBSTREAMX_L1_ADDRESS, OWNER, PROVER
 };
 use blobstream_sn::tree::binary::merkle_proof::BinaryMerkleProof;
 use snforge_std as snf;
@@ -97,9 +97,10 @@ fn blobstreamx_fulfill_commit_header_range() {
         .encode_packed(TEST_END_BLOCK);
 
     let output = BytesTrait::new_empty()
-        .encode_packed(0x94a3afe8ce56375bedcb401c07a38a93a6b9d47461a01b6a410d5a958ca9bc7a_u256)
-        .encode_packed(0xAAA0E18EB3689B8D88BE03EA19589E3565DB343F6509C8601DB6AFA01255A488_u256);
+        .encode(0x94a3afe8ce56375bedcb401c07a38a93a6b9d47461a01b6a410d5a958ca9bc7a_u256)
+        .encode(0xAAA0E18EB3689B8D88BE03EA19589E3565DB343F6509C8601DB6AFA01255A488_u256);
 
+    snf::start_prank(CheatTarget::One(gateway.contract_address), PROVER());
     gateway
         .fulfill_call(
             bsx.get_header_range_id(),
@@ -110,6 +111,7 @@ fn blobstreamx_fulfill_commit_header_range() {
             selector!("commit_header_range"),
             array![TEST_END_BLOCK.into()].span(),
         );
+    snf::stop_prank(CheatTarget::One(gateway.contract_address));
 
     assert!(
         get_bsx_latest_block(bsx.contract_address) == TEST_END_BLOCK, "latest block does not match"
@@ -147,6 +149,7 @@ fn blobstreamx_commit_next_header() {
     let latest_block = get_bsx_latest_block(bsx.contract_address);
 
     // TODO: need test data for input, output, and proof as no txs on testnet
+    snf::start_prank(CheatTarget::One(gateway.contract_address), PROVER());
     gateway
         .fulfill_call(
             bsx.get_next_header_id(),
@@ -157,6 +160,7 @@ fn blobstreamx_commit_next_header() {
             selector!("commit_next_header"),
             array![latest_block.into()].span(),
         );
+    snf::stop_prank(CheatTarget::One(gateway.contract_address));
 
     assert!(
         get_bsx_latest_block(bsx.contract_address) == latest_block + 1,

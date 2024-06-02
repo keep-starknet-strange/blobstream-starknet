@@ -7,6 +7,7 @@ use succinct_sn::function_registry::interfaces::{
     IFunctionRegistryDispatcher, IFunctionRegistryDispatcherTrait
 };
 use succinct_sn::interfaces::{IFeeVaultDispatcher, IFeeVaultDispatcherTrait};
+use succinct_sn::interfaces::{ISuccinctGatewayDispatcher, ISuccinctGatewayDispatcherTrait};
 
 // https://sepolia.etherscan.io/tx/0xadced8dc7f4bb01d730ed78daecbf9640417c5bd60b0ada23c9045cc953481a5#eventlog
 const TEST_START_BLOCK: u64 = 846054;
@@ -25,6 +26,10 @@ fn OWNER() -> ContractAddress {
 
 fn NEW_OWNER() -> ContractAddress {
     contract_address_const::<'NEW_OWNER'>()
+}
+
+fn PROVER() -> ContractAddress {
+    contract_address_const::<'PROVER'>()
 }
 
 fn setup_base() -> ContractAddress {
@@ -49,7 +54,13 @@ fn setup_base() -> ContractAddress {
     let gateway_addr = succinct_gateway_class
         .deploy(@array![OWNER().into(), fee_vault_address.into()])
         .unwrap();
-    let gateway = IFunctionRegistryDispatcher { contract_address: gateway_addr };
+    let gateway = ISuccinctGatewayDispatcher { contract_address: gateway_addr };
+    let function_registry = IFunctionRegistryDispatcher { contract_address: gateway_addr };
+
+    // Setup the gateway contract
+    snf::start_prank(CheatTarget::One(gateway.contract_address), OWNER());
+    gateway.set_prover(PROVER(), true);
+    snf::stop_prank(CheatTarget::One(gateway.contract_address));
 
     // deploy the mock function verifier
     let func_verifier_class = snf::declare("function_verifier_mock");
@@ -65,9 +76,9 @@ fn setup_base() -> ContractAddress {
     let herodotus_facts_registry = herodotus_registry_class.deploy(@array![]).unwrap();
 
     // register verifier functions w/ gateway
-    let header_range_func_id = gateway
+    let header_range_func_id = function_registry
         .register_function(OWNER(), header_range_verifier, 'HEADER_RANGE');
-    let next_header_func_id = gateway
+    let next_header_func_id = function_registry
         .register_function(OWNER(), next_header_verifier, 'NEXT_HEADER');
 
     // deploy blobstreamx
